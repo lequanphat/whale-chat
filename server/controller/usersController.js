@@ -28,4 +28,24 @@ const register = async (req, res, next) => {
         next(error);
     }
 }
-export default register;
+const login = async (req, res, next) => {
+    try {
+        const {username, password } = req.body;
+        const user = await userModel.findOne({username});
+        if (!user){
+            return res.json({msg: "Incorrect username", status: false});
+        }
+        const isPasswordValid = await brcypt.compare(password, user.password);
+        if (isPasswordValid){
+            return res.json({msg: "Incorrect password", status: false});
+        }
+        const newUser = { ...user._doc, password:'' }
+
+        // CookieService.saveCookie(res, 'user', '123');
+        console.log(newUser);
+        return res.json({status: true, newUser})
+    } catch (error) {
+        next(error);
+    }
+}
+export {register, login};

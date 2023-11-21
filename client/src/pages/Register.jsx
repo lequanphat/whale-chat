@@ -21,8 +21,9 @@ function Register() {
             email,
             password,
         });
-        if (data.stauts === false) {
-            alert('false');
+        if (data.status === false) {
+            alert(data.msg);
+            return;
         }
         localStorage.setItem('chat-app-user', JSON.stringify(data.newUser));
         navigate('/');
@@ -32,9 +33,11 @@ function Register() {
     };
     return (
         <div>
+            
             <FormContainer>
+                <img className="robot" src='/robot.gif' alt='' />
                 <form onSubmit={(event) => handleSubmit(event)}>
-                    <div className="brand">
+                    <div className="header">
                         <h1>Register</h1>
                     </div>
                     <input type="text" placeholder="Username" name="username" onChange={(e) => handleChange(e)} />
@@ -47,7 +50,7 @@ function Register() {
                         onChange={(e) => handleChange(e)}
                     />
 
-                    <button type="submit">Create User</button>
+                    <button type="submit">Join now</button>
                     <span>
                         You already have an account?<Link to="/login">Login</Link>
                     </span>
@@ -61,12 +64,15 @@ const FormContainer = styled.div`
     height: 100vh;
     width: 100vw;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     gap: 1rem;
     align-items: center;
     background-color: #40407a;
-    .brand h1 {
+    .robot{
+        width: 40%;
+
+    }
+    .header h1 {
         color: white;
         text-transform: uppercase;
         font-size: 1.8rem;

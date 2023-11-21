@@ -1,28 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { registerRoute } from '../utils/ApiRoutes';
+import { loginRoute } from '../utils/ApiRoutes';
 
 function Login() {
     const navigate = useNavigate();
     const [values, setValues] = useState({
         username: '',
-        email: '',
         password: '',
-        confirmPassword: '',
     });
+
+    useEffect(() => {
+        if(localStorage.getItem('chat-app-user')){
+            navigate('/');
+        }
+    })
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('submit');
-        const {username, email, password } = values;
-        const { data } = await axios.post(registerRoute, {
+        const {username, password } = values;
+        const { data } = await axios.post(loginRoute, {
             username,
-            email,
             password,
        }); 
-       if(data.stauts === false){
-            alert('false');
+       if(data.status === false){
+            alert(data.msg);
+            return;
        }
        localStorage.setItem('chat-app-user', JSON.stringify(data.newUser));
        navigate("/");
@@ -33,23 +38,16 @@ function Login() {
     return (
         <div>
             <FormContainer>
+                <img className="robot" src='/robot.gif' alt='' />
                 <form onSubmit={(event) => handleSubmit(event)}>
-                    <div className="brand">
-                        <h1>Register</h1>
+                    <div className="header">
+                        <h1>Login</h1>
                     </div>
                     <input type="text" placeholder="Username" name="username" onChange={(e) => handleChange(e)} />
-                    <input type="text" placeholder="Email" name="email" onChange={(e) => handleChange(e)} />
                     <input type="password" placeholder="Password" name="password" onChange={(e) => handleChange(e)} />
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        name="confirmPassword"
-                        onChange={(e) => handleChange(e)}
-                    />
-
-                    <button type="submit">Create User</button>
+                    <button type="submit">Login</button>
                     <span>
-                        You already have an account?<Link to="/login">Login</Link>
+                        You don't have an account?<Link to="/register">Register</Link>
                     </span>
                 </form>
             </FormContainer>
@@ -61,12 +59,14 @@ const FormContainer = styled.div`
     height: 100vh;
     width: 100vw;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     gap: 1rem;
     align-items: center;
     background-color: #40407a;
-    .brand h1 {
+    .robot{
+        width: 40%;
+    }
+    .header h1 {
         color: white;
         text-transform: uppercase;
         font-size: 1.8rem;
