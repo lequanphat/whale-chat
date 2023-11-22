@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { allUsersRoute } from '../utils/ApiRoutes';
 import Contact from '../components/Contacts';
+import Welcome from '../components/Welcome';
+import ChatContainer from './ChatContainer';
 
 function Chat() {
     const navigate = useNavigate();
     const [contacts, setContacts] = useState([]);
     const [currentUser, setCurrentUser] = useState(undefined);
-
+    const [currentChat, setCurrentChat] = useState(undefined);
     const getContacts = async () => {
         const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
         setContacts(data.data);
@@ -24,15 +26,20 @@ function Chat() {
     }, []);
 
     useEffect(() => {
-        if(currentUser){
+        if (currentUser) {
             getContacts();
         }
         console.log('call api');
     }, [currentUser]);
+    const handleChatChange = (chat) => {
+        setCurrentChat(chat);
+    };
     return (
         <Container>
             <div className="container">
-                <Contact contacts={contacts} currentUser={currentUser} />
+                <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
+
+                {currentChat === undefined ? <Welcome currentUser={currentUser} /> : <ChatContainer />}
             </div>
         </Container>
     );
@@ -51,10 +58,9 @@ const Container = styled.div`
         height: 85vh;
         width: 85vw;
         background-color: #00000076;
-        display: grid;
-        grid-template-columns: 25% 75%;
+        display: flex;
+
         @media screen and (min-width: 720px) and (max-width: 1080px) {
-            grid-template-columns: 35% 65%;
         }
     }
 `;

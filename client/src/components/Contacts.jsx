@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-function Contact({ contacts, currentUser }) {
+function Contact({ contacts, currentUser, changeChat }) {
     const navigate = useNavigate();
     const [currentUserName, setCurrentUserName] = useState('');
     const [currentUserImage, setCurrentUserImage] = useState('');
@@ -14,15 +14,17 @@ function Contact({ contacts, currentUser }) {
         }
     }, [currentUser]);
 
-    const changeCurrentChat = () => {};
-
+    const changeCurrentChat = (index, contact) => {
+        setCurrentSelected(index);
+        changeChat(contact);
+      };
 
     const handleLogout = () => {
         localStorage.removeItem('chat-app-user');
         navigate('/login');
     }
     return (
-        <div>
+        <>
             {currentUserImage && currentUserImage && (
                 <Container>
                     <div className="brand">
@@ -57,7 +59,7 @@ function Contact({ contacts, currentUser }) {
                     </div>
                 </Container>
             )}
-        </div>
+        </>
     );
 }
 
