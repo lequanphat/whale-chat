@@ -12,25 +12,25 @@ function Login() {
     });
 
     useEffect(() => {
-        if(localStorage.getItem('chat-app-user')){
+        if (localStorage.getItem('chat-app-user')) {
             navigate('/');
         }
-    })
+    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('submit');
-        const {username, password } = values;
+        const { username, password } = values;
         const { data } = await axios.post(loginRoute, {
             username,
             password,
-       }); 
-       if(data.status === false){
+        });
+        if (data.status === false) {
             alert(data.msg);
             return;
-       }
-       localStorage.setItem('chat-app-user', JSON.stringify(data.newUser));
-       navigate("/");
+        }
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        navigate('/');
     };
     const handleChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value });
@@ -38,7 +38,7 @@ function Login() {
     return (
         <div>
             <FormContainer>
-                <img className="robot" src='/robot.gif' alt='' />
+                <img className="robot" src="/robot.gif" alt="" />
                 <form onSubmit={(event) => handleSubmit(event)}>
                     <div className="header">
                         <h1>Login</h1>
@@ -63,7 +63,7 @@ const FormContainer = styled.div`
     gap: 1rem;
     align-items: center;
     background-color: #40407a;
-    .robot{
+    .robot {
         width: 40%;
     }
     .header h1 {

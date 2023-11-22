@@ -20,14 +20,10 @@ const userSchema = new mongoose.Schema({
         min:8,
         max: 50,
     },
-    isAvatarImageSet: {
-        type: Boolean,
-        default: false,
-    },
     avatarImage: {
         type: String, 
         default: "",
-    }
+    },
 })
 
 export default mongoose.model("Users", userSchema);

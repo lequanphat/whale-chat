@@ -1,39 +1,79 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Buffer from 'buffer';
+import { setAvatarRoute } from '../utils/ApiRoutes';
+import { useNavigate } from 'react-router-dom';
+
 function SetAvatar() {
+    const navigate = useNavigate();
     const [avatars, setAvatars] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAvatar, setSelectedAvatar] = useState(undefined);
     const fetchData = async () => {
-        const data = ['avatar_1.jpg', 'avatar_2.jpg', 'avatar_3.jpg', 'avatar_1.jpg'];
+        const data = [
+            'avatar_1.jpg',
+            'avatar_2.jpg',
+            'avatar_3.jpg',
+            'avatar_4.jpg',
+            'avatar_5.jpg',
+            'avatar_6.jpg',
+            'avatar_7.jpg',
+        ];
         setAvatars(data);
         setSelectedAvatar(0);
-        setIsLoading(false);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
     };
+
     useEffect(() => {
         fetchData();
     }, []);
 
-    return (
-        <div>
-            <Container>
-                <div className="title-container">
-                    <h1>Pick an avatar as your profile picture</h1>
-                </div>
-                <div className="avatars">
-                    {avatars.map((avatar, index) => {
-                        return (
-                            <div key={index} className={`avatar ${selectedAvatar === index ? 'selected' : ''}`}>
-                                <img src={`/images/${avatar}`} alt="avt" onClick={() => setSelectedAvatar(index)} />
-                            </div>
-                        );
-                    })}
-                </div>
-                <button className="submit-btn">Set as Profile Picture</button>
-            </Container>
-        </div>
+    const handleSetAvatar = async () => {
+        const user = JSON.parse(localStorage.getItem('chat-app-user'));
+        const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
+            avatar: avatars[selectedAvatar],
+        });
+        if (data.status === false) {
+            alert(data.msg);
+            return;
+        }
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        navigate('/');
+    };
+
+    return isLoading ? (
+        <Loading>
+            <img className="loading" src="loading.gif" alt="loading" />
+        </Loading>
+    ) : (
+        <Container>
+            <div className="title-container">
+                <h1>Pick an avatar as your profile picture</h1>
+            </div>
+            <div className="avatars">
+                {avatars.map((avatar, index) => {
+                    return (
+                        <div key={index} className={`avatar ${selectedAvatar === index ? 'selected' : ''}`}>
+                            <img
+                                src={`http://localhost:2411/storage/${avatar}`}
+                                alt="avt"
+                                onClick={() => setSelectedAvatar(index)}
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+            <button
+                className="submit-btn"
+                onClick={() => {
+                    handleSetAvatar();
+                }}
+            >
+                Set as Profile Picture
+            </button>
+        </Container>
     );
 }
 
@@ -64,6 +104,7 @@ const Container = styled.div`
             align-items: center;
             transition: 0.3s ease-in-out;
             border-radius: 100%;
+            cursor: pointer;
             img {
                 border-radius: 100%;
                 height: 6rem;
@@ -87,6 +128,21 @@ const Container = styled.div`
         &:hover {
             background-color: #16a085;
         }
+    }
+`;
+
+const Loading = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 3rem;
+    background-color: #131324;
+    height: 100vh;
+    width: 100vw;
+    .loading {
+        width: 10rem;
+        height: 10rem;
     }
 `;
 

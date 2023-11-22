@@ -25,8 +25,8 @@ function Register() {
             alert(data.msg);
             return;
         }
-        localStorage.setItem('chat-app-user', JSON.stringify(data.newUser));
-        navigate('/');
+        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
+        navigate('/set-avatar/'+data.user._id);
     };
     const handleChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value });
