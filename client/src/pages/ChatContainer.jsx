@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import ChatInput from '../components/ChatInput';
-import Message from '../components/Message';
 import { getAllMessages, sendMessage } from '../api/internal';
 import { useEffect, useRef, useState } from 'react';
 
@@ -9,8 +8,10 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const scrollRef = useRef();
 
+    console.log('current_chat = '+ currentChat._id);
+
     const handleSendMsg = async (msg) => {
-        const data = await sendMessage({
+        await sendMessage({
             from: currentUser._id,
             to: currentChat._id,
             message: msg,
@@ -38,15 +39,33 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     }, [currentChat]);
 
     useEffect(() => {
+        const socketListener = (data) => {
+            console.log('from -> ' + data.from);
+            console.log('to -> ' + data.to);
+            console.log('current chat: ' + currentChat._id);
+            if (data.from === currentChat._id) {
+                console.log(data.message);
+                setArrivalMessage({ fromSelf: false, message: data.message });
+            }
+        };
+    
         if (socket.current) {
-            socket.current.on('msg-recieve', (msg) => {
-                setArrivalMessage({ fromSelf: false, message: msg });
-            });
+            socket.current.on('msg-recieve', socketListener);
         }
-    }, []);
+        // clean up
+        return () => {
+            if (socket.current) {
+                socket.current.off('msg-recieve', socketListener);
+            }
+        };
+    }, [currentChat]);
 
     useEffect(() => {
-        arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+        console.log('add message');
+        if (arrivalMessage) {
+            setMessages((prev) => [...prev, arrivalMessage]);
+        }
+        
     }, [arrivalMessage]);
 
     useEffect(() => {
