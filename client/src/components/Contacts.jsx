@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Logout from './Logout';
 function Contact({ contacts, currentUser, changeChat }) {
-    const navigate = useNavigate();
     const [currentUserName, setCurrentUserName] = useState('');
     const [currentUserImage, setCurrentUserImage] = useState('');
     const [currentSelected, setCurrentSelected] = useState('');
@@ -17,12 +16,8 @@ function Contact({ contacts, currentUser, changeChat }) {
     const changeCurrentChat = (index, contact) => {
         setCurrentSelected(index);
         changeChat(contact);
-      };
+    };
 
-    const handleLogout = () => {
-        localStorage.removeItem('chat-app-user');
-        navigate('/login');
-    }
     return (
         <>
             {currentUserImage && currentUserImage && (
@@ -49,13 +44,15 @@ function Contact({ contacts, currentUser, changeChat }) {
                         })}
                     </div>
                     <div className="current-user">
-                        <div className="avatar">
-                            <img src={`http://localhost:2411/storage/${currentUserImage}`} alt="avatar" />
+                        <div className="user">
+                            <div className="avatar">
+                                <img src={`http://localhost:2411/storage/${currentUserImage}`} alt="avatar" />
+                            </div>
+                            <div className="username">
+                                <h2>{currentUserName}</h2>
+                            </div>
                         </div>
-                        <div className="username">
-                            <h2>{currentUserName}</h2>
-                        </div>
-                        <h3 className="logout" onClick={handleLogout}>Logout</h3>
+                        <div className="logout"><Logout/></div>
                     </div>
                 </Container>
             )}
@@ -64,8 +61,7 @@ function Contact({ contacts, currentUser, changeChat }) {
 }
 
 const Container = styled.div`
-    /* display: grid;
-  grid-template-rows: 10% 75% 15%; */
+    width: 25%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -119,34 +115,34 @@ const Container = styled.div`
             }
         }
         .selected {
-            background-color: #9a86f3;
+            background-color: #2ecc71;
         }
     }
 
     .current-user {
-        background-color: #0d0d30;
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: 2rem;
-        padding: 0.4rem;
-        .avatar {
-            img {
-                height: 4rem;
-                max-inline-size: 100%;
-                border-radius: 100%;
+        justify-content: space-between;
+        background-color: #0d0d30;
+        padding: 0.4rem 1rem;
+        .user {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .avatar {
+                img {
+                    width: 3rem;
+                    height: 3rem;
+                    border-radius: 100%;
+                }
+            }
+            .username {
+                h2 {
+                    color: white;
+                }
             }
         }
-        .username {
-            h2 {
-                color: white;
-            }
-        }
-        .logout{
-            color: red;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+
         @media screen and (min-width: 720px) and (max-width: 1080px) {
             gap: 0.5rem;
             .username {

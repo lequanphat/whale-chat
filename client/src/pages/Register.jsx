@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { registerRoute } from '../utils/ApiRoutes';
+import { register } from '../api/internal';
 
 function Register() {
     const navigate = useNavigate();
@@ -16,11 +15,11 @@ function Register() {
         event.preventDefault();
         console.log('submit');
         const { username, email, password } = values;
-        const { data } = await axios.post(registerRoute, {
+        const { data } = await register({
             username,
             email,
             password,
-        });
+        })
         if (data.status === false) {
             alert(data.msg);
             return;

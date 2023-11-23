@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { loginRoute } from '../utils/ApiRoutes';
+import { login } from '../api/internal';
+import Cookies from 'js-cookie';
 
 function Login() {
     const navigate = useNavigate();
@@ -21,15 +21,19 @@ function Login() {
         event.preventDefault();
         console.log('submit');
         const { username, password } = values;
-        const { data } = await axios.post(loginRoute, {
+        const response = await login({
             username,
             password,
         });
-        if (data.status === false) {
-            alert(data.msg);
+        console.log(response);
+        if (response.data.status === false) {
+            alert(response.msg);
             return;
         }
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+        localStorage.setItem('chat-app-user', JSON.stringify(response.data.user));
+        const myCookie = Cookies.get('chat-app-user');
+        console.log('cookie');
+        console.log(myCookie);
         navigate('/');
     };
     const handleChange = (event) => {

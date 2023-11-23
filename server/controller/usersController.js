@@ -21,7 +21,7 @@ const register = async (req, res, next) => {
         });
         const newUser = { ...user._doc, password: '' };
 
-        // CookieService.saveCookie(res, 'chat-app-user', JSON.stringify(newUser));
+        CookieService.saveCookie(res, 'chat-app-user', JSON.stringify(newUser));
         console.log(newUser);
         return res.json({ status: true, user: newUser });
     } catch (error) {
@@ -41,7 +41,7 @@ const login = async (req, res, next) => {
         }
         const newUser = { ...user._doc, password: '' };
 
-        // CookieService.saveCookie(res, 'chat-app-user', JSON.stringify(newUser), false);
+        CookieService.saveCookie(res, 'chat-app-user', JSON.stringify(newUser));
         console.log(newUser);
         return res.json({ status: true, user: newUser });
     } catch (error) {
@@ -73,14 +73,21 @@ const setAvatarImage = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
     try {
+
         const users = await userModel
             .find({ _id: { $ne: req.params.id } })
             .select(['email', 'username', 'avatarImage', '_id']);
-        console.log(users);
         return res.json(users);
     } catch (error) {
         next(error);
     }
 };
-
-export { register, login, setAvatarImage, getAllUsers };
+const logout = async (req, res, next) => {
+    try {
+        res.clearCookie('chat-app-user');
+        return res.json({msg: 'logout'});
+    } catch (error) {
+        next(error);
+    }
+};
+export { register, login, setAvatarImage, getAllUsers, logout };
