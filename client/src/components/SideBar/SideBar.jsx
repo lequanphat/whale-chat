@@ -4,7 +4,7 @@ import { RiSettings3Line } from 'react-icons/ri';
 import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
 import { BiMessageSquareCheck } from 'react-icons/bi';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const items = [
@@ -32,7 +32,11 @@ const items = [
 function SideBar() {
     const navigate = useNavigate();
     const [selected, setSelected] = useState(0);
-   
+    const [avatarImage, setAvatarImage] = useState(null);
+
+    useEffect(() => {
+        setAvatarImage(JSON.parse(localStorage.getItem('chat-app-user'))?.avatarImage);
+    }, [])
     return (
         <Container>
             <div>
@@ -50,7 +54,7 @@ function SideBar() {
             </div>
             <div className="footer">
                 <button className="user" onClick={() => { navigate("/profile")} }>
-                    <img src="http://localhost:2411/storage/avatar_1.jpg" alt="avatar" />
+                    <img src={`http://localhost:2411/storage/${avatarImage}`} alt="avatar" />
                 </button>
             </div>
         </Container>

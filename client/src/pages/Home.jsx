@@ -3,9 +3,9 @@ import Contact from '../components/contacts/Contact';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllContacts } from '../api/internal';
-import Welcome from '../components/Welcome';
 import { io } from 'socket.io-client';
 import ChatContainer from '../components/chat/ChatContainer';
+import Temp from './Temp';
 
 function Home() {
     const socket = useRef();
@@ -52,7 +52,7 @@ function Home() {
                 </div>
                 <div className="chat-frame">
                     {currentChat === undefined ? (
-                        <Welcome currentUser={currentUser} />
+                        <Temp title={currentUser?.username} subTitle={"Welcome, "} content={"Please choose a friend to start chatting..."}/>
                     ) : (
                         <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} />
                     )}
