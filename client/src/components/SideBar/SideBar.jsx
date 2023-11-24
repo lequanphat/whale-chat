@@ -1,46 +1,55 @@
 import styled from 'styled-components';
 import { GoHome } from 'react-icons/go';
 import { RiSettings3Line } from 'react-icons/ri';
-import { LuUsers, LuLogOut } from 'react-icons/lu';
+import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
 import { BiMessageSquareCheck } from 'react-icons/bi';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { logout } from '../../api/internal';
+import { Link, useNavigate } from 'react-router-dom';
 
 const items = [
-    <GoHome />,,
-    <BiMessageSquareCheck />,
-    <LuUsers />,
-    <PiUsersThreeBold />,
-    <RiSettings3Line />
+    {
+        icon: <GoHome />,
+        to: "/"
+    },
+    {
+        icon: <BiMessageSquareCheck />,
+        to: "/temp"
+    },
+    {
+        icon: <LuUsers />,
+        to: "/temp"
+    },
+    {
+        icon: <PiUsersThreeBold />,
+        to: "/temp"
+    },
+    {
+        icon: <RiSettings3Line />,
+        to: "/temp"
+    },
 ];
 function SideBar() {
     const navigate = useNavigate();
     const [selected, setSelected] = useState(0);
-    // const handleLogout = async () => {
-    //     localStorage.removeItem('chat-app-user');
-    //     const response = await logout();
-    //     console.log('logout: ' +response.data.msg);
-    //     navigate('/login');
-    // };
+   
     return (
         <Container>
             <div>
                 <div className="logo">
-                    <img src="logo.jpg" alt="avatar" />
+                    <img src="logo.png" alt="avatar" />
                 </div>
                 <ul className="menu">
                     {items.map((item, index) => (
-                        <li key={index} className={ index === selected ? 'active' : ''} onClick={() => {setSelected(index)}}>
-                            <span className="icon">{item}</span>
-                        </li>
+                        <Link to={item.to} key={index} className={ ` menu-item ${index === selected ? 'active' : ''}`} onClick={() => {setSelected(index)}}>
+                            <span className="icon">{item.icon}</span>
+                        </Link>
                     ))}
                     
                 </ul>
             </div>
             <div className="footer">
-                <button className="user">
+                <button className="user" onClick={() => { navigate("/profile")} }>
                     <img src="http://localhost:2411/storage/avatar_1.jpg" alt="avatar" />
                 </button>
             </div>
@@ -61,13 +70,13 @@ const Container = styled.div`
         text-align: center;
         margin: 1rem 0 2.4rem 0;
         img {
-            width: 3rem;
-            height: 3rem;
+            width: 3.6rem;
+            height: 3.4rem;
             border-radius: 10px;
         }
     }
     .menu {
-        li {
+        .menu-item {
             width: 3.6rem;
             height: 3.6rem;
             color: #95a5a6;
