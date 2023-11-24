@@ -50,5 +50,13 @@ const getAllMessages = async (data) => {
         return error;
     }
 }
+const getAllContacts = async (data) => {
+    try {
+        const respone = await api.get('/api/auth/all-users/'+data);
+        return respone;
+    } catch (error) {
+        return error;
+    }
+}
 
-export { login, register, logout, sendMessage, getAllMessages };
+export { login, register, logout, sendMessage, getAllMessages,getAllContacts };

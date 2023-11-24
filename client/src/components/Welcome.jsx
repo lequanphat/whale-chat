@@ -9,12 +9,13 @@ function Welcome({currentUser}) {
 }
 
 const Container = styled.div`
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     color: white;
-    width: 100%;
+    
     img {
         width: 20rem;
         height: 20rem;

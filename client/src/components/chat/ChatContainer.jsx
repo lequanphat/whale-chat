@@ -1,14 +1,13 @@
 import styled from 'styled-components';
-import ChatInput from '../components/ChatInput';
-import { getAllMessages, sendMessage } from '../api/internal';
+import ChatInput from './ChatInput';
 import { useEffect, useRef, useState } from 'react';
+import { getAllMessages, sendMessage } from '../../api/internal';
+import ChatHeader from './ChatHeader';
 
 function ChatContainer({ currentChat, currentUser, socket }) {
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const scrollRef = useRef();
-
-    console.log('current_chat = '+ currentChat._id);
 
     const handleSendMsg = async (msg) => {
         await sendMessage({
@@ -25,7 +24,6 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
     };
-
     const handleGetAllMessages = async () => {
         const respone = await getAllMessages({
             from: currentUser._id,
@@ -33,10 +31,6 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         });
         setMessages(respone.data);
     };
-
-    useEffect(() => {
-        handleGetAllMessages();
-    }, [currentChat]);
 
     useEffect(() => {
         const socketListener = (data) => {
@@ -48,7 +42,7 @@ function ChatContainer({ currentChat, currentUser, socket }) {
                 setArrivalMessage({ fromSelf: false, message: data.message });
             }
         };
-    
+
         if (socket.current) {
             socket.current.on('msg-recieve', socketListener);
         }
@@ -60,34 +54,32 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         };
     }, [currentChat]);
 
+
     useEffect(() => {
         console.log('add message');
         if (arrivalMessage) {
             setMessages((prev) => [...prev, arrivalMessage]);
         }
-        
     }, [arrivalMessage]);
+
+    useEffect(() => {
+        handleGetAllMessages();
+    }, [currentChat]);
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
     return (
         <Container>
-            <div className="chat-header">
-                <div className="user-details">
-                    <div className="avatar">
-                        <img src={`http://localhost:2411/storage/${currentChat.avatarImage}`} alt="" />
-                    </div>
-                    <div className="username">
-                        <h3>{currentChat.username}</h3>
-                    </div>
-                </div>
-            </div>
+            <ChatHeader currentChat={currentChat} />
             <div className="chat-messages">
                 {messages.map((message, index) => {
                     return (
-                        <div ref={scrollRef} key={index} className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}>
+                        <div
+                            ref={scrollRef}
+                            key={index}
+                            className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}
+                        >
                             <div className="content ">
                                 <p>{message.message}</p>
                             </div>
@@ -100,40 +92,12 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         </Container>
     );
 }
-
 const Container = styled.div`
-    width: 100%;
+    height: 100vh;
     display: grid;
     grid-template-rows: 10% 80% 10%;
     gap: 0.1rem;
-    overflow: hidden;
-    @media screen and (min-width: 720px) and (max-width: 1080px) {
-        grid-template-rows: 15% 70% 15%;
-    }
-    .chat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 2rem;
-        border: 1px solid #131324;
-        .user-details {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            .avatar {
-                img {
-                    width: 2.8rem;
-                    height: 2.8rem;
-                    border-radius: 100%;
-                }
-            }
-            .username {
-                h3 {
-                    color: white;
-                }
-            }
-        }
-    }
+
     .chat-messages {
         padding: 1rem 2rem;
         display: flex;
@@ -177,5 +141,4 @@ const Container = styled.div`
         }
     }
 `;
-
 export default ChatContainer;

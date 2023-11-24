@@ -1,23 +1,26 @@
-import axios from 'axios';
+import styled from 'styled-components';
+import Contact from '../components/contacts/Contact';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { allUsersRoute } from '../utils/ApiRoutes';
-import Contact from '../components/Contacts';
+import { getAllContacts } from '../api/internal';
 import Welcome from '../components/Welcome';
-import ChatContainer from './ChatContainer';
+import { io } from 'socket.io-client';
+import ChatContainer from '../components/chat/ChatContainer';
 
-import {io} from 'socket.io-client'
-
-function Chat() {
+function Home() {
     const socket = useRef();
     const navigate = useNavigate();
     const [contacts, setContacts] = useState([]);
     const [currentUser, setCurrentUser] = useState(undefined);
     const [currentChat, setCurrentChat] = useState(undefined);
+
     const getContacts = async () => {
-        const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+        const data = await getAllContacts(currentUser._id);
         setContacts(data.data);
+    };
+
+    const handleChatChange = (chat) => {
+        setCurrentChat(chat);
     };
 
     useEffect(() => {
@@ -32,7 +35,6 @@ function Chat() {
         if (currentUser) {
             getContacts();
         }
-        console.log('call api');
     }, [currentUser]);
 
     useEffect(() => {
@@ -41,38 +43,26 @@ function Chat() {
             socket.current.emit("add-user", currentUser._id);
         }
     }, [currentUser])
-    const handleChatChange = (chat) => {
-        setCurrentChat(chat);
-    };
+
     return (
         <Container>
             <div className="container">
                 <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
-
-                {currentChat === undefined ? <Welcome currentUser={currentUser} /> : 
-                <ChatContainer socket={socket}   currentChat={currentChat} currentUser={currentUser}/>}
+                <div className='chat-frame'>{currentChat === undefined ? 
+                <Welcome currentUser={currentUser} /> : 
+                <ChatContainer currentChat={currentChat}  currentUser={currentUser} socket={socket}  /> }
+                </div>
             </div>
         </Container>
     );
 }
-
 const Container = styled.div`
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
     background-color: #131324;
     .container {
-        height: 90vh;
-        width: 95vw;
-        background-color: #00000076;
         display: flex;
-        
-        @media screen and (min-width: 720px) and (max-width: 1080px) {
-        }
+    }
+    .chat-frame{
+        flex:1;
     }
 `;
-export default Chat;
+export default Home;

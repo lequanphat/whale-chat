@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Picker from 'emoji-picker-react';
 
 import { IoMdSend } from 'react-icons/io';
 import { BsEmojiSmileFill } from 'react-icons/bs';
@@ -55,7 +54,8 @@ const Container = styled.div`
     display: grid;
     align-items: center;
     grid-template-columns: 5% 95%;
-    background-color: #080420;
+    background-color: #131324;
+    border-top: 1px solid #273c75;
     padding: 0 2rem;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0 1rem;
