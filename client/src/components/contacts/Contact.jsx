@@ -16,7 +16,6 @@ function Contact({contacts, changeChat}) {
             </div>
 
             <div className="online-wrapper">
-                <h1>Online</h1>
                 <div className="online-users">
                     <img src="http://localhost:2411/storage/avatar_1.jpg" />
                     <img src="http://localhost:2411/storage/avatar_2.jpg" />
@@ -49,7 +48,7 @@ const Container = styled.div`
     height: 100vh;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #718093;
+    border-right: 1px solid #273c75;
     .header {
         padding: 1rem 1rem;
 
@@ -63,17 +62,14 @@ const Container = styled.div`
         width: 100%;
         padding: 0.6rem;
         outline: none;
+        background-color: #ffffff34;
         background-color: transparent;
-        border: 1px solid #16a085;
-        border-radius: 4px;
+        border: 1px solid #273c75;
+        border-radius: 8px;
         color: white;
     }
     .online-wrapper {
-        border-bottom: 1px solid #16a085;
-        h1 {
-            font-size: 1.2rem;
-            padding: 1rem 1rem;
-        }
+        border-bottom: 1px solid #273c75;
         .online-users {
             padding: 0rem 1rem 1.4rem 1rem;
             display: flex;

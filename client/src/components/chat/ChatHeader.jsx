@@ -38,7 +38,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 0.6rem;
-    border-bottom: 1px solid #718093;
+    border-bottom: 1px solid #273c75;
     color: white;
     background-color: ${props => props.theme.backgroundColor || 'white'};;
     .user-details {

@@ -16,10 +16,10 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     .sidebar{
-        width: 16%;
+        width: 6%;
     }
     .content{
-        width: 84%;
+        width: 94%;
     }
 `;
 
