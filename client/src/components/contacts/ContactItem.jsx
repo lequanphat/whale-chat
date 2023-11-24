@@ -1,10 +1,11 @@
 import styled from 'styled-components';
+import Avatar from '../avatar/Avatar';
 
 function ContactItem({image, username, latestMessage, latestChat, selected, ...props}) {
     return (
         <Container {...props} className={selected?'selected':''}>
             <div className="chat-user-info">
-                <img src={image} />
+                <Avatar image={image}/>
                 <div className="chat-user-text">
                     <p className="username">{username}</p>
                     <p className="latest-message">Chat with my friends now!</p>
@@ -19,6 +20,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: space-between;
     padding:1rem;
+    cursor: pointer;
     &.selected{
         background-color: #0d193f;
     }

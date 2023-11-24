@@ -16,6 +16,7 @@ body {
     max-height: 100vh;
     max-width: 100vw;
     overflow: hidden;
+    background-color: #131324;
 }
 :root {
     --primary-color: red;

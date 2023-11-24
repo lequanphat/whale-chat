@@ -17,6 +17,8 @@ function App() {
                 <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
                 <Route path="/temp" element={<MainLayout><Temp/></MainLayout>} />
                 <Route path="/" element={<MainLayout><Home /></MainLayout>} />
+                <Route path="*" element={<MainLayout><Temp title={"Page not found"} content={"Please check the link. See you soon!"}/></MainLayout>} />
+
             </Routes>
         </BrowserRouter>
     );

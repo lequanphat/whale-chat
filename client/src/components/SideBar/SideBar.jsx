@@ -58,7 +58,6 @@ function SideBar() {
 }
 
 const Container = styled.div`
-    
     background-color: #080420;
     height: 100vh;
     color: white;
@@ -103,8 +102,8 @@ const Container = styled.div`
         padding: 0.8rem 2rem;
         margin-bottom: 0.5rem;
         img {
-            width: 2.4rem;
-            height: 2.4rem;
+            width: 2.8rem;
+            height: 2.8rem;
             border-radius: 100%;
         }
         .user {

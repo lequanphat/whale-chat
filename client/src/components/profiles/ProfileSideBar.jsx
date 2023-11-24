@@ -4,7 +4,7 @@ import { MdLogout } from 'react-icons/md';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../api/internal.js';
-function ProfileSideBar() {
+function ProfileSideBar({currentUser}) {
     const navigate = useNavigate();
     const handleLogout = async () => {
         localStorage.removeItem('chat-app-user');
@@ -16,9 +16,9 @@ function ProfileSideBar() {
         <Container>
             <h1 className="header">Profile</h1>
             <div className="avatar">
-                <img src="http://localhost:2411/storage/avatar_1.jpg" alt="avatar" />
+                <img src={`http://localhost:2411/storage/${currentUser?.avatarImage}`} alt="avatar" />
             </div>
-            <h1 className="username">Quan Phát</h1>
+            <h1 className="username">{currentUser?.username}</h1>
             <p className="about">
                 You’ve gotta dance like there’s nobody watching, love like you’ll never be hurt, sing like there’s
                 nobody listening, and live like it’s heaven on earth.
@@ -99,7 +99,7 @@ const Container = styled.div`
             align-items: center;
             width: 2.8rem;
             height: 2.8rem;
-            border: 2px solid #ccc;
+            border: 1px solid #ccc;
             border-radius: 100%;
             margin-bottom: 1rem;
             cursor: pointer;

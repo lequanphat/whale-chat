@@ -1,0 +1,59 @@
+import styled from 'styled-components';
+import Avatar from '../avatar/Avatar';
+
+function Message({ scrollRef, message, sended, image }) {
+    return (
+        <Container ref={scrollRef} className={`${sended ? 'sended' : 'recieved'}`}>
+            <div className="avatar-img">
+                {image && (
+                    <Avatar
+                        image={`http://localhost:2411/storage/${image}`}
+                        theme={{ width: '2.4rem', height: '2.4rem' }}
+                        className="img"
+                    />
+                )}
+            </div>
+            <div className="content">
+                <p>{message}</p>
+            </div>
+        </Container>
+    );
+}
+const Container = styled.div`
+    display: flex;
+    align-items: center;
+    .avatar-img{
+        width: 3rem;
+    }
+    .content {
+        max-width: 40%;
+        overflow-wrap: break-word;
+        font-size: 1.1rem;
+        border-radius: 0.8rem;
+        line-height: 1.5;
+        color: #d1d1d1;
+        p{
+            width: fit-content;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
+            
+        }
+        
+    }
+    &.sended {
+        justify-content: flex-end;
+        .content p{
+            background-color: #4f04ff21;
+            float: right;
+        }
+    }
+    &.recieved {
+        justify-content: flex-start;
+        align-items: flex-start;
+        .content p{
+            background-color: #9900ff20;
+            float: left;
+        }
+    }
+`;
+export default Message;

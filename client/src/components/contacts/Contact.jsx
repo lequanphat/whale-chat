@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import ContactItem from './ContactItem';
 import { useState } from 'react';
+import Avatar from '../avatar/Avatar';
 
-function Contact({contacts, changeChat}) {
+function Contact({ contacts, changeChat }) {
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const changeCurrentChat = (index, contact) => {
         setCurrentSelected(index);
@@ -15,34 +16,31 @@ function Contact({contacts, changeChat}) {
                 <input type="text" placeholder="Search your friends..." />
             </div>
 
-            <div className="online-wrapper">
-                <div className="online-users">
-                    <img src="http://localhost:2411/storage/avatar_1.jpg" />
-                    <img src="http://localhost:2411/storage/avatar_2.jpg" />
-                    <img src="http://localhost:2411/storage/avatar_3.jpg" />
-                    <img src="http://localhost:2411/storage/avatar_1.jpg" />
-                    <img src="http://localhost:2411/storage/avatar_1.jpg" />
-                </div>
+            <div className="online-users">
+                <Avatar image={`http://localhost:2411/storage/avatar_1.jpg`} online />
+                <Avatar image={`http://localhost:2411/storage/avatar_2.jpg`} online />
+                <Avatar image={`http://localhost:2411/storage/avatar_3.jpg`} online />
+                <Avatar image={`http://localhost:2411/storage/avatar_4.jpg`} online />
+                <Avatar image={`http://localhost:2411/storage/avatar_5.jpg`} online />
             </div>
             <div className="chat-users">
-            {
-                contacts && contacts.map((contact, index) => (
-                    <ContactItem selected={index===currentSelected}
-                    key={contact._id} 
-                    username={contact.username} 
-                    image={`http://localhost:2411/storage/${contact.avatarImage}`} 
-                    onClick={() => {
-                        changeCurrentChat(index, contact);
-                    }}
-                    />))
-            }
-                
+                {contacts &&
+                    contacts.map((contact, index) => (
+                        <ContactItem
+                            selected={index === currentSelected}
+                            key={contact._id}
+                            username={contact.username}
+                            image={`http://localhost:2411/storage/${contact.avatarImage}`}
+                            onClick={() => {
+                                changeCurrentChat(index, contact);
+                            }}
+                        />
+                    ))}
             </div>
         </Container>
     );
 }
 const Container = styled.div`
-    width: 25%;
     background-color: #131324;
     color: white;
     height: 100vh;
@@ -68,25 +66,20 @@ const Container = styled.div`
         border-radius: 8px;
         color: white;
     }
-    .online-wrapper {
+    .online-users {
+        padding: 0rem 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
         border-bottom: 1px solid #273c75;
-        .online-users {
-            padding: 0rem 1rem 1.4rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            img {
-                width: 3rem;
-                height: 3rem;
-                border-radius: 100%;
-            }
-        }
+        padding-bottom: 1rem;
     }
     .chat-users {
         display: flex;
         flex-direction: column;
         overflow: auto;
-        
+
         &::-webkit-scrollbar {
             width: 0.3rem;
             &-thumb {

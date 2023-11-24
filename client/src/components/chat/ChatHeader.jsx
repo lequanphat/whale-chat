@@ -2,14 +2,16 @@ import styled from 'styled-components';
 import { IoIosSearch, IoIosArrowDown } from 'react-icons/io';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { LiaPhoneSolid } from "react-icons/lia";
-function ChatHeader({currentChat}) {
+import Avatar from '../avatar/Avatar';
+function ChatHeader({currentChat, theme}) {
     return (
-        <Container theme={{ backgroundColor: 'inherit' }}>
+        <Container theme={theme}>
             <div className="user-details">
-                <div className="avatar">
+                {/* <div className="avatar">
                     <img src={`http://localhost:2411/storage/${currentChat.avatarImage}`} alt="avatar" />
                     <div className="online-status"></div>
-                </div>
+                </div> */}
+                <Avatar image={`http://localhost:2411/storage/${currentChat.avatarImage}`} online/>
                 <div className="username">
                     <h3>{currentChat.username}</h3>
                     <p className="status">Online</p>
@@ -40,32 +42,13 @@ const Container = styled.div`
     padding: 0.6rem;
     border-bottom: 1px solid #273c75;
     color: white;
-    background-color: ${props => props.theme.backgroundColor || 'white'};;
+    background-color: ${props => props.theme.backgroundColor || 'inherit'};
     .user-details {
         display: flex;
         align-items: center;
         margin-left: 1rem;
     }
-    .avatar {
-        position: relative;
-        width: 3rem;
-        height: 3rem;
-        margin-right: 0.8rem;
-        img {
-            width: 100%;
-            height: 100%;
-            border-radius: 100%;
-        }
-    }
-    .online-status {
-        position: absolute;
-        bottom: 2px;
-        right: 2px;
-        width: 0.6rem;
-        height: 0.6rem;
-        border-radius: 100%;
-        background-color: #4cd137;
-    }
+    
     .username {
         h3 {
             font-size: 1.1rem;

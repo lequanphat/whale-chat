@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-function Temp() {
+function Temp({title, content}) {
     return <Container>
         <div className='container'>
             <img src='robot.gif' alt='logo'/>
-            <h1>Coming Soon</h1>
-            <h2>Thanks for visit this site. See you soon!</h2>
+            <h1>{title ? title : 'Coming Soon'}</h1>
+            <h2>{content ? content : 'Thanks for visit this site. See you soon!'}</h2>
         </div>
     </Container>;
 }

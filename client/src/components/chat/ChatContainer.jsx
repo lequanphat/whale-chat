@@ -3,7 +3,7 @@ import ChatInput from './ChatInput';
 import { useEffect, useRef, useState } from 'react';
 import { getAllMessages, sendMessage } from '../../api/internal';
 import ChatHeader from './ChatHeader';
-
+import Message from './Message';
 function ChatContainer({ currentChat, currentUser, socket }) {
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -24,13 +24,7 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
     };
-    const handleGetAllMessages = async () => {
-        const respone = await getAllMessages({
-            from: currentUser._id,
-            to: currentChat._id,
-        });
-        setMessages(respone.data);
-    };
+    
 
     useEffect(() => {
         const socketListener = (data) => {
@@ -54,7 +48,6 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         };
     }, [currentChat]);
 
-
     useEffect(() => {
         console.log('add message');
         if (arrivalMessage) {
@@ -63,6 +56,21 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     }, [arrivalMessage]);
 
     useEffect(() => {
+        const handleGetAllMessages = async () => {
+            const respone = await getAllMessages({
+                from: currentUser._id,
+                to: currentChat._id,
+            });
+            for (let i = 1; i < respone.data.length; i++) {
+                if (respone.data[i - 1].fromSelf === true && respone.data[i].fromSelf === false) {
+                    respone.data[i].image = currentChat.avatarImage;
+                }
+            }
+            if (respone.data[0]?.fromSelf === false) {
+                respone.data[0].image = currentChat.avatarImage;
+            }
+            setMessages(respone.data);
+        };
         handleGetAllMessages();
     }, [currentChat]);
 
@@ -75,19 +83,17 @@ function ChatContainer({ currentChat, currentUser, socket }) {
             <div className="chat-messages">
                 {messages.map((message, index) => {
                     return (
-                        <div
-                            ref={scrollRef}
+                        <Message
+                            message={message.message}
+                            sended={message.fromSelf}
+                            scrollRef={scrollRef}
                             key={index}
-                            className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}
-                        >
-                            <div className="content ">
-                                <p>{message.message}</p>
-                            </div>
-                        </div>
+                            image={message?.image}
+                        />
                     );
                 })}
             </div>
-            {/* <Message/> */}
+
             <ChatInput handleSendMsg={handleSendMsg} />
         </Container>
     );
@@ -97,12 +103,11 @@ const Container = styled.div`
     display: grid;
     grid-template-rows: 10% 80% 10%;
     gap: 0.1rem;
-
     .chat-messages {
         padding: 1rem 2rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.6rem;
         overflow: auto;
         &::-webkit-scrollbar {
             width: 0.2rem;
@@ -110,34 +115,6 @@ const Container = styled.div`
                 background-color: #ffffff39;
                 width: 0.1rem;
                 border-radius: 1rem;
-            }
-        }
-        .message {
-            display: flex;
-            align-items: center;
-            .content {
-                max-width: 40%;
-                overflow-wrap: break-word;
-                padding: 1rem;
-                font-size: 1.1rem;
-                border-radius: 1rem;
-                line-height: 1.5;
-                color: #d1d1d1;
-                @media screen and (min-width: 720px) and (max-width: 1080px) {
-                    max-width: 70%;
-                }
-            }
-        }
-        .sended {
-            justify-content: flex-end;
-            .content {
-                background-color: #4f04ff21;
-            }
-        }
-        .recieved {
-            justify-content: flex-start;
-            .content {
-                background-color: #9900ff20;
             }
         }
     }

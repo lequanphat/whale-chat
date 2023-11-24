@@ -38,19 +38,24 @@ function Home() {
     }, [currentUser]);
 
     useEffect(() => {
-        if(currentUser){
-            socket.current = io("http://localhost:2411");
-            socket.current.emit("add-user", currentUser._id);
+        if (currentUser) {
+            socket.current = io('http://localhost:2411');
+            socket.current.emit('add-user', currentUser._id);
         }
-    }, [currentUser])
+    }, [currentUser]);
 
     return (
         <Container>
             <div className="container">
-                <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
-                <div className='chat-frame'>{currentChat === undefined ? 
-                <Welcome currentUser={currentUser} /> : 
-                <ChatContainer currentChat={currentChat}  currentUser={currentUser} socket={socket}  /> }
+                <div className="contacts-frame">
+                    <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
+                </div>
+                <div className="chat-frame">
+                    {currentChat === undefined ? (
+                        <Welcome currentUser={currentUser} />
+                    ) : (
+                        <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} />
+                    )}
                 </div>
             </div>
         </Container>
@@ -61,8 +66,16 @@ const Container = styled.div`
     .container {
         display: flex;
     }
-    .chat-frame{
-        flex:1;
+    .contacts-frame {
+        width: 25%;
+    }
+    .chat-frame {
+        flex: 1;
+    }
+    @media screen and (min-width: 540px) and (max-width: 960px) {
+        .contacts-frame {
+            width: 40%;
+        }
     }
 `;
 export default Home;
