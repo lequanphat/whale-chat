@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { setAvatarRoute } from '../utils/ApiRoutes';
 import { useNavigate } from 'react-router-dom';
+import { setAvatar } from '../api/internal';
 
 function SetAvatar() {
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ function SetAvatar() {
 
     const handleSetAvatar = async () => {
         const user = JSON.parse(localStorage.getItem('chat-app-user'));
-        const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
+        const { data } = await setAvatar(user._id, {
             avatar: avatars[selectedAvatar],
         });
         if (data.status === false) {
