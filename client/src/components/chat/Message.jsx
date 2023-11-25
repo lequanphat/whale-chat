@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Avatar from '../avatar/Avatar';
 
-function Message({ scrollRef, message, sended, image }) {
+function Message({ scrollRef, message, sended, image, width }) {
     return (
-        <Container ref={scrollRef} className={`${sended ? 'sended' : 'recieved'}`}>
+        <Container theme={{ width: width }} ref={scrollRef} className={`${sended ? 'sended' : 'recieved'}`}>
             <div className="avatar-img">
                 {image && (
                     <Avatar
@@ -26,7 +26,7 @@ const Container = styled.div`
         width: 3rem;
     }
     .content {
-        max-width: 40%;
+        max-width: ${props => props.theme.width || '45%'};;
         overflow-wrap: break-word;
         font-size: 1.1rem;
         border-radius: 0.8rem;

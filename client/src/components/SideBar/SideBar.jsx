@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { GoHome } from 'react-icons/go';
-import { RiSettings3Line } from 'react-icons/ri';
+import { RiSettings3Line, RiRobot2Line  } from 'react-icons/ri';
 import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
-import { BiMessageSquareCheck } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -13,16 +12,16 @@ const items = [
         to: "/"
     },
     {
-        icon: <BiMessageSquareCheck />,
-        to: "/temp"
-    },
-    {
         icon: <LuUsers />,
         to: "/temp"
     },
     {
         icon: <PiUsersThreeBold />,
         to: "/temp"
+    },
+    {
+        icon: <RiRobot2Line />,
+        to: "/ai-chat"
     },
     {
         icon: <RiSettings3Line />,

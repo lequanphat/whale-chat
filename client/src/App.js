@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import MainLayout from './components/layouts/MainLayout';
 import Profile from './pages/Profile';
 import Temp from './pages/Temp';
+import AiChat from './pages/AiChat';
 function App() {
     return (
         <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/set-avatar/:id" element={<SetAvatar />} />
                 <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
                 <Route path="/temp" element={<MainLayout><Temp/></MainLayout>} />
+                <Route path="/ai-chat" element={<MainLayout><AiChat/></MainLayout>} />
                 <Route path="/" element={<MainLayout><Home /></MainLayout>} />
                 <Route path="*" element={<MainLayout><Temp image={"../skeleton.gif"} title={"Page not found"} content={"What do you want to find here? Come back now."}/></MainLayout>} />
 

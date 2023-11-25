@@ -94,7 +94,7 @@ function ChatContainer({ currentChat, currentUser, socket }) {
                 })}
             </div>
 
-            <ChatInput handleSendMsg={handleSendMsg} />
+            <ChatInput handleSendMsg={handleSendMsg} usingIcon/>
         </Container>
     );
 }
@@ -102,7 +102,6 @@ const Container = styled.div`
     height: 100vh;
     display: grid;
     grid-template-rows: 10% 80% 10%;
-    gap: 0.1rem;
     .chat-messages {
         padding: 1rem 2rem;
         display: flex;

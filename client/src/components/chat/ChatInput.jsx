@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-import { IoMdSend } from 'react-icons/io';
+import { IoMdSend, IoMdTime } from 'react-icons/io';
 import { BsEmojiSmileFill } from 'react-icons/bs';
 import { useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 
-function ChatInput({handleSendMsg}) {
+function ChatInput({ handleSendMsg, usingIcon, pending }) {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [msg, setMsg] = useState('');
 
@@ -22,19 +22,27 @@ function ChatInput({handleSendMsg}) {
     };
     const sendChat = (event) => {
         event.preventDefault();
-        if(msg.length > 0) {
+        if (pending){
+            return;
+        }
+        if (msg.length > 0) {
             handleSendMsg(msg.trim());
             setMsg('');
         }
     };
     return (
         <Container>
-            <div className="button-container">
-                <div className="emoji">
-                    <BsEmojiSmileFill onClick={handleEmojiPickerHideShow} />
-                    {showEmojiPicker && <EmojiPicker  width="300px" height="380px" onEmojiClick={handleEmojiClick} />}
+            {usingIcon && (
+                <div className="button-container">
+                    <div className="emoji">
+                        <BsEmojiSmileFill onClick={handleEmojiPickerHideShow} />
+                        {showEmojiPicker && (
+                            <EmojiPicker width="300px" height="380px" onEmojiClick={handleEmojiClick} />
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
+
             <form className="input-container" onSubmit={(event) => sendChat(event)}>
                 <input
                     type="text"
@@ -42,18 +50,15 @@ function ChatInput({handleSendMsg}) {
                     onChange={(e) => setMsg(e.target.value)}
                     value={msg}
                 />
-                <button type="submit">
-                    <IoMdSend />
-                </button>
+                <button type="submit">{pending ? <IoMdTime /> : <IoMdSend />}</button>
             </form>
         </Container>
     );
 }
 
 const Container = styled.div`
-    display: grid;
+    display: flex;
     align-items: center;
-    grid-template-columns: 5% 95%;
     background-color: #131324;
     border-top: 1px solid #273c75;
     padding: 0 2rem;
@@ -62,6 +67,7 @@ const Container = styled.div`
         gap: 1rem;
     }
     .button-container {
+        width: 5%;
         display: flex;
         align-items: center;
         color: white;
@@ -85,18 +91,17 @@ const Container = styled.div`
                         background-color: #95a5a6;
                     }
                 }
-                .epr-emoji-category-label{
+                .epr-emoji-category-label {
                     display: none;
                 }
-                .epr-preview{
+                .epr-preview {
                     display: none;
                 }
-                
             }
         }
     }
     .input-container {
-        width: 100%;
+        flex: 1;
         border-radius: 2rem;
         display: flex;
         align-items: center;
