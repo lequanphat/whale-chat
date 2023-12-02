@@ -68,4 +68,13 @@ const setAvatar = async (id, data) => {
     }
 }
 
-export { login, register, logout, sendMessage, getAllMessages,getAllContacts, setAvatar };
+const getUser = async () => {
+    try {
+        const respone = await api.get('/api/auth/user');
+        return respone;
+    } catch (error) {
+        return error;
+    }
+}
+
+export { login, register, logout, sendMessage, getAllMessages,getAllContacts, setAvatar, getUser };

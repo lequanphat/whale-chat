@@ -12,7 +12,7 @@ const checkAccessToken = (req, res, next) => {
         return next();
     }
     const cookieReq = req.cookies;
-    console.log(cookieReq);
+    console.log('cookie'+JSON.stringify(cookieReq));
     if (!cookieReq) {
         return next(new Error('Unauthorized'));
     }

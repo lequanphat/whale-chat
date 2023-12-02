@@ -53,7 +53,7 @@ function SideBar() {
             </div>
             <div className="footer">
                 <button className="user" onClick={() => { navigate("/profile")} }>
-                    <img src={`http://localhost:2411/storage/${avatarImage}`} alt="avatar" />
+                    <img src={avatarImage} alt="avatar" />
                 </button>
             </div>
         </Container>
@@ -108,6 +108,7 @@ const Container = styled.div`
             width: 2.8rem;
             height: 2.8rem;
             border-radius: 100%;
+            object-fit: cover;
         }
         .user {
             display: flex;
@@ -118,6 +119,7 @@ const Container = styled.div`
             outline: none;
             border: 3px solid #0d193f;
             background-color: transparent;
+            
             cursor: pointer;
         }
     }

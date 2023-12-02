@@ -7,7 +7,7 @@ function Message({ scrollRef, message, sended, image, width }) {
             <div className="avatar-img">
                 {image && (
                     <Avatar
-                        image={`http://localhost:2411/storage/${image}`}
+                        image={image}
                         theme={{ width: '2.4rem', height: '2.4rem' }}
                         className="img"
                     />

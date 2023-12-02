@@ -1,18 +1,39 @@
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { login } from '../api/internal';
-import Cookies from 'js-cookie';
-
+import { setUser } from '../store/slices/userSlice';
+import { useFormik } from 'formik';
+import loginSchema from '../schema/login';
+import TextInput from '../components/input/TextInput';
+import Button from '../components/button/Button';
+import ImageButton from '../components/button/ImageButton';
 function Login() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [values, setValues] = useState({
-        username: '',
-        password: '',
-    });
+    const [loginError, setLoginError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
+    const { values, handleBlur, handleChange, errors } = useFormik({
+        initialValues: {
+            username: '',
+            password: '',
+        },
+        initialErrors: {
+            username: 'Vui lòng điền trường này',
+            password: 'Vui lòng điền trường này',
+        },
+        validationSchema: loginSchema,
+    });
     useEffect(() => {
         if (localStorage.getItem('chat-app-user')) {
+            const user = JSON.parse(localStorage.getItem('chat-app-user'));
+            const { username, email } = user;
+            const id = user._id;
+            const avatar = user.avatarImage;
+            dispatch(setUser({ username, email, id, avatar, auth: true }));
             navigate('/');
         }
     });
@@ -31,13 +52,28 @@ function Login() {
             return;
         }
         localStorage.setItem('chat-app-user', JSON.stringify(response.data.user));
-        const myCookie = Cookies.get('chat-app-user');
-        console.log('cookie');
-        console.log(myCookie);
+        const { _id, avatarImage, email } = response.data.user;
+        dispatch(setUser({ username, email, id: _id, avatar: avatarImage, auth: true }));
         navigate('/');
     };
-    const handleChange = (event) => {
-        setValues({ ...values, [event.target.name]: event.target.value });
+
+    const googleLogin = async () => {
+        window.open('http://localhost:2411/api/auth/login/google', '_self');
+    };
+    // const resetLogin = () => {
+    //     setEmailError('');
+    //     setPasswordError('');
+    //     setLoginError('');
+    // };
+    const handleBlurCustom = (event, setError, error) => {
+        setError(error);
+        setLoginError('');
+        handleBlur(event);
+    };
+    const handleChangeCustom = (event, setError) => {
+        setError('');
+        setLoginError('');
+        handleChange(event);
     };
     return (
         <div>
@@ -47,10 +83,54 @@ function Login() {
                     <div className="header">
                         <h1>Login</h1>
                     </div>
-                    <input type="text" placeholder="Username" name="username" onChange={(e) => handleChange(e)} />
-                    <input type="password" placeholder="Password" name="password" onChange={(e) => handleChange(e)} />
-                    <button type="submit">Login</button>
-                    <span>
+                    <TextInput
+                        title="Username"
+                        placeholder={'Username'}
+                        name="username"
+                        value={values.username}
+                        onBlur={(e) => {
+                            handleBlurCustom(e, setUsernameError, errors.username);
+                        }}
+                        onChange={(e) => {
+                            handleChangeCustom(e, setUsernameError);
+                        }}
+                        error={usernameError}
+                    />
+                    <TextInput
+                        title="Password"
+                        placeholder={'Enter password'}
+                        name="password"
+                        type={'password'}
+                        value={values.password}
+                        onBlur={(e) => {
+                            handleBlurCustom(e, setPasswordError, errors.password);
+                        }}
+                        onChange={(e) => {
+                            handleChangeCustom(e, setPasswordError);
+                        }}
+                        error={passwordError}
+                    />
+
+                    <div>
+                        <Button type="submit">Login</Button>
+                        <p className="forgot-password">Quên mật khẩu</p>
+                    </div>
+
+                    <div className="login-with">
+                        <div className="seperate">
+                            <div></div>
+                            <p>Login with</p>
+                            <div></div>
+                        </div>
+
+                        <ImageButton image={'google.png'} name={'Google'} onClick={googleLogin}>
+                            Login with google
+                        </ImageButton>
+                        <ImageButton image={'facebook.png'} name={'facebook'} onClick={googleLogin}>
+                            Login with google
+                        </ImageButton>
+                    </div>
+                    <span className="footer">
                         You don't have an account?<Link to="/register">Register</Link>
                     </span>
                 </form>
@@ -71,55 +151,59 @@ const FormContainer = styled.div`
         width: 40%;
     }
     .header h1 {
-        color: white;
         text-transform: uppercase;
-        font-size: 1.8rem;
+        font-size: 2.4rem;
+        margin-bottom: 2rem;
+        color: #2c3e50;
     }
     form {
-        display: flex;
-        background-color: #2c2c54;
-        flex-direction: column;
-        gap: 2rem;
-        border-radius: 0.8rem;
+        width: 42rem;
+        background-color: white;
+        border-radius: 0.4rem;
         padding: 2.4rem 3.2rem;
     }
-    input {
-        min-width: 18rem;
-        background-color: transparent;
-        padding: 0.8rem;
-        border: 0.1rem solid #1abc9c;
-        border-radius: 0.4rem;
-        color: white;
-        width: 100%;
-        font-size: 1.2rem;
-        &:focus {
-            border: 0.1rem solid #997af0;
-            outline: none;
-        }
-    }
-    button {
-        background-color: #1abc9c;
-        color: white;
-        padding: 1rem 2rem;
-        border: none;
-        font-weight: bold;
+    .forgot-password {
+        margin: 1rem 0;
+        font-size: 1.5rem;
+
+        color: #7f8c8d;
         cursor: pointer;
-        font-size: 1rem;
-        text-transform: uppercase;
-        border-radius: 0.4rem;
+        transition: 0.2s;
         &:hover {
-            background-color: #16a085;
+            color: #1abc9c;
         }
     }
-    span {
-        color: white;
+    .login-with {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .seperate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        div {
+            flex: 1;
+            height: 1px;
+            background-color: #bdc3c7;
+        }
+        p {
+            display: block;
+            color: #7f8c8d;
+            font-size: 1.5rem;
+            padding: 0 1rem;
+        }
+    }
+    .footer {
+        display: block;
+        margin-top: 2rem;
+        font-size: 1.5rem;
+        text-align: center;
         a {
-            margin-left: 0.2rem;
-            color: #1abc9c;
             text-decoration: none;
-            &:hover {
-                text-decoration: underline;
-            }
+            color: #1abc9c;
+            margin: 0.4rem;
         }
     }
 `;

@@ -11,7 +11,7 @@ function ChatHeader({currentChat, theme}) {
                     <img src={`http://localhost:2411/storage/${currentChat.avatarImage}`} alt="avatar" />
                     <div className="online-status"></div>
                 </div> */}
-                <Avatar image={`http://localhost:2411/storage/${currentChat.avatarImage}`} online/>
+                <Avatar image={currentChat.avatarImage} online/>
                 <div className="username">
                     <h3>{currentChat.username}</h3>
                     <p className="status">Online</p>

@@ -3,7 +3,6 @@ import AiChatHeader from '../components/chat/AiChatHeader';
 import ChatInput from '../components/chat/ChatInput';
 import { useEffect, useRef, useState } from 'react';
 import Message from '../components/chat/Message';
-import { sendMessage } from '../api/external';
 import OpenAI from 'openai';
 const openai = new OpenAI({
     apiKey:  process.env.REACT_APP_OPENAI_API_KEY,

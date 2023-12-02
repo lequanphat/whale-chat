@@ -73,7 +73,6 @@ const setAvatarImage = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
     try {
-
         const users = await userModel
             .find({ _id: { $ne: req.params.id } })
             .select(['email', 'username', 'avatarImage', '_id']);
@@ -84,8 +83,10 @@ const getAllUsers = async (req, res, next) => {
 };
 const logout = async (req, res, next) => {
     try {
-        res.clearCookie('chat-app-user');
-        return res.json({msg: 'logout'});
+        // req.logout(); // Xóa phiên đăng nhập
+
+        res.clearCookie('connect.sid'); // Xóa cookie
+        return res.json({ msg: 'logout' });
     } catch (error) {
         next(error);
     }

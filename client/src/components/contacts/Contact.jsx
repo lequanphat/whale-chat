@@ -30,7 +30,7 @@ function Contact({ contacts, changeChat }) {
                             selected={index === currentSelected}
                             key={contact._id}
                             username={contact.username}
-                            image={`http://localhost:2411/storage/${contact.avatarImage}`}
+                            image={contact.avatarImage}
                             onClick={() => {
                                 changeCurrentChat(index, contact);
                             }}

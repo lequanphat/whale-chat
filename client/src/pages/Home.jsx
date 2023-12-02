@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import Contact from '../components/contacts/Contact';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllContacts } from '../api/internal';
+import { getAllContacts, getUser } from '../api/internal';
 import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
 import ChatContainer from '../components/chat/ChatContainer';
 import Temp from './Temp';
 
@@ -23,12 +24,22 @@ function Home() {
         setCurrentChat(chat);
     };
 
-    useEffect(() => {
-        if (!localStorage.getItem('chat-app-user')) {
-            navigate('/login');
-        } else {
-            setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user')));
+    const getUserLogin = async () => {
+        const res = await getUser();
+        console.log(res);
+        if (res.data !== '') {
+            setCurrentUser(res.data);
+            return;
         }
+        if (localStorage.getItem('chat-app-user')) {
+            setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user')));
+            return;
+        }
+        navigate('/login');
+    };
+
+    useEffect(() => {
+        getUserLogin();
     }, []);
 
     useEffect(() => {
@@ -52,7 +63,11 @@ function Home() {
                 </div>
                 <div className="chat-frame">
                     {currentChat === undefined ? (
-                        <Temp title={currentUser?.username} subTitle={"Welcome, "} content={"Please choose a friend to start chatting..."}/>
+                        <Temp
+                            title={currentUser?.username}
+                            subTitle={'Welcome, '}
+                            content={'Please choose a friend to start chatting...'}
+                        />
                     ) : (
                         <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} />
                     )}
