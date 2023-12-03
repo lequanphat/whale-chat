@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import SideBar from "../SideBar/SideBar";
 import Setting from "../settings/Setting";
+import SideBar from "../sidebar/SideBar";
 
 
 function MainLayout({children}) {

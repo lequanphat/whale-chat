@@ -3,13 +3,14 @@ import { IoIosSearch, IoIosArrowDown } from 'react-icons/io';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { LiaPhoneSolid } from 'react-icons/lia';
 import Avatar from '../avatar/Avatar';
-import { useState } from 'react';
-function ChatHeader({ currentChat, theme }) {
-    
+import { useSelector } from 'react-redux';
+import { currentContactSelector } from '../../store/selectors/contactSelector';
+function ChatHeader() {
+    const currentChat = useSelector(currentContactSelector);
     return (
-        <Container theme={theme}>
+        <Container>
             <div className="user-details">
-                <Avatar image={currentChat.avatarImage} online />
+                <Avatar image={currentChat.avatar} online />
                 <div className="username">
                     <h3>{currentChat.username}</h3>
                     <p className="status">Online</p>
@@ -25,7 +26,7 @@ function ChatHeader({ currentChat, theme }) {
                 <button className="action">
                     <IoIosSearch />
                 </button>
-                <button className="action" >
+                <button className="action">
                     <IoIosArrowDown />
                 </button>
             </div>
@@ -40,7 +41,7 @@ const Container = styled.div`
     padding: 0.6rem;
     border-bottom: 1px solid #273c75;
     color: white;
-    background-color: ${(props) => props.theme.backgroundColor || 'inherit'};
+    background-color: 'inherit';
     .user-details {
         display: flex;
         align-items: center;

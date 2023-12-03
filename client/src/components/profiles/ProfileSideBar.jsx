@@ -50,6 +50,7 @@ function ProfileSideBar({ currentUser }) {
     );
 }
 const Container = styled.div`
+    background-color: var(--second-bg-color);
     width: 25%;
     border-right: 1px solid #273c75;
     padding: 1rem;

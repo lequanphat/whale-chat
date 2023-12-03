@@ -1,14 +1,40 @@
 import styled from 'styled-components';
 import ContactItem from './ContactItem';
-import { useState } from 'react';
-import Avatar from '../avatar/Avatar';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-function Contact({ contacts, changeChat }) {
+import { contactsLoadingSelector, contactsSelector } from '../../store/selectors/contactSelector';
+import { userSelector } from '../../store/selector';
+import { getAllContacts, setCurrentContact } from '../../store/slices/contactsSlice';
+import Loading from '../loading/Loading';
+
+function Contact() {
+    const dispatch = useDispatch();
+    const user = useSelector(userSelector);
+    const contacts = useSelector(contactsSelector);
+    const isLoading = useSelector(contactsLoadingSelector);
     const [currentSelected, setCurrentSelected] = useState(undefined);
-    const changeCurrentChat = (index, contact) => {
-        setCurrentSelected(index);
-        changeChat(contact);
+    const getContacts = async () => {
+        await dispatch(getAllContacts(user.id));
     };
+
+    const handleCurrentContact = (index) => {
+        setCurrentSelected(index);
+        dispatch(
+            setCurrentContact({
+                id: contacts[index]._id,
+                username: contacts[index].username,
+                email: contacts[index].email,
+                avatar: contacts[index].avatarImage,
+            }),
+        );
+    };
+
+    useEffect(() => {
+        if (user) {
+            getContacts();
+        }
+    }, []);
     return (
         <Container>
             <div className="header">
@@ -16,15 +42,15 @@ function Contact({ contacts, changeChat }) {
                 <input type="text" placeholder="Search your friends..." />
             </div>
 
-            <div className="online-users">
-                <Avatar image={`http://localhost:2411/storage/avatar_1.jpg`} online />
-                <Avatar image={`http://localhost:2411/storage/avatar_2.jpg`} online />
-                <Avatar image={`http://localhost:2411/storage/avatar_3.jpg`} online />
-                <Avatar image={`http://localhost:2411/storage/avatar_4.jpg`} online />
-                <Avatar image={`http://localhost:2411/storage/avatar_5.jpg`} online />
-            </div>
             <div className="chat-users">
-                {contacts &&
+                {isLoading ? (
+                    <>
+                        <ContactItem loading username="123" />
+                        <ContactItem loading username="123" />
+                        <ContactItem loading username="123" />
+                    </>
+                ) : (
+                    contacts &&
                     contacts.map((contact, index) => (
                         <ContactItem
                             selected={index === currentSelected}
@@ -32,27 +58,28 @@ function Contact({ contacts, changeChat }) {
                             username={contact.username}
                             image={contact.avatarImage}
                             onClick={() => {
-                                changeCurrentChat(index, contact);
+                                handleCurrentContact(index);
                             }}
                         />
-                    ))}
+                    ))
+                )}
             </div>
         </Container>
     );
 }
 const Container = styled.div`
-    background-color: #131324;
-    color: white;
+    background-color: var(--second-bg-color);
+    width: auto;
     height: 100vh;
     display: flex;
     flex-direction: column;
     border-right: 1px solid #273c75;
     .header {
         padding: 1.4rem;
-
         h1 {
             font-size: 2rem;
             margin-bottom: 1.4rem;
+            color: white;
         }
     }
     input {
@@ -66,20 +93,11 @@ const Container = styled.div`
         border-radius: 8px;
         color: white;
     }
-    .online-users {
-        padding: 1rem 1.4rem;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #273c75;
-        padding-bottom: 1rem;
-    }
     .chat-users {
         display: flex;
         flex-direction: column;
         overflow: auto;
-
+        padding: 1.4rem;
         &::-webkit-scrollbar {
             width: 0.3rem;
             &-thumb {

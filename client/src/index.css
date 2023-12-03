@@ -3,8 +3,9 @@
 
 :root{
     --bg-color: #1e272e;
+    --second-bg-color: #12171c;
+    --main-color: #3867d6;
 }
-
 * {
     margin: 0;
     padding: 0;

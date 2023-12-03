@@ -76,7 +76,9 @@ const Container = styled.div`
     display: flex;
     color: #ccc;
     height: 100vh;
+    background-color: var(--bg-color);
     .history-chat {
+        background-color: var(--second-bg-color);
         width: 25%;
         padding: 16px;
         border-right: 1px solid #273c75;

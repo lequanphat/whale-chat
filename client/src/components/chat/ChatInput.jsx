@@ -59,7 +59,6 @@ function ChatInput({ handleSendMsg, usingIcon, pending }) {
 const Container = styled.div`
     display: flex;
     align-items: center;
-    background-color: #131324;
     border-top: 1px solid #273c75;
     padding: 0 2rem;
     @media screen and (min-width: 720px) and (max-width: 1080px) {

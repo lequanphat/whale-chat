@@ -9,7 +9,7 @@ function IconButton({ icon, content, ...props }) {
     );
 }
 const Container = styled.div`
-    background-color: #1abc9c;
+    background-color: var(--main-color);
     padding: 1rem;
     font-size: 1.6rem;
     display: flex;

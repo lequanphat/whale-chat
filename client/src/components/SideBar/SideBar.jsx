@@ -1,42 +1,39 @@
 import styled from 'styled-components';
 import { GoHome } from 'react-icons/go';
-import { RiSettings3Line, RiRobot2Line  } from 'react-icons/ri';
+import { RiSettings3Line, RiRobot2Line } from 'react-icons/ri';
 import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Avatar from '../avatar/Avatar';
-
+import { useSelector } from 'react-redux';
+import { userSelector } from '../../store/selector';
 const items = [
     {
         icon: <GoHome />,
-        to: "/"
+        to: '/',
     },
     {
         icon: <LuUsers />,
-        to: "/temp"
+        to: '/temp',
     },
     {
         icon: <PiUsersThreeBold />,
-        to: "/temp"
+        to: '/temp',
     },
     {
         icon: <RiRobot2Line />,
-        to: "/ai-chat"
+        to: '/ai-chat',
     },
     {
         icon: <RiSettings3Line />,
-        to: "/temp"
+        to: '/temp',
     },
 ];
 function SideBar() {
     const navigate = useNavigate();
     const [selected, setSelected] = useState(0);
-    const [avatarImage, setAvatarImage] = useState(null);
-
-    useEffect(() => {
-        setAvatarImage(JSON.parse(localStorage.getItem('chat-app-user'))?.avatarImage);
-    }, [])
+    const user = useSelector(userSelector);
     return (
         <Container>
             <div>
@@ -45,23 +42,33 @@ function SideBar() {
                 </div>
                 <ul className="menu">
                     {items.map((item, index) => (
-                        <Link to={item.to} key={index} className={ ` menu-item ${index === selected ? 'active' : ''}`} onClick={() => {setSelected(index)}}>
+                        <Link
+                            to={item.to}
+                            key={index}
+                            className={` menu-item ${index === selected ? 'active' : ''}`}
+                            onClick={() => {
+                                setSelected(index);
+                            }}
+                        >
                             <span className="icon">{item.icon}</span>
                         </Link>
                     ))}
-                    
                 </ul>
             </div>
             <div className="footer">
-                
-                <Avatar image={avatarImage} onClick={() => { navigate("/profile")}}/>
+                <Avatar
+                    image={user.avatar}
+                    onClick={() => {
+                        navigate('/profile');
+                    }}
+                />
             </div>
         </Container>
     );
 }
 
 const Container = styled.div`
-    background-color: #080420;
+    background-color: var(--bg-color);
     height: 100vh;
     color: white;
     display: flex;
@@ -89,13 +96,14 @@ const Container = styled.div`
             align-items: center;
             justify-content: center;
             border-radius: 10px;
+            transition: 0.2s;
             &:hover {
-                background-color: #0d193f;
+                background-color: var(--main-color);
             }
         }
         .active {
             color: white;
-            background-color: #0d193f;
+            background-color: var(--main-color);
         }
     }
     .footer {

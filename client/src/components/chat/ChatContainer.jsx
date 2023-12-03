@@ -4,34 +4,49 @@ import { useEffect, useRef, useState } from 'react';
 import { getAllMessages, sendMessage } from '../../api/internal';
 import ChatHeader from './ChatHeader';
 import Message from './Message';
-function ChatContainer({ currentChat, currentUser, socket }) {
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../../store/selector';
+import { currentContactSelector } from '../../store/selectors/contactSelector';
+import Temp from '../../pages/errors/Temp'
+function ChatContainer() {
+    const user = useSelector(userSelector);
+    const currentChat = useSelector(currentContactSelector);
+    const socket = useRef();
+    const scrollRef = useRef();
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
-    const scrollRef = useRef();
+
+
+    useEffect(() => {
+        if (user) {
+            socket.current = io('http://localhost:2411');
+            socket.current.emit('add-user', user.id);
+        }
+    }, [user]);
 
     const handleSendMsg = async (msg) => {
         await sendMessage({
-            from: currentUser.id,
-            to: currentChat._id,
+            from: user.id,
+            to: currentChat.id,
             message: msg,
         });
         socket.current.emit('send-msg', {
-            to: currentChat._id,
-            from: currentUser.id,
+            to: currentChat.id,
+            from: user.id,
             message: msg,
         });
         const msgs = [...messages];
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
     };
-    
 
     useEffect(() => {
         const socketListener = (data) => {
             console.log('from -> ' + data.from);
             console.log('to -> ' + data.to);
-            console.log('current chat: ' + currentChat._id);
-            if (data.from === currentChat._id) {
+            console.log('current chat: ' + currentChat.id);
+            if (data.from === currentChat.id) {
                 console.log(data.message);
                 setArrivalMessage({ fromSelf: false, message: data.message });
             }
@@ -51,8 +66,8 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     useEffect(() => {
         console.log('add message');
         if (arrivalMessage) {
-            if(messages[messages.length-1].fromSelf === true ){
-                arrivalMessage.image = currentChat.avatarImage;
+            if (messages[messages.length - 1].fromSelf === true) {
+                arrivalMessage.image = currentChat.avatar;
             }
             setMessages((prev) => [...prev, arrivalMessage]);
         }
@@ -61,16 +76,16 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     useEffect(() => {
         const handleGetAllMessages = async () => {
             const respone = await getAllMessages({
-                from: currentUser.id,
-                to: currentChat._id,
+                from: user.id,
+                to: currentChat?.id,
             });
             for (let i = 1; i < respone.data.length; i++) {
                 if (respone.data[i - 1].fromSelf === true && respone.data[i].fromSelf === false) {
-                    respone.data[i].image = currentChat.avatarImage;
+                    respone.data[i].image = currentChat.avatar;
                 }
             }
             if (respone.data[0]?.fromSelf === false) {
-                respone.data[0].image = currentChat.avatarImage;
+                respone.data[0].image = currentChat.avatar;
             }
             setMessages(respone.data);
         };
@@ -81,8 +96,15 @@ function ChatContainer({ currentChat, currentUser, socket }) {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
     return (
+         !currentChat  ? (
+            <Temp
+                title={user?.username}
+                subTitle={'Welcome, '}
+                content={'Please choose a friend to start chatting...'}
+            />
+        ) : (
         <Container>
-            <ChatHeader currentChat={currentChat} />
+            <ChatHeader/>
             <div className="chat-messages">
                 {messages.map((message, index) => {
                     return (
@@ -97,11 +119,12 @@ function ChatContainer({ currentChat, currentUser, socket }) {
                 })}
             </div>
 
-            <ChatInput handleSendMsg={handleSendMsg} usingIcon/>
-        </Container>
+            <ChatInput handleSendMsg={handleSendMsg} usingIcon />
+        </Container>)
     );
 }
 const Container = styled.div`
+    background-color: var(--bg-color);
     height: 100vh;
     display: grid;
     grid-template-rows: 10% 80% 10%;

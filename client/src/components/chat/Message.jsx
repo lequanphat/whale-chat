@@ -38,7 +38,7 @@ const Container = styled.div`
     &.sended {
         justify-content: flex-end;
         .content p {
-            background-color: #4f04ff21;
+            background-color: var(--main-color);
             float: right;
         }
     }

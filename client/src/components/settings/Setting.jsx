@@ -74,26 +74,30 @@ const SettingContainer = styled.div`
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    background-color: var(--bg-color);
+    background-color: transparent;
+    
     color: white;
     h1 {
         font-size: 1.5rem;
     }
     .setting_wrapper {
+        background-color: var(--bg-color);
         padding: 1.4rem;
         width: 28rem;
         min-height: 90vh;
-        border-radius: 2rem;
+        border-radius: 1rem;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     }
     .setting_button {
+        background-color: var(--bg-color);
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 4rem;
-        height: 4rem;
-        background-color: var(--bg-color);
+        width: 4.4rem;
+        height: 4.4rem;
         font-size: 2.6rem;
         border-radius: 50%;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
         cursor: pointer;
     }
     .header {
@@ -103,21 +107,22 @@ const SettingContainer = styled.div`
         padding-bottom: 1.2rem;
         border-bottom: 1px solid #555;
         margin-bottom: 1rem;
-
         button {
             width: 3rem;
             height: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: none;
             border-radius: 50%;
             outline: none;
             background-color: transparent;
-            border: none;
             font-size: 2.6rem;
+            cursor: pointer;
             color: white;
+            transition: 0.2s;
             &:hover {
-                background-color: red;
+                background-color: rgba(255, 255, 255, 0.1);
             }
         }
     }

@@ -20,7 +20,7 @@ function Profile() {
 const Container = styled.div`
     height: 100vh;
     display: flex;
-    background-color: #131324;
+    background-color: var(--bg-color);
     color: #ffffff;
 `;
 export default Profile;
