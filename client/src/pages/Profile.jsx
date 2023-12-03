@@ -3,28 +3,13 @@ import ProfileSideBar from '../components/profiles/ProfileSideBar';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '../api/internal';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../store/selector';
 
 function Profile() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState(null);
+    const currentUser = useSelector(userSelector);
     
-    const getUserLogin = async () => {
-        const res = await getUser();
-        console.log(res);
-        if (res.data !== '') {
-            setCurrentUser(res.data);
-            return;
-        }
-        if (localStorage.getItem('chat-app-user')) {
-            setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user')));
-            return;
-        }
-        navigate('/login');
-    };
-
-    useEffect(() => {
-        getUserLogin();
-    }, []);
     return (
         <Container>
             <ProfileSideBar currentUser={currentUser}/>

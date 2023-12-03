@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-function TextInput({ title, type, placeholder, error, value, ...props }) {
+function TextInput({ title, type, placeholder, error, value, name, ...props }) {
     return (
         <Container>
-            <label>{title}</label>
+            <label htmlFor={name}>{title}</label>
             <input
                 {...props}
                 value={value}
@@ -16,12 +16,12 @@ function TextInput({ title, type, placeholder, error, value, ...props }) {
     );
 }
 const Container = styled.div`
-    margin-bottom: 2rem;
-    label{
+    margin-bottom: 1.6rem;
+    label {
         display: block;
-        color:#34495e;
+        color: #34495e;
         font-size: 1.6rem;
-        margin-bottom: .6rem;
+        margin-bottom: 0.6rem;
     }
     input {
         background-color: transparent;
@@ -44,9 +44,9 @@ const Container = styled.div`
             background-color: rgba(231, 76, 60, 0.1);
         }
     }
-    span{
+    span {
         display: block;
-        margin-top: .6rem;
+        margin-top: 0.6rem;
         font-size: 1.5rem;
         color: rgba(231, 76, 60, 1);
     }

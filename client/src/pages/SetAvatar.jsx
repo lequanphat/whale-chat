@@ -32,7 +32,7 @@ function SetAvatar() {
     const handleSetAvatar = async () => {
         const user = JSON.parse(localStorage.getItem('chat-app-user'));
         const { data } = await setAvatar(user._id, {
-            avatar: avatars[selectedAvatar],
+            avatar: `http://localhost:2411/storage/${avatars[selectedAvatar]}`,
         });
         if (data.status === false) {
             alert(data.msg);

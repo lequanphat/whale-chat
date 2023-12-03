@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Register from './pages/Register';
-import Login from './pages/Login';
 import SetAvatar from './pages/SetAvatar';
 import Home from './pages/Home';
 import MainLayout from './components/layouts/MainLayout';
 import Profile from './pages/Profile';
-import Temp from './pages/Temp';
 import AiChat from './pages/AiChat';
-
-
+import Register from './pages/auth/Register';
+import Login from './pages/auth/Login';
+import Temp from './pages/errors/Temp';
+import useAutoLogin from './hooks/useAutoLogin';
 
 function App() {
-    return (
+    const loading = useAutoLogin();
+    return loading ? (
+        <h1>123</h1>
+    ) : (
         <BrowserRouter>
             <Routes>
                 <Route path="/register" element={<Register />} />

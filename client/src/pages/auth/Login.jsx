@@ -2,13 +2,13 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { login } from '../api/internal';
-import { setUser } from '../store/slices/userSlice';
+import { login } from '../../api/internal';
+import { setUser } from '../../store/slices/userSlice';
 import { useFormik } from 'formik';
-import loginSchema from '../schema/login';
-import TextInput from '../components/input/TextInput';
-import Button from '../components/button/Button';
-import ImageButton from '../components/button/ImageButton';
+import loginSchema from '../../schema/login';
+import TextInput from '../../components/input/TextInput';
+import Button from '../../components/button/Button';
+import ImageButton from '../../components/button/ImageButton';
 function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -22,38 +22,42 @@ function Login() {
             password: '',
         },
         initialErrors: {
-            username: 'Vui lòng điền trường này',
-            password: 'Vui lòng điền trường này',
+            username: 'Please enter username',
+            password: 'Please enter password',
         },
         validationSchema: loginSchema,
     });
-    useEffect(() => {
-        if (localStorage.getItem('chat-app-user')) {
-            const user = JSON.parse(localStorage.getItem('chat-app-user'));
-            const { username, email } = user;
-            const id = user._id;
-            const avatar = user.avatarImage;
-            dispatch(setUser({ username, email, id, avatar, auth: true }));
-            navigate('/');
-        }
-    });
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        console.log('submit');
-        const { username, password } = values;
-        const response = await login({
-            username,
-            password,
-        });
-        console.log(response);
-        if (response.data.status === false) {
-            alert(response.msg);
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        // validate
+        if (errors.password || errors.username) {
+            if (errors.password) {
+                setPasswordError(errors.password);
+            }
+            if (errors.username) {
+                setUsernameError(errors.username);
+            }
             return;
         }
-        localStorage.setItem('chat-app-user', JSON.stringify(response.data.user));
-        const { _id, avatarImage, email } = response.data.user;
-        dispatch(setUser({ username, email, id: _id, avatar: avatarImage, auth: true }));
+        // call api
+        const data = {
+            username: values.username,
+            password: values.password,
+        };
+        const response = await login(data);
+        console.log(response);
+        if (response.data.status === false) {
+            setLoginError(response.data.msg);
+            return;
+        }
+        const user = {
+            id: response.data.user._id,
+            email: response.data.user.email,
+            username: response.data.user.username,
+            avatar: response.data.user.avatarImage,
+            auth: true,
+        };
+        dispatch(setUser(user));
         navigate('/');
     };
 
@@ -79,14 +83,15 @@ function Login() {
         <div>
             <FormContainer>
                 <img className="robot" src="/robot.gif" alt="" />
-                <form onSubmit={(event) => handleSubmit(event)}>
+                <form onSubmit={(event) => handleLogin(event)}>
                     <div className="header">
                         <h1>Login</h1>
                     </div>
                     <TextInput
                         title="Username"
-                        placeholder={'Username'}
+                        placeholder={'Enter username'}
                         name="username"
+                        id="username"
                         value={values.username}
                         onBlur={(e) => {
                             handleBlurCustom(e, setUsernameError, errors.username);
@@ -101,6 +106,7 @@ function Login() {
                         placeholder={'Enter password'}
                         name="password"
                         type={'password'}
+                        id="password"
                         value={values.password}
                         onBlur={(e) => {
                             handleBlurCustom(e, setPasswordError, errors.password);
@@ -110,23 +116,24 @@ function Login() {
                         }}
                         error={passwordError}
                     />
-
+                    {loginError && <p className="login-error">{loginError}</p>}
                     <div>
                         <Button type="submit">Login</Button>
-                        <p className="forgot-password">Quên mật khẩu</p>
+                        <p className="forgot-password">Forgot password</p>
                     </div>
-
+                    <div className="seperate">
+                        <div></div>
+                        <p>Login with</p>
+                        <div></div>
+                    </div>
                     <div className="login-with">
-                        <div className="seperate">
-                            <div></div>
-                            <p>Login with</p>
-                            <div></div>
-                        </div>
-
-                        <ImageButton image={'google.png'} name={'Google'} onClick={googleLogin}>
+                        <ImageButton image={'google.png'} onClick={googleLogin}>
                             Login with google
                         </ImageButton>
-                        <ImageButton image={'facebook.png'} name={'facebook'} onClick={googleLogin}>
+                        <ImageButton image={'facebook.png'} onClick={googleLogin}>
+                            Login with google
+                        </ImageButton>
+                        <ImageButton image={'github.png'} onClick={googleLogin}>
                             Login with google
                         </ImageButton>
                     </div>
@@ -162,6 +169,12 @@ const FormContainer = styled.div`
         border-radius: 0.4rem;
         padding: 2.4rem 3.2rem;
     }
+    .login-error {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-size: 1.5rem;
+        color: rgba(231, 76, 60, 1);
+    }
     .forgot-password {
         margin: 1rem 0;
         font-size: 1.5rem;
@@ -174,15 +187,15 @@ const FormContainer = styled.div`
         }
     }
     .login-with {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+        display: grid;
+        grid-template-columns: 31% 31% 31%;
+        justify-content: space-between;
     }
     .seperate {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
         div {
             flex: 1;
             height: 1px;

@@ -67,7 +67,7 @@ const Container = styled.div`
         gap: 1rem;
     }
     .button-container {
-        width: 5%;
+        padding-right: 2rem;
         display: flex;
         align-items: center;
         color: white;
@@ -75,7 +75,7 @@ const Container = styled.div`
         .emoji {
             position: relative;
             svg {
-                font-size: 1.5rem;
+                font-size: 2rem;
                 color: #ffff00c8;
                 cursor: pointer;
             }
@@ -114,10 +114,9 @@ const Container = styled.div`
             color: white;
             border: none;
             padding-left: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             cursor: pointer;
             &::selection {
-                /* #9a86f3 */
                 background-color: red;
             }
             &:focus {
@@ -125,7 +124,7 @@ const Container = styled.div`
             }
         }
         button {
-            padding: 0.3rem 2rem;
+            padding: .6rem 4rem;
             border-radius: 2rem;
             display: flex;
             justify-content: center;
@@ -135,11 +134,11 @@ const Container = styled.div`
             @media screen and (min-width: 720px) and (max-width: 1080px) {
                 padding: 0.3rem 1rem;
                 svg {
-                    font-size: 1rem;
+                    font-size: 2rem;
                 }
             }
             svg {
-                font-size: 2rem;
+                font-size: 2.6rem;
                 color: white;
             }
         }

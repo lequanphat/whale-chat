@@ -1,17 +1,15 @@
 import styled from 'styled-components';
 import { IoIosSearch, IoIosArrowDown } from 'react-icons/io';
 import { IoVideocamOutline } from 'react-icons/io5';
-import { LiaPhoneSolid } from "react-icons/lia";
+import { LiaPhoneSolid } from 'react-icons/lia';
 import Avatar from '../avatar/Avatar';
-function ChatHeader({currentChat, theme}) {
+import { useState } from 'react';
+function ChatHeader({ currentChat, theme }) {
+    
     return (
         <Container theme={theme}>
             <div className="user-details">
-                {/* <div className="avatar">
-                    <img src={`http://localhost:2411/storage/${currentChat.avatarImage}`} alt="avatar" />
-                    <div className="online-status"></div>
-                </div> */}
-                <Avatar image={currentChat.avatarImage} online/>
+                <Avatar image={currentChat.avatarImage} online />
                 <div className="username">
                     <h3>{currentChat.username}</h3>
                     <p className="status">Online</p>
@@ -27,7 +25,7 @@ function ChatHeader({currentChat, theme}) {
                 <button className="action">
                     <IoIosSearch />
                 </button>
-                <button className="action">
+                <button className="action" >
                     <IoIosArrowDown />
                 </button>
             </div>
@@ -42,22 +40,20 @@ const Container = styled.div`
     padding: 0.6rem;
     border-bottom: 1px solid #273c75;
     color: white;
-    background-color: ${props => props.theme.backgroundColor || 'inherit'};
+    background-color: ${(props) => props.theme.backgroundColor || 'inherit'};
     .user-details {
         display: flex;
         align-items: center;
         margin-left: 1rem;
     }
-    
     .username {
         h3 {
-            font-size: 1.1rem;
+            font-size: 1.7rem;
             margin-bottom: 0.2rem;
-            margin-top: 0.3rem;
         }
         .status {
             color: #95a5a6;
-            font-size: 0.8rem;
+            font-size: 1.1rem;
         }
     }
     .actions-group {
@@ -65,8 +61,8 @@ const Container = styled.div`
         align-items: center;
         justify-content: space-between;
         .action {
-            width: 2.6rem;
-            height: 2.6rem;
+            width: 3.8rem;
+            height: 3.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,9 +70,9 @@ const Container = styled.div`
             outline: none;
             background-color: transparent;
             color: #dcdde1;
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             border-radius: 100%;
-            margin: 0 0.2rem;
+            margin: 0 0.4rem;
             &:hover {
                 background-color: #0d193f;
                 color: white;

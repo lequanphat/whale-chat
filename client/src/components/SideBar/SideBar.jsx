@@ -5,6 +5,7 @@ import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Avatar from '../avatar/Avatar';
 
 const items = [
     {
@@ -52,9 +53,8 @@ function SideBar() {
                 </ul>
             </div>
             <div className="footer">
-                <button className="user" onClick={() => { navigate("/profile")} }>
-                    <img src={avatarImage} alt="avatar" />
-                </button>
+                
+                <Avatar image={avatarImage} onClick={() => { navigate("/profile")}}/>
             </div>
         </Container>
     );
@@ -72,17 +72,17 @@ const Container = styled.div`
         text-align: center;
         margin: 1rem 0 2.4rem 0;
         img {
-            width: 3.6rem;
-            height: 3.4rem;
+            width: 5.4rem;
+            height: 5rem;
             border-radius: 10px;
         }
     }
     .menu {
         .menu-item {
-            width: 3.6rem;
-            height: 3.6rem;
+            width: 5rem;
+            height: 5rem;
             color: #95a5a6;
-            font-size: 1.2rem;
+            font-size: 1.7rem;
             margin: 0.8rem 0;
             transition: 0.2s;
             display: flex;
@@ -102,24 +102,17 @@ const Container = styled.div`
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.8rem 2rem;
+        padding: 1rem;
         margin-bottom: 0.5rem;
-        img {
-            width: 2.8rem;
-            height: 2.8rem;
-            border-radius: 100%;
-            object-fit: cover;
-        }
         .user {
             display: flex;
             align-items: center;
+            justify-content: center;
             color: #95a5a6;
-            font-size: 1.1rem;
-            border-radius: 100%;
+            border-radius: 50%;
             outline: none;
             border: 3px solid #0d193f;
             background-color: transparent;
-            
             cursor: pointer;
         }
     }

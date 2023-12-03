@@ -11,7 +11,11 @@ function ProfileSideBar({ currentUser }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = async () => {
-        const response = await logout();
+        const response = await logout({ username: currentUser.username});
+        if (response.response?.data?.message){
+            alert(response.response.data.message)
+            return;
+        }
         console.log('logout: ', response);
         localStorage.removeItem('chat-app-user');
         dispatch(resetUser())
@@ -21,7 +25,7 @@ function ProfileSideBar({ currentUser }) {
         <Container>
             <h1 className="header">Profile</h1>
             <div className="avatar">
-                <img src={currentUser?.avatarImage} alt="avatar" />
+                <img src={currentUser?.avatar} alt="avatar" />
             </div>
             <h1 className="username">{currentUser?.username}</h1>
             <p className="about">

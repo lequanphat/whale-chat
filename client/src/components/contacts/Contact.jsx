@@ -48,17 +48,17 @@ const Container = styled.div`
     flex-direction: column;
     border-right: 1px solid #273c75;
     .header {
-        padding: 1rem 1rem;
+        padding: 1.4rem;
 
         h1 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 1.4rem;
         }
     }
     input {
-        font-size: 1.1rem;
+        font-size: 1.6rem;
         width: 100%;
-        padding: 0.6rem;
+        padding: 1rem;
         outline: none;
         background-color: #ffffff34;
         background-color: transparent;
@@ -67,7 +67,7 @@ const Container = styled.div`
         color: white;
     }
     .online-users {
-        padding: 0rem 1rem;
+        padding: 1rem 1.4rem;
         display: flex;
         flex-wrap: wrap;
         align-items: center;

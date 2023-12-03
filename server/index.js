@@ -5,10 +5,11 @@ import dotenv from 'dotenv';
 import routes from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
-import { checkAccessToken } from './middlewares/auth.js';
+import { authenticateToken } from './middlewares/auth.js';
 import session from 'express-session';
 import passport from 'passport';
 import passportService from './utils/passportService.js';
+import errorHandler from './middlewares/errors.js';
 dotenv.config();
 
 const app = express();
@@ -19,14 +20,12 @@ const corsOptions = {
 
 const store = session.MemoryStore();
 
-
-
 app.use(
     session({
         secret: 'keyboard cat',
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false, maxAge: 1000 * 60  },
+        cookie: { secure: false, maxAge: 1000 * 60 },
         store: store,
     }),
 );
@@ -37,11 +36,14 @@ app.use(passport.session());
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
-app.use(checkAccessToken);
+app.use(authenticateToken);
+
 
 app.use('/storage', express.static('storage'));
 
 routes(app);
+app.use(errorHandler)
+
 // connect to db
 mongoose
     .connect(process.env.MONGO_URL)

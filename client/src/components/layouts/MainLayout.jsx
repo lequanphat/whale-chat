@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import SideBar from "../SideBar/SideBar";
+import Setting from "../settings/Setting";
 
 
 function MainLayout({children}) {
@@ -7,6 +8,7 @@ function MainLayout({children}) {
     <Container>
         <div className="sidebar"><SideBar/></div>
         <div className="content">{children}</div>
+        <Setting />
     </Container> 
     );
 }

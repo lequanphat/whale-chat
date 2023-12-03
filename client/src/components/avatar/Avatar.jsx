@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-function Avatar({ image, online, theme }) {
+function Avatar({ image, online, size, ...props}) {
     return (
-        <Container theme={theme}>
+        <Container theme={{ size: size }} {...props}>
             <img src={image} alt="avatar" />
             <div className={`${online ? 'online' : ''}`}></div>
         </Container>
@@ -10,8 +10,8 @@ function Avatar({ image, online, theme }) {
 }
 const Container = styled.div`
     position: relative;
-    width: ${props => props.theme.width || '3rem'};
-    height: ${props => props.theme.height || '3rem'};
+    width: ${props => props.theme.size || '4.2rem'};
+    height: ${props => props.theme.size || '4.2rem'};
     margin-right: 0.8rem;
     img {
         width: 100%;
@@ -19,13 +19,12 @@ const Container = styled.div`
         border-radius: 100%;
         object-fit: cover;
     }
-
     .online{
         position: absolute;
         bottom: 2px;
         right: 2px;
-        width: 0.6rem;
-        height: 0.6rem;
+        width: 1rem;
+        height: 1rem;
         border-radius: 100%;
         background-color: #4cd137;
     }

@@ -19,7 +19,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding:1rem;
+    padding: 1.4rem;
     cursor: pointer;
     &.selected{
         background-color: #0d193f;
@@ -28,15 +28,9 @@ const Container = styled.div`
         display: flex;
         align-items: center;
     }
-    img {
-        width: 3rem;
-        height: 3rem;
-        border-radius: 100%;
-        margin-right: 0.5rem;
-    }
     .chat-user-text {
         .username {
-            font-size: 1.1rem;
+            font-size: 1.6rem;
             font-weight: 600;
             margin-bottom: 0.2rem;
             margin-top: 0.2rem;
@@ -47,10 +41,11 @@ const Container = styled.div`
             overflow: hidden;
             text-overflow: ellipsis;
             width: 9rem;
+            font-size: 1.2rem;
         }
     }
     .time {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: #95a5a6;
     }
 `;

@@ -11,13 +11,13 @@ function ChatContainer({ currentChat, currentUser, socket }) {
 
     const handleSendMsg = async (msg) => {
         await sendMessage({
-            from: currentUser._id,
+            from: currentUser.id,
             to: currentChat._id,
             message: msg,
         });
         socket.current.emit('send-msg', {
             to: currentChat._id,
-            from: currentUser._id,
+            from: currentUser.id,
             message: msg,
         });
         const msgs = [...messages];
@@ -51,6 +51,9 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     useEffect(() => {
         console.log('add message');
         if (arrivalMessage) {
+            if(messages[messages.length-1].fromSelf === true ){
+                arrivalMessage.image = currentChat.avatarImage;
+            }
             setMessages((prev) => [...prev, arrivalMessage]);
         }
     }, [arrivalMessage]);
@@ -58,7 +61,7 @@ function ChatContainer({ currentChat, currentUser, socket }) {
     useEffect(() => {
         const handleGetAllMessages = async () => {
             const respone = await getAllMessages({
-                from: currentUser._id,
+                from: currentUser.id,
                 to: currentChat._id,
             });
             for (let i = 1; i < respone.data.length; i++) {
@@ -106,7 +109,7 @@ const Container = styled.div`
         padding: 1rem 2rem;
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 1rem;
         overflow: auto;
         &::-webkit-scrollbar {
             width: 0.2rem;

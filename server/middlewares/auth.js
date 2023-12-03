@@ -1,23 +1,29 @@
+import { verifyAccessToken } from '../utils/JWTService.js';
 
-const checkAccessToken = (req, res, next) => {
-    console.log(req.rawHeaders[1]+ ' -> '+ req.url);
-    const ignoreUrls = [
-        '/auth/login',
-        '/auth/register',
-    ]
-    if(ignoreUrls.includes(req.url.toLowerCase().trim())){ 
-        return next();
+const authenticateToken = (req, res, next) => {
+    console.log('client -> ' + req.originalUrl);
+    if (
+        req.originalUrl === '/api/auth/login' ||
+        req.originalUrl === '/api/auth/register' ||
+        req.originalUrl.includes('storage')
+    ) {
+        return next(); // Cho phép tiếp tục nếu là route login hoặc register
     }
-    if(req.url.includes(process.env.BACKEND_SERVER_PATH+'/storage/')){
-        return next();
+
+    try {
+        const accessToken = req.cookies['access_token'];
+        const refreshToken = req.cookies['refresh_token'];
+
+        if (!refreshToken || !accessToken) {
+            return next(new Error('Unauthorized'));
+        }
+        const { err, data } = verifyAccessToken(accessToken);
+        if (err) {
+            return next(new Error('Toke has expired'));
+        }
+        next();
+    } catch (error) {
+        next(new Error('Toke has expired'));
     }
-    const cookieReq = req.cookies;
-    console.log('cookie'+JSON.stringify(cookieReq));
-    if (!cookieReq) {
-        return next(new Error('Unauthorized'));
-    }
-    next();
-}
-export {
-    checkAccessToken,
-}
+};
+export { authenticateToken };

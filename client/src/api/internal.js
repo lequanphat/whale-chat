@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+// import Cookies from 'js-cookie';
 const api = axios.create({
     baseURL: process.env.REACT_APP_INTERNAL_API_PATH,
     withCredentials: true,
@@ -7,6 +7,18 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+// api.interceptors.request.use(
+//     (config) => {
+//         const token = Cookies.get('access_token');
+//         if (token) {
+//             config.headers['Authorization'] = `Bearer ${token}`;
+//         }
+//         return config;
+//     },
+//     (error) => {
+//         return new Error('no access_token');
+//     },
+// );
 const login = async (data) => {
     try {
         const respone = await api.post('/api/auth/login', data);
@@ -23,15 +35,14 @@ const register = async (data) => {
         return error;
     }
 };
-const logout = async () => {
+const logout = async (data) => {
     try {
-        const respone = await api.post('/api/auth/logout');
+        const respone = await api.post('/api/auth/logout', data);
         return respone;
     } catch (error) {
         return error;
     }
 };
-
 
 const sendMessage = async (data) => {
     try {
@@ -40,7 +51,7 @@ const sendMessage = async (data) => {
     } catch (error) {
         return error;
     }
-}
+};
 
 const getAllMessages = async (data) => {
     try {
@@ -49,24 +60,24 @@ const getAllMessages = async (data) => {
     } catch (error) {
         return error;
     }
-}
+};
 const getAllContacts = async (data) => {
     try {
-        const respone = await api.get('/api/auth/all-users/'+data);
+        const respone = await api.get('/api/auth/all-users/' + data);
         return respone;
     } catch (error) {
         return error;
     }
-}
+};
 
 const setAvatar = async (id, data) => {
     try {
-        const respone = await api.post('/api/auth/set-avatar/'+id, data);
+        const respone = await api.post('/api/auth/set-avatar/' + id, data);
         return respone;
     } catch (error) {
         return error;
     }
-}
+};
 
 const getUser = async () => {
     try {
@@ -75,6 +86,14 @@ const getUser = async () => {
     } catch (error) {
         return error;
     }
-}
+};
+const autoLogin = async () => {
+    try {
+        const respone = await api.get('/api/auth/refresh-token');
+        return respone;
+    } catch (error) {
+        return error;
+    }
+};
 
-export { login, register, logout, sendMessage, getAllMessages,getAllContacts, setAvatar, getUser };
+export { login, register, logout, sendMessage, getAllMessages, getAllContacts, setAvatar, getUser, autoLogin };

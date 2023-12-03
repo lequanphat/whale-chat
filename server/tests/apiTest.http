@@ -3,7 +3,28 @@
 
 POST http://localhost:2411/api/auth/login
 Content-Type: application/json
+
 {
     "username": "quanphat",
-    "password": "123"
+    "password": "123123123"
 }
+
+### 
+
+POST http://localhost:2411/api/auth/logout
+Content-Type: application/json
+
+{
+    "username": "quanphat"
+}
+
+###
+
+GET http://localhost:2411/api/auth/all-users/656b014a2a5d219a91116cf2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NmIwMTRhMmE1ZDIxOWE5MTExNmNmMiIsImlhdCI6MTcwMTUzNzgxOSwiZXhwIjoxNzAxNTM3ODQ5fQ.td4szUOl-puT_linFHE-DEMKhzSUwblQI2jF0FdUXp0
+
+
+###
+
+GET http://localhost:2411/api/auth/refresh-token
