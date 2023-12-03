@@ -7,18 +7,29 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
-// api.interceptors.request.use(
-//     (config) => {
-//         const token = Cookies.get('access_token');
-//         if (token) {
-//             config.headers['Authorization'] = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return new Error('no access_token');
-//     },
-// );
+
+api.interceptors.response.use(
+    (config) => config,
+    async (error) => {
+        const originalReq = error.config;
+        if ((error.response.status === 401 || error.response.status === 403 || error.response.status === 500) && originalReq && !originalReq._isRerty) {
+            originalReq._isRerty = true;
+            try {
+                await axios.get(`${process.env.REACT_APP_INTERNAL_API_PATH}/api/auth/refresh-token`, {
+                    withCredentials: true,
+                });
+                return api.request(originalReq);
+            } catch (error) {
+                return Promise.reject(error);
+            }
+        }
+    },
+);
+
+
+
+
+
 const login = async (data) => {
     try {
         const respone = await api.post('/api/auth/login', data);
@@ -97,3 +108,4 @@ const autoLogin = async () => {
 };
 
 export { login, register, logout, sendMessage, getAllMessages, getAllContacts, setAvatar, getUser, autoLogin };
+export default api;

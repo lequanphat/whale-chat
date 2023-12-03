@@ -2,8 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { login } from '../../api/internal';
-import { setUser } from '../../store/slices/userSlice';
+import { userLogin } from '../../store/slices/userSlice';
 import { useFormik } from 'formik';
 import loginSchema from '../../schema/login';
 import TextInput from '../../components/input/TextInput';
@@ -40,35 +39,22 @@ function Login() {
             return;
         }
         // call api
-        const data = {
-            username: values.username,
-            password: values.password,
-        };
-        const response = await login(data);
-        console.log(response);
-        if (response.data.status === false) {
-            setLoginError(response.data.msg);
+        const response = await dispatch(
+            userLogin({
+                username: values.username,
+                password: values.password,
+            }),
+        );
+        if (response.error) {
+            setLoginError(response.payload.error);
             return;
         }
-        const user = {
-            id: response.data.user._id,
-            email: response.data.user.email,
-            username: response.data.user.username,
-            avatar: response.data.user.avatarImage,
-            auth: true,
-        };
-        dispatch(setUser(user));
         navigate('/');
     };
 
     const googleLogin = async () => {
         window.open('http://localhost:2411/api/auth/login/google', '_self');
     };
-    // const resetLogin = () => {
-    //     setEmailError('');
-    //     setPasswordError('');
-    //     setLoginError('');
-    // };
     const handleBlurCustom = (event, setError, error) => {
         setError(error);
         setLoginError('');
@@ -79,6 +65,7 @@ function Login() {
         setLoginError('');
         handleChange(event);
     };
+   
     return (
         <div>
             <FormContainer>

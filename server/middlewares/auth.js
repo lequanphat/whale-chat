@@ -5,6 +5,7 @@ const authenticateToken = (req, res, next) => {
     if (
         req.originalUrl === '/api/auth/login' ||
         req.originalUrl === '/api/auth/register' ||
+        req.originalUrl === '/api/auth/refresh-token' ||
         req.originalUrl.includes('storage')
     ) {
         return next(); // Cho phép tiếp tục nếu là route login hoặc register
@@ -15,15 +16,24 @@ const authenticateToken = (req, res, next) => {
         const refreshToken = req.cookies['refresh_token'];
 
         if (!refreshToken || !accessToken) {
-            return next(new Error('Unauthorized'));
+            const error = {
+                status: 403,
+                message: 'Auth middleware: Unauthorized',
+            };
+            return next(error);
         }
         const { err, data } = verifyAccessToken(accessToken);
         if (err) {
-            return next(new Error('Toke has expired'));
+            const error = {
+                status: 403,
+                message: 'Auth middleware: Token has expired',
+            };
+            return next(error);
         }
+        req.user = data;
         next();
     } catch (error) {
-        next(new Error('Toke has expired'));
+        return next(error);
     }
 };
 export { authenticateToken };

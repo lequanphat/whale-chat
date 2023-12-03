@@ -21,8 +21,14 @@ const register = async (req, res, next) => {
             password: hashedPassword,
             token: '',
         });
-        const accessToken = signAccessToken({ id: user._doc._id }, '10m');
-        const refreshToken = signRefreshToken({ id: user._doc._id }, '20m');
+        const data = {
+            id: user._doc._id,
+            username: user._doc.username,
+            email: user._doc.email,
+            avatar: user._doc.avatarImage,
+        };
+        const accessToken = signAccessToken(data);
+        const refreshToken = signRefreshToken(data);
         saveCookie(res, 'access_token', accessToken);
         saveCookie(res, 'refresh_token', refreshToken);
         const updatedUser = await userModel.findOneAndUpdate(
@@ -51,8 +57,14 @@ const login = async (req, res, next) => {
         }
 
         // Authorrization
-        const accessToken = signAccessToken({ id: user._doc._id }, '10m');
-        const refreshToken = signRefreshToken({ id: user._doc._id }, '20m');
+        const data = {
+            id: user._doc._id,
+            username: user._doc.username,
+            email: user._doc.email,
+            avatar: user._doc.avatarImage,
+        };
+        const accessToken = signAccessToken(data);
+        const refreshToken = signRefreshToken(data);
         saveCookie(res, 'access_token', accessToken);
         saveCookie(res, 'refresh_token', refreshToken);
         const updatedUser = await userModel.findOneAndUpdate(
@@ -111,21 +123,30 @@ const logout = async (req, res, next) => {
 };
 const refreshToken = async (req, res, next) => {
     const refreshToken = req.cookies['refresh_token'];
-    
+
     try {
         const { err, data } = verifyRefreshToken(refreshToken);
         console.log(data);
         if (err) {
-            return next(new Error('Token has expired kkk'));
+            return next(new Error('Refresh token has expired kkk'));
         }
         const match = await userModel.findOne({ _id: data.id, token: refreshToken });
-        console.log(match);
         if (!match) {
             return next(new Error('Unauthorized no match'));
         }
-        const accessToken = signAccessToken({ id: data.id }, '30m');
-        const newRefreshToken = signRefreshToken({ id: data.id }, '60m');
-        const user = await userModel.findOneAndUpdate({ _id: data.id }, { $set: { token: newRefreshToken } }, { new: true });
+        const tokenData = {
+            id: match._doc._id,
+            username: match._doc.username,
+            email: match._doc.email,
+            avatar: match._doc.avatarImage,
+        };
+        const accessToken = signAccessToken(tokenData);
+        const newRefreshToken = signRefreshToken(tokenData);
+        const user = await userModel.findOneAndUpdate(
+            { _id: data.id },
+            { $set: { token: newRefreshToken } },
+            { new: true },
+        );
         saveCookie(res, 'access_token', accessToken);
         saveCookie(res, 'refresh_token', newRefreshToken);
         console.log(user);

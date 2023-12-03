@@ -7,8 +7,10 @@ import registerSchema from '../../schema/register';
 import TextInput from '../../components/input/TextInput';
 import Button from '../../components/button/Button';
 import ImageButton from '../../components/button/ImageButton';
-
+import { useDispatch } from 'react-redux';
+import { setUser, userRegister } from '../../store/slices/userSlice';
 function Register() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -50,20 +52,15 @@ function Register() {
             return;
         }
         // call api
-        
+
         const { username, email, password, confirmPassword } = values;
-        const response = await register({
-            username,
-            email,
-            password,
-            confirmPassword,
-        });
-        if (response.data.status === false) {
-            setRegisterError(response.data.msg);
+        const response = await dispatch(userRegister({ username, email, password, confirmPassword }));
+        if (response.error) {
+            setRegisterError(response.payload.error);
             return;
         }
-        localStorage.setItem('chat-app-user', JSON.stringify(response.data.user));
-        navigate('/set-avatar/' + response.data.user._id);
+        console.log(response);
+        navigate('/set-avatar/' + response.payload._id);
     };
     const handleBlurCustom = (event, setError, error) => {
         setError(error);

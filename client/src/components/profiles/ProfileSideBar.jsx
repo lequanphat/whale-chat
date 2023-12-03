@@ -5,20 +5,14 @@ import { MdLogout } from 'react-icons/md';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../api/internal.js';
-import { resetUser } from '../../store/slices/userSlice.js';
+import { resetUser, userLogout } from '../../store/slices/userSlice.js';
 
 function ProfileSideBar({ currentUser }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = async () => {
-        const response = await logout({ username: currentUser.username});
-        if (response.response?.data?.message){
-            alert(response.response.data.message)
-            return;
-        }
-        console.log('logout: ', response);
-        localStorage.removeItem('chat-app-user');
-        dispatch(resetUser())
+        const response = await dispatch(userLogout({ username: currentUser.username }));
+        console.log(response);
         navigate('/login');
     };
     return (

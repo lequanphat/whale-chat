@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { setAvatar } from '../api/internal';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { userSelector } from '../store/selector';
+import { userSetAvatar } from '../store/slices/userSlice';
 function SetAvatar() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [avatars, setAvatars] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+    const user = useSelector(userSelector);
+
     const fetchData = async () => {
         const data = [
             'avatar_1.jpg',
@@ -22,7 +26,7 @@ function SetAvatar() {
         setSelectedAvatar(0);
         setTimeout(() => {
             setIsLoading(false);
-        }, 1000);
+        }, 3000);
     };
 
     useEffect(() => {
@@ -30,15 +34,14 @@ function SetAvatar() {
     }, []);
 
     const handleSetAvatar = async () => {
-        const user = JSON.parse(localStorage.getItem('chat-app-user'));
-        const { data } = await setAvatar(user._id, {
-            avatar: `http://localhost:2411/storage/${avatars[selectedAvatar]}`,
-        });
-        if (data.status === false) {
-            alert(data.msg);
+        const response = await dispatch(
+            userSetAvatar({ id: user.id, avatar: `http://localhost:2411/storage/${avatars[selectedAvatar]}` }),
+        );
+
+        if (response.error) {
+            alert(response.payload.error);
             return;
         }
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user));
         navigate('/');
     };
 
@@ -49,7 +52,7 @@ function SetAvatar() {
     ) : (
         <Container>
             <div className="title-container">
-                <h1>Pick an avatar as your profile picture</h1>
+                <h1>Pick an avatar as your profile picture, {user.username}</h1>
             </div>
             <div className="avatars">
                 {avatars.map((avatar, index) => {

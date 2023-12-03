@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/user', (req, res) => {
     console.log(req.user);
-    res.json(req.user);
+    return res.json({ user: req.user });
 });
 router.get('/login/google', passport.authenticate('google'));
 router.get(
