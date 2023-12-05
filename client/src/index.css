@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,100;1,300;1,700&display=swap');
-
-:root{
+:root {
     --bg-color: #1e272e;
     --second-bg-color: #12171c;
     --main-color: #3867d6;
@@ -11,13 +8,13 @@
     padding: 0;
     box-sizing: border-box;
 }
-html{
+html {
     font-size: 62.5%;
 }
 body,
 button,
 input {
-    font-family: 'IBM', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 1.6rem;
 }
 
@@ -28,5 +25,5 @@ body {
     background-color: #131324;
 }
 :root {
-    --primary-color: red;
+    --primary-color: #1abc9c;
 }

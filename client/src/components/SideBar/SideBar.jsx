@@ -5,9 +5,9 @@ import { LuUsers } from 'react-icons/lu';
 import { PiUsersThreeBold } from 'react-icons/pi';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Avatar from '../avatar/Avatar';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selector';
+import { Avatar } from '@mui/material';
 const items = [
     {
         icon: <GoHome />,
@@ -56,12 +56,9 @@ function SideBar() {
                 </ul>
             </div>
             <div className="footer">
-                <Avatar
-                    image={user.avatar}
-                    onClick={() => {
+                <Avatar alt="avatar" src={user.avatar} onClick={() => {
                         navigate('/profile');
-                    }}
-                />
+                    }}/>
             </div>
         </Container>
     );

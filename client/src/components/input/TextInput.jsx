@@ -25,7 +25,7 @@ const Container = styled.div`
     }
     input {
         background-color: transparent;
-        padding: 1.2rem;
+        padding: 1rem;
         border: 1px solid #1abc9c;
         border-radius: 0.4rem;
         width: 100%;

@@ -13,9 +13,7 @@ const authenticateToken = (req, res, next) => {
 
     try {
         const accessToken = req.cookies['access_token'];
-        const refreshToken = req.cookies['refresh_token'];
-
-        if (!refreshToken || !accessToken) {
+        if (!accessToken) {
             const error = {
                 status: 403,
                 message: 'Auth middleware: Unauthorized',

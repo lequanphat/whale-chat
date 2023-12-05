@@ -1,12 +1,10 @@
 import express from 'express';
-import { register, login, setAvatarImage, getAllUsers, logout, refreshToken } from '../controller/usersController.js';
 import passport from 'passport';
+import userController from '../controller/usersController.js';
 const router = express.Router();
 
-router.get('/user', (req, res) => {
-    console.log(req.user);
-    return res.json({ user: req.user });
-});
+router.get('/user', userController.getUser);
+
 router.get('/login/google', passport.authenticate('google'));
 router.get(
     '/login/google/callback',
@@ -16,10 +14,6 @@ router.get(
     }),
 );
 
-router.post('/register', register);
-router.post('/login', login);
-router.post('/logout', logout);
-router.get('/refresh-token', refreshToken);
-router.post('/set-avatar/:id', setAvatarImage);
-router.get('/all-users/:id', getAllUsers);
+router.post('/set-avatar/:id', userController.setAvatarImage);
+router.get('/all-users/:id', userController.getAllUsers);
 export default router;

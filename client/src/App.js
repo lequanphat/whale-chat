@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SetAvatar from './pages/SetAvatar';
 import Home from './pages/Home';
@@ -10,8 +9,11 @@ import Login from './pages/auth/Login';
 import Temp from './pages/errors/Temp';
 import useAutoLogin from './hooks/useAutoLogin';
 
+
 function App() {
+
     const loading = useAutoLogin();
+   
     return loading ? (
         <h1>123</h1>
     ) : (

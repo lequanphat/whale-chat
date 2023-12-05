@@ -64,7 +64,6 @@ function ChatContainer() {
     }, [currentChat]);
 
     useEffect(() => {
-        console.log('add message');
         if (arrivalMessage) {
             if (messages[messages.length - 1].fromSelf === true) {
                 arrivalMessage.image = currentChat.avatar;
@@ -79,12 +78,12 @@ function ChatContainer() {
                 from: user.id,
                 to: currentChat?.id,
             });
-            for (let i = 1; i < respone.data.length; i++) {
+            for (let i = 1; i < respone.data?.length; i++) {
                 if (respone.data[i - 1].fromSelf === true && respone.data[i].fromSelf === false) {
                     respone.data[i].image = currentChat.avatar;
                 }
             }
-            if (respone.data[0]?.fromSelf === false) {
+            if (respone?.data[0]?.fromSelf === false) {
                 respone.data[0].image = currentChat.avatar;
             }
             setMessages(respone.data);

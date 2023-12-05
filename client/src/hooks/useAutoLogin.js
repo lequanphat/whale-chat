@@ -1,17 +1,15 @@
 /* eslint-disable no-unused-expressions */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getUser } from '../store/slices/userSlice';
+import { getUser } from '../store/slices/authSlice';
 const useAutoLogin = () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         // IIFE
         (async function autoLoginApi() {
             try {
-                const response = await dispatch(getUser());
-                console.log(response);
+                await dispatch(getUser());
             } catch (error) {}
             setLoading(false);
         })();

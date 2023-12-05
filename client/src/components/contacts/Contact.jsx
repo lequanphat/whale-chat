@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { contactsLoadingSelector, contactsSelector } from '../../store/selectors/contactSelector';
 import { userSelector } from '../../store/selector';
 import { getAllContacts, setCurrentContact } from '../../store/slices/contactsSlice';
-import Loading from '../loading/Loading';
 
 function Contact() {
     const dispatch = useDispatch();
@@ -25,7 +24,7 @@ function Contact() {
                 id: contacts[index]._id,
                 username: contacts[index].username,
                 email: contacts[index].email,
-                avatar: contacts[index].avatarImage,
+                avatar: contacts[index].avatar,
             }),
         );
     };
@@ -56,7 +55,7 @@ function Contact() {
                             selected={index === currentSelected}
                             key={contact._id}
                             username={contact.username}
-                            image={contact.avatarImage}
+                            image={contact.avatar}
                             onClick={() => {
                                 handleCurrentContact(index);
                             }}

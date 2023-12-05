@@ -1,17 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import styled from 'styled-components';
 import Contact from '../components/contacts/Contact';
 import ChatContainer from '../components/chat/ChatContainer';
 import { useSelector } from 'react-redux';
 import { contactsLoadingSelector } from '../store/selectors/contactSelector';
 import Loading from '../components/loading/Loading';
-
+import { userSelector } from '../store/selector';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 function Home() {
+    const navigate = useNavigate();
     const isLoading = useSelector(contactsLoadingSelector);
+    const user = useSelector(userSelector);
+    useEffect(() => {
+        if (!user.auth) {
+            navigate('/login');
+        }
+    }, []);
     return (
         <Container>
             <Contact />
             <ChatContainer />
-           { isLoading && <Loading />}
+            {isLoading && <Loading />}
         </Container>
     );
 }

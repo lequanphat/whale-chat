@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { userSelector } from '../store/selector';
-import { userSetAvatar } from '../store/slices/userSlice';
+import { userSetAvatar } from '../store/slices/authSlice';
 function SetAvatar() {
     const dispatch = useDispatch();
     const navigate = useNavigate();

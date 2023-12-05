@@ -12,7 +12,11 @@ api.interceptors.response.use(
     (config) => config,
     async (error) => {
         const originalReq = error.config;
-        if ((error.response.status === 401 || error.response.status === 403 || error.response.status === 500) && originalReq && !originalReq._isRerty) {
+        if (
+            (error.response.status === 401 || error.response.status === 403 || error.response.status === 500) &&
+            originalReq &&
+            !originalReq._isRerty
+        ) {
             originalReq._isRerty = true;
             try {
                 await axios.get(`${process.env.REACT_APP_INTERNAL_API_PATH}/api/auth/refresh-token`, {
@@ -25,35 +29,6 @@ api.interceptors.response.use(
         }
     },
 );
-
-
-
-
-
-const login = async (data) => {
-    try {
-        const respone = await api.post('/api/auth/login', data);
-        return respone;
-    } catch (error) {
-        return error;
-    }
-};
-const register = async (data) => {
-    try {
-        const respone = await api.post('/api/auth/register', data);
-        return respone;
-    } catch (error) {
-        return error;
-    }
-};
-const logout = async (data) => {
-    try {
-        const respone = await api.post('/api/auth/logout', data);
-        return respone;
-    } catch (error) {
-        return error;
-    }
-};
 
 const sendMessage = async (data) => {
     try {
@@ -74,7 +49,7 @@ const getAllMessages = async (data) => {
 };
 const getAllContacts = async (data) => {
     try {
-        const respone = await api.get('/api/auth/all-users/' + data);
+        const respone = await api.get('/api/user/all-users/' + data);
         return respone;
     } catch (error) {
         return error;
@@ -83,21 +58,14 @@ const getAllContacts = async (data) => {
 
 const setAvatar = async (id, data) => {
     try {
-        const respone = await api.post('/api/auth/set-avatar/' + id, data);
+        const respone = await api.post('/api/user/set-avatar/' + id, data);
         return respone;
     } catch (error) {
         return error;
     }
 };
 
-const getUser = async () => {
-    try {
-        const respone = await api.get('/api/auth/user');
-        return respone;
-    } catch (error) {
-        return error;
-    }
-};
+
 const autoLogin = async () => {
     try {
         const respone = await api.get('/api/auth/refresh-token');
@@ -107,5 +75,5 @@ const autoLogin = async () => {
     }
 };
 
-export { login, register, logout, sendMessage, getAllMessages, getAllContacts, setAvatar, getUser, autoLogin };
+export { sendMessage, getAllMessages, getAllContacts, setAvatar,  autoLogin };
 export default api;

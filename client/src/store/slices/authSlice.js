@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { autoLogin, login, logout, register, setAvatar } from '../../api/internal';
+import api, { autoLogin, setAvatar } from '../../api/internal';
+import authApi from '../../api/authApi';
 
 const initialState = {
     id: '',
@@ -40,7 +41,7 @@ export const userSlice = createSlice({
                 state.id = action.payload._id;
                 state.email = action.payload.email;
                 state.username = action.payload.username;
-                state.avatar = action.payload.avatarImage;
+                state.avatar = action.payload.avatar;
                 state.auth = true;
             })
             .addCase(userLogin.rejected, (state, error) => {})
@@ -49,13 +50,13 @@ export const userSlice = createSlice({
                 state.id = action.payload._id;
                 state.email = action.payload.email;
                 state.username = action.payload.username;
-                state.avatar = action.payload.avatarImage;
+                state.avatar = action.payload.avatar;
                 state.auth = true;
             })
             .addCase(userRegister.rejected, (state, error) => {})
             .addCase(userSetAvatar.pending, (state) => {})
             .addCase(userSetAvatar.fulfilled, (state, action) => {
-                state.avatar = action.payload.avatarImage;
+                state.avatar = action.payload.avatar;
             })
             .addCase(userSetAvatar.rejected, (state, error) => {})
             .addCase(userLogout.pending, (state) => {})
@@ -69,7 +70,7 @@ export const userSlice = createSlice({
             .addCase(userLogout.rejected, (state, error) => {})
             .addCase(userRefresh.pending, (state) => {})
             .addCase(userRefresh.fulfilled, (state, action) => {
-                state.id = action.payload.id;
+                state.id = action.payload._id;
                 state.username = action.payload.username;
                 state.email = action.payload.email;
                 state.avatar = action.payload.avatar;
@@ -78,7 +79,7 @@ export const userSlice = createSlice({
             .addCase(userRefresh.rejected, (state, error) => {})
             .addCase(getUser.pending, (state) => {})
             .addCase(getUser.fulfilled, (state, action) => {
-                state.id = action.payload.id;
+                state.id = action.payload._id;
                 state.username = action.payload.username;
                 state.email = action.payload.email;
                 state.avatar = action.payload.avatar;
@@ -90,7 +91,7 @@ export const userSlice = createSlice({
 
 export const userLogin = createAsyncThunk('user/login', async (data, { rejectWithValue }) => {
     try {
-        const response = await login(data);
+        const response = await authApi.post('/api/auth/login', data);
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
@@ -101,7 +102,7 @@ export const userLogin = createAsyncThunk('user/login', async (data, { rejectWit
 });
 export const userRegister = createAsyncThunk('user/register', async (data, { rejectWithValue }) => {
     try {
-        const response = await register(data);
+        const response = await authApi.post('/api/auth/register', data);
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
@@ -124,7 +125,7 @@ export const userSetAvatar = createAsyncThunk('user/set-avatar', async (data, { 
 });
 export const userLogout = createAsyncThunk('user/logout', async (data, { rejectWithValue }) => {
     try {
-        const response = await logout(data);
+        const response = await api.post('/api/auth/logout');
         if (response.response?.data?.message) {
             rejectWithValue({ error: response.response.data.message });
             return;
@@ -136,7 +137,7 @@ export const userLogout = createAsyncThunk('user/logout', async (data, { rejectW
 });
 export const getUser = createAsyncThunk('user/get-user', async (data, { rejectWithValue }) => {
     try {
-        const response = await api.get('/api/auth/user');
+        const response = await api.get('/api/user/user');
         if (!response.data.user) {
             rejectWithValue({ error: 'Unauthorizied ...' });
             return;
@@ -151,16 +152,16 @@ export const userRefresh = createAsyncThunk('user/refresh', async (data, { rejec
         const response = await autoLogin();
         if (response.status === 200) {
             const user = {
-                id: response.data.user._id,
+                _id: response.data.user._id,
                 email: response.data.user.email,
                 username: response.data.user.username,
-                avatar: response.data.user.avatarImage,
+                avatar: response.data.user.avatar,
                 auth: true,
             };
             return user;
         } else {
             const user = {
-                id: '',
+                _id: '',
                 email: '',
                 username: '',
                 avatar: '',
@@ -172,6 +173,7 @@ export const userRefresh = createAsyncThunk('user/refresh', async (data, { rejec
         return rejectWithValue({ error: 'error in refresh' });
     }
 });
+
 
 export const { setUser, resetUser, setAvatarUser } = userSlice.actions;
 export default userSlice.reducer;

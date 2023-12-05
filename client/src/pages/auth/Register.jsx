@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { register } from '../../api/internal';
 import { useFormik } from 'formik';
 import registerSchema from '../../schema/register';
 import TextInput from '../../components/input/TextInput';
-import Button from '../../components/button/Button';
+import Button from '@mui/material/Button';
 import ImageButton from '../../components/button/ImageButton';
-import { useDispatch } from 'react-redux';
-import { setUser, userRegister } from '../../store/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { userRegister } from '../../store/slices/authSlice';
+import { userSelector } from '../../store/selector';
+import { Stack, Typography } from '@mui/material';
 function Register() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const user = useSelector(userSelector);
     const [registerError, setRegisterError] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -32,6 +34,14 @@ function Register() {
         },
         validationSchema: registerSchema,
     });
+
+    useEffect(() => {
+        if (user.auth) {
+            navigate('/');
+        } else {
+            navigate('/register');
+        }
+    }, []);
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -77,9 +87,9 @@ function Register() {
             <FormContainer>
                 <img className="robot" src="/robot.gif" alt="" />
                 <form onSubmit={(event) => handleRegister(event)}>
-                    <div className="header">
-                        <h1>REGISTER</h1>
-                    </div>
+                    <Typography variant="h5" component="h1" mb={2}>
+                        Register
+                    </Typography>
                     <TextInput
                         title="Username"
                         placeholder={'Enter username'}
@@ -139,7 +149,9 @@ function Register() {
                         error={confirmPasswordError}
                     />
                     {registerError && <p className="register-error">{registerError}</p>}
-                    <Button type="submit">Register</Button>
+                    <Button type="submit" variant="contained" fullWidth>
+                        Register
+                    </Button>
                     <div className="seperate">
                         <div></div>
                         <p>Login with</p>
@@ -150,9 +162,14 @@ function Register() {
                         <ImageButton image={'facebook.png'}>Login with google</ImageButton>
                         <ImageButton image={'github.png'}>Login with google</ImageButton>
                     </div>
-                    <span className="footer">
-                        You already have an account?<Link to="/login">Login</Link>
-                    </span>
+                    <Stack direction="row" justifyContent="center" mt={3}>
+                        <Typography variant="subtitle1" component="p" mr={0.5}>
+                            You already have an account?
+                        </Typography>
+                        <Typography variant="subtitle1" component="p" sx={{  color: 'var(--primary-color)', cursor: 'pointer' }} onClick={() => {navigate('/login')}}>
+                            Login
+                        </Typography>
+                    </Stack>
                 </form>
             </FormContainer>
         </div>
@@ -169,12 +186,6 @@ const FormContainer = styled.div`
     background-color: #40407a;
     .robot {
         width: 40%;
-    }
-    .header h1 {
-        text-transform: uppercase;
-        font-size: 2.4rem;
-        margin-bottom: 2rem;
-        color: #2c3e50;
     }
     form {
         width: 42rem;
@@ -209,17 +220,6 @@ const FormContainer = styled.div`
         display: grid;
         grid-template-columns: 31% 31% 31%;
         justify-content: space-between;
-    }
-    .footer {
-        display: block;
-        margin-top: 2rem;
-        font-size: 1.5rem;
-        text-align: center;
-        a {
-            text-decoration: none;
-            color: #1abc9c;
-            margin: 0.4rem;
-        }
     }
 `;
 

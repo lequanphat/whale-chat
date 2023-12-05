@@ -1,20 +1,28 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { userLogin } from '../../store/slices/userSlice';
+import { userLogin } from '../../store/slices/authSlice';
 import { useFormik } from 'formik';
 import loginSchema from '../../schema/login';
 import TextInput from '../../components/input/TextInput';
-import Button from '../../components/button/Button';
 import ImageButton from '../../components/button/ImageButton';
+import { userSelector } from '../../store/selector';
+import { Typography, Button, Stack } from '@mui/material';
 function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const user = useSelector(userSelector);
     const [loginError, setLoginError] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-
+    useEffect(() => {
+        if (user.auth) {
+            navigate('/');
+        } else {
+            navigate('/login');
+        }
+    }, []);
     const { values, handleBlur, handleChange, errors } = useFormik({
         initialValues: {
             username: '',
@@ -65,15 +73,15 @@ function Login() {
         setLoginError('');
         handleChange(event);
     };
-   
+
     return (
         <div>
             <FormContainer>
                 <img className="robot" src="/robot.gif" alt="" />
                 <form onSubmit={(event) => handleLogin(event)}>
-                    <div className="header">
-                        <h1>Login</h1>
-                    </div>
+                    <Typography variant="h5" component="h1" mb={2}>
+                        LOGIN
+                    </Typography>
                     <TextInput
                         title="Username"
                         placeholder={'Enter username'}
@@ -105,8 +113,12 @@ function Login() {
                     />
                     {loginError && <p className="login-error">{loginError}</p>}
                     <div>
-                        <Button type="submit">Login</Button>
-                        <p className="forgot-password">Forgot password</p>
+                        <Button type="submit" variant="contained" fullWidth>
+                            Login
+                        </Button>
+                        <Typography variant="subtitle1" component="p" mb={1} mt={0.6}>
+                            Forgot password
+                        </Typography>
                     </div>
                     <div className="seperate">
                         <div></div>
@@ -124,9 +136,14 @@ function Login() {
                             Login with google
                         </ImageButton>
                     </div>
-                    <span className="footer">
-                        You don't have an account?<Link to="/register">Register</Link>
-                    </span>
+                    <Stack direction="row" justifyContent="center" mt={3}>
+                        <Typography variant="subtitle1" component="p" mr={0.5}>
+                            You don't have an account?
+                        </Typography>
+                        <Typography variant="subtitle1" component="p" sx={{  color: 'var(--primary-color)', cursor: 'pointer' }} onClick={() => {navigate('/register')}}>
+                            Register
+                        </Typography>
+                    </Stack>
                 </form>
             </FormContainer>
         </div>
@@ -144,12 +161,6 @@ const FormContainer = styled.div`
     .robot {
         width: 40%;
     }
-    .header h1 {
-        text-transform: uppercase;
-        font-size: 2.4rem;
-        margin-bottom: 2rem;
-        color: #2c3e50;
-    }
     form {
         width: 42rem;
         background-color: white;
@@ -162,17 +173,7 @@ const FormContainer = styled.div`
         font-size: 1.5rem;
         color: rgba(231, 76, 60, 1);
     }
-    .forgot-password {
-        margin: 1rem 0;
-        font-size: 1.5rem;
-
-        color: #7f8c8d;
-        cursor: pointer;
-        transition: 0.2s;
-        &:hover {
-            color: #1abc9c;
-        }
-    }
+    
     .login-with {
         display: grid;
         grid-template-columns: 31% 31% 31%;
@@ -193,17 +194,6 @@ const FormContainer = styled.div`
             color: #7f8c8d;
             font-size: 1.5rem;
             padding: 0 1rem;
-        }
-    }
-    .footer {
-        display: block;
-        margin-top: 2rem;
-        font-size: 1.5rem;
-        text-align: center;
-        a {
-            text-decoration: none;
-            color: #1abc9c;
-            margin: 0.4rem;
         }
     }
 `;

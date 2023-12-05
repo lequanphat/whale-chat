@@ -13,6 +13,7 @@ Content-Type: application/json
 
 POST http://localhost:2411/api/auth/logout
 Content-Type: application/json
+# Set-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NmI2ZTViNjg0ODViZDdhOWI2MTYwYyIsImlhdCI6MTcwMTc2NjEzMCwiZXhwIjoxNzAxNzY3OTMwfQ.2suBhtT392ZsJZ26VOugS7aAZE635gl4xh72Fbh-otw
 
 {
     "username": "quanphat"
@@ -20,10 +21,12 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:2411/api/auth/all-users/656b014a2a5d219a91116cf2
+GET http://localhost:2411/api/user/all-users/656b6e5b68485bd7a9b6160c
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NmIwMTRhMmE1ZDIxOWE5MTExNmNmMiIsImlhdCI6MTcwMTUzNzgxOSwiZXhwIjoxNzAxNTM3ODQ5fQ.td4szUOl-puT_linFHE-DEMKhzSUwblQI2jF0FdUXp0
 
+{
+    "username": "quanphat"
+}
 
 ###
 

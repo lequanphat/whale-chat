@@ -20,11 +20,7 @@ const userSchema = new mongoose.Schema({
         min: 8,
         max: 50,
     },
-    avatarImage: {
-        type: String,
-        default: '',
-    },
-    token: {
+    avatar: {
         type: String,
         default: '',
     },

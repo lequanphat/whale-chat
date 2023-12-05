@@ -1,4 +1,4 @@
 // import { createSelector } from '@reduxjs/toolkit';
 const userSelector = (state) => state.user;
-
-export { userSelector };
+const tokenSelector = (state) => state.user.token;
+export { userSelector, tokenSelector };
