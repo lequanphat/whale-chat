@@ -1,10 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch as useDefaultDispatch, useSelector as useDefaultSelector } from 'react-redux';
+import { persistStore, persistReducer } from 'redux-persist';
 
-import userReducer from './slices/authSlice';
-import contactsReducer from './slices/contactsSlice';
+import { rootPersistConfig, rootReducer } from './rootReducer';
 
 const store = configureStore({
-    reducer: { user: userReducer, contacts: contactsReducer },
+    reducer: persistReducer(rootPersistConfig, rootReducer),
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+            immutableCheck: false,
+        }),
 });
+const persistor = persistStore(store);
 
-export default store;
+const { dispatch } = store;
+const useSelector = useDefaultSelector;
+
+const useDispatch = () => useDefaultDispatch();
+
+export { store, persistor, dispatch, useSelector, useDispatch };

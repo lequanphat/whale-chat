@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import AiChatHeader from '../components/chat/AiChatHeader';
 import ChatInput from '../components/chat/ChatInput';
 import { useEffect, useRef, useState } from 'react';
 import Message from '../components/chat/Message';
@@ -54,7 +53,6 @@ function AiChat() {
                 <h1 className="header">AiChat</h1>
             </div>
             <div className="chat-container">
-                <AiChatHeader />
                 <div className="messages-container">
                     {messages.map((message, index) => (
                         <Message
