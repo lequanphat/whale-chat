@@ -67,7 +67,7 @@ function Contact() {
                     </IconButton>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    {[1, 2, 3].map((item) => {
+                    {[1, 2, 3].map(() => {
                         return (
                             <Box>
                                 <img src={faker.image.food()} alt={faker.name.fullName()} />
