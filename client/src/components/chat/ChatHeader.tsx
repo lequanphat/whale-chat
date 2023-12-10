@@ -1,6 +1,8 @@
+
 import { Avatar, Box, Divider, IconButton, Stack, Typography } from '@mui/material';
 import StyledBadge from '../avatar/StyledBadge';
-import { IoCallOutline, IoSearchOutline, IoVideocamOutline } from 'react-icons/io5';
+import { IoSearchOutline, IoVideocamOutline } from 'react-icons/io5';
+import { PiPhoneLight } from "react-icons/pi";
 import { GoChevronDown } from 'react-icons/go';
 import { useTheme } from '@emotion/react';
 import quanphat from '../../assets/quanphat.jpg';
@@ -44,7 +46,7 @@ const ChatHeader = () => {
                         <IoVideocamOutline />
                     </IconButton>
                     <IconButton>
-                        <IoCallOutline />
+                        <PiPhoneLight />
                     </IconButton>
                     <IconButton>
                         <IoSearchOutline />

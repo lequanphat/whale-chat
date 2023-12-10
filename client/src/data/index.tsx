@@ -7,7 +7,7 @@ import {
 } from 'react-icons/io5';
 import avatar from '../assets/avatar_4.jpg';
 import { PiRobotLight } from 'react-icons/pi';
-
+import { faker } from '@faker-js/faker';
 interface NavButton {
     index: number;
     icon: unknown;
@@ -35,8 +35,8 @@ export const Nav_Setting = [
 export const ChatList = [
     {
         id: 0,
-        img: avatar,
-        name: 'Quan Phat',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 2,
@@ -45,8 +45,8 @@ export const ChatList = [
     },
     {
         id: 1,
-        img: avatar,
-        name: 'Ngan Tran',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 1,
@@ -55,8 +55,8 @@ export const ChatList = [
     },
     {
         id: 2,
-        img: avatar,
-        name: 'Nguyen Van A',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 15,
@@ -65,8 +65,8 @@ export const ChatList = [
     },
     {
         id: 3,
-        img: avatar,
-        name: 'Tony Kroos',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 1,
@@ -75,8 +75,8 @@ export const ChatList = [
     },
     {
         id: 4,
-        img: avatar,
-        name: 'David Beckham',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -85,8 +85,8 @@ export const ChatList = [
     },
     {
         id: 5,
-        img: avatar,
-        name: 'Quan Phat',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -95,8 +95,8 @@ export const ChatList = [
     },
     {
         id: 6,
-        img: avatar,
-        name: 'Quan Phat',
+        img: faker.image.avatar(),
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -106,7 +106,7 @@ export const ChatList = [
     {
         id: 7,
         img: avatar,
-        name: 'Quan Phat',
+        name: faker.name.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
