@@ -1,18 +1,18 @@
-import { Avatar, Box, Divider, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Avatar, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
 import React, { useState } from 'react';
 import { RiSettings3Line } from 'react-icons/ri';
 import CustomSwitch from '../../components/switch/CustomSwitch';
-import { useTheme, Theme } from '@emotion/react';
 import avatar from '../../assets/avatar_4.jpg';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 const Sidebar = () => {
     const [selected, setSelected] = useState(0);
-    const theme: Theme = useTheme();
+    const theme = useTheme();
     const { onToggleMode } = useSettings();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const handleClick = (event: { currentTarget: React.SetStateAction<null> }) => {
+
+    const handleClick = (event: React.SyntheticEvent) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
@@ -62,11 +62,14 @@ const Sidebar = () => {
                                 </Box>
                             ) : (
                                 <IconButton
+                                    key={item.index}
                                     sx={{
                                         width: 'max-content',
-                                        color: theme.palette.mode === 'light' ? theme.palette.primary : '#fff',
+                                        color:
+                                            theme.palette.mode === 'light'
+                                                ? theme.palette.primary.contrastText
+                                                : '#fff',
                                     }}
-                                    key={item.index}
                                     onClick={() => {
                                         setSelected(item.index);
                                     }}
@@ -90,7 +93,7 @@ const Sidebar = () => {
                                 }}
                                 sx={{
                                     width: 'max-content',
-                                    color: theme.palette.mode === 'light' ? theme.palette.primary : '#fff',
+                                    color: theme.palette.mode === 'light' ? theme.palette.primary.contrastText : '#fff',
                                 }}
                             >
                                 <RiSettings3Line />
@@ -100,14 +103,7 @@ const Sidebar = () => {
                 </Stack>
                 <Stack alignItems="center" spacing={2}>
                     <CustomSwitch onChange={onToggleMode} />
-                    <Avatar
-                        src={avatar}
-                        id="basic-button-2"
-                        aria-controls={open ? 'basic-menu-2' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
-                    />
+                    <Avatar src={avatar} alt="temp" onClick={handleClick} />
                     <Menu
                         id="basic-menu-2"
                         anchorEl={anchorEl}
@@ -123,9 +119,9 @@ const Sidebar = () => {
                         }}
                     >
                         <Stack spacing={1} px={1}>
-                            {Profile_Menu.map((item) => {
+                            {Profile_Menu.map((item, index) => {
                                 return (
-                                    <MenuItem>
+                                    <MenuItem key={index}>
                                         <Stack
                                             width={100}
                                             direction="row"

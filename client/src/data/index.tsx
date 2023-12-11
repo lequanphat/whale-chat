@@ -8,9 +8,10 @@ import {
 import avatar from '../assets/avatar_4.jpg';
 import { PiRobotLight } from 'react-icons/pi';
 import { faker } from '@faker-js/faker';
+import { ReactNode } from 'react';
 interface NavButton {
     index: number;
-    icon: unknown;
+    icon: ReactNode;
 }
 export const Nav_Buttons: NavButton[] = [
     {
@@ -36,7 +37,7 @@ export const ChatList = [
     {
         id: 0,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 2,
@@ -46,7 +47,7 @@ export const ChatList = [
     {
         id: 1,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 1,
@@ -56,7 +57,7 @@ export const ChatList = [
     {
         id: 2,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 15,
@@ -66,7 +67,7 @@ export const ChatList = [
     {
         id: 3,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 1,
@@ -76,7 +77,7 @@ export const ChatList = [
     {
         id: 4,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -86,7 +87,7 @@ export const ChatList = [
     {
         id: 5,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -96,7 +97,7 @@ export const ChatList = [
     {
         id: 6,
         img: faker.image.avatar(),
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -106,7 +107,7 @@ export const ChatList = [
     {
         id: 7,
         img: avatar,
-        name: faker.name.fullName(),
+        name: faker.person.fullName(),
         msg: 'How are you today?',
         time: '9:36',
         unread: 0,
@@ -219,3 +220,74 @@ export const Profile_Menu = [
     },
 ];
 
+export const SHARED_LINKS = [
+    {
+        type: 'msg',
+        subtype: 'link',
+        preview: faker.image.url(),
+        message: 'Can you please send this in file format?',
+        incoming: true,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'link',
+        preview: faker.image.url(),
+        message: 'Can you please send this in file format?',
+        incoming: true,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'link',
+        preview: faker.image.url(),
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+];
+
+export const SHARED_DOCS = [
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+    {
+        type: 'msg',
+        subtype: 'doc',
+        message: 'Can you please send this in file format?',
+        incoming: false,
+        outgoing: true,
+    },
+];

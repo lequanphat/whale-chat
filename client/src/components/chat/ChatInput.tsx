@@ -74,9 +74,9 @@ function ChatInput() {
                     startAdornment: (
                         <Stack>
                             <Stack position="relative" display={openActions ? 'block' : 'none'}>
-                                {Actions.map((item) => {
+                                {Actions.map((item, index) => {
                                     return (
-                                        <Tooltip title={item.title} placement="right">
+                                        <Tooltip key={index} title={item.title} placement="right">
                                             <Fab
                                                 color="primary"
                                                 aria-label="add"

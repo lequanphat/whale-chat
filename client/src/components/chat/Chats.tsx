@@ -40,7 +40,7 @@ const Chats = () => {
                     </Stack>
                     <Divider />
                 </Stack>
-                <Scrollbar direction="column" sx={{ flexGrow: 1, overflow: 'auto', height: '100%' }} spacing={2}>
+                <Scrollbar  scrollbar direction="column" sx={{ flexGrow: 1, overflow: 'auto', height: '100%' }} spacing={2}>
                     <Stack spacing={1.6}>
                         <Typography variant="subtitle2" sx={{ color: '#676767' }}>
                             Pinned

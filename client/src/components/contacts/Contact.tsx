@@ -1,36 +1,45 @@
-import { useTheme } from '@emotion/react';
-import { Avatar, Box, Button, Divider, IconButton, Stack, Switch, Typography } from '@mui/material';
+import { Avatar, Box, Button, Divider, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
-import { IoCloseOutline } from "react-icons/io5";
+import { IoCloseOutline } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
 import { PiPhoneLight } from 'react-icons/pi';
-import { MdBlock } from "react-icons/md";
+import { MdBlock } from 'react-icons/md';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useDispatch } from 'react-redux';
-import { ToggleSidebar } from '../../store/slices/appSlice';
+import { ToggleSidebar, UpdateSidebarType } from '../../store/slices/appSlice';
 import avatar from '../../assets/quanphat.jpg';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { Scrollbar } from '../scrollbar/Scrollbar';
+import { useState } from 'react';
+import BlockDialog from '../dialog/BlockDialog';
 
 function Contact() {
     const theme = useTheme();
-    const dispath = useDispatch();
+    const dispatch = useDispatch();
+    const [openBlock, setOpenBlock] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+    const handleCloseBlock = () => {
+        setOpenBlock(false);
+    };
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
     return (
         <Stack width={320} height="100%">
             <Box
                 sx={{
                     width: '100%',
                     boxShadow: '0px 0px 2px rgba(0,0,0,.25)',
-                    backgroundColor: theme.palette.mode === 'light' ? '#F8FAFF' : theme.palette.background,
+                    backgroundColor: theme.palette.mode === 'light' ? '#F8FAFF' : theme.palette.background.default,
                 }}
             >
                 <Stack direction="row" height={70} alignItems="center" justifyContent="space-between" spacing={3} p={2}>
                     <Typography variant="subtitle2">Contact Info</Typography>
                     <IconButton
                         onClick={() => {
-                            dispath(ToggleSidebar());
+                            dispatch(ToggleSidebar());
                         }}
                     >
                         <IoCloseOutline />
@@ -41,7 +50,7 @@ function Contact() {
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Avatar src={avatar} alt="avt" sx={{ width: 52, height: 52 }} />
                     <Stack spacing={0}>
-                        <Typography variant="article">Quan Phat</Typography>
+                        <Typography variant="body2">Quan Phat</Typography>
                         <Typography variant="caption">0383642670</Typography>
                     </Stack>
                 </Stack>
@@ -62,15 +71,19 @@ function Contact() {
                 <Divider />
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Typography variant="subtitle2">Media, Links and Docs</Typography>
-                    <IconButton>
+                    <IconButton
+                        onClick={() => {
+                            dispatch(UpdateSidebarType('SHARED'));
+                        }}
+                    >
                         <RxCaretRight size={26} />
                     </IconButton>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    {[1, 2, 3].map(() => {
+                    {[1, 2, 3].map((item) => {
                         return (
-                            <Box>
-                                <img src={faker.image.food()} alt={faker.name.fullName()} />
+                            <Box key={item}>
+                                <img src={faker.image.url()} alt={faker.person.fullName()} />
                             </Box>
                         );
                     })}
@@ -96,28 +109,44 @@ function Contact() {
                 <Divider />
                 <Typography variant="body1">2 group in common</Typography>
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={faker.image.food()} alt={faker.name.fullName()} />
+                    <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
                     <Stack>
                         <Typography variant="subtitle2">Coding Monk</Typography>
                         <Typography variant="caption">16 members</Typography>
                     </Stack>
                 </Stack>
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={faker.image.food()} alt={faker.name.fullName()} />
+                    <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
                     <Stack>
                         <Typography variant="subtitle2">Coding Monk</Typography>
                         <Typography variant="caption">16 members</Typography>
                     </Stack>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <Button startIcon={<MdBlock />} variant="outlined" fullWidth>
+                    <Button
+                        onClick={() => {
+                            setOpenBlock(true);
+                        }}
+                        startIcon={<MdBlock />}
+                        variant="outlined"
+                        fullWidth
+                    >
                         Block
                     </Button>
-                    <Button startIcon={<RiDeleteBin6Line />} variant="outlined" fullWidth>
+                    <Button
+                        onClick={() => {
+                            setOpenDelete(true);
+                        }}
+                        startIcon={<RiDeleteBin6Line />}
+                        variant="outlined"
+                        fullWidth
+                    >
                         Delete
                     </Button>
                 </Stack>
             </Scrollbar>
+            {openBlock && <BlockDialog open={openBlock} handleClose={handleCloseBlock} />}
+            {openDelete && <BlockDialog open={openDelete} handleClose={handleCloseDelete} />}
         </Stack>
     );
 }

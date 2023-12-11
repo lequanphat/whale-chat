@@ -51,8 +51,8 @@ const MessagesOption = () => {
                 }}
             >
                 <Stack spacing={1} px={1}>
-                    {Message_Option.map((item) => {
-                        return <MenuItem onClick={handleClose}>{item.title}</MenuItem>;
+                    {Message_Option.map((item, index) => {
+                        return <MenuItem key={index} onClick={handleClose}>{item.title}</MenuItem>;
                     })}
                 </Stack>
             </Menu>
@@ -130,8 +130,8 @@ const LinkMessage = ({ msg }) => {
                         <img src={msg.preview} alt={msg.message} style={{ maxHeight: 210 }} />
                     </Stack>
                     <Stack spacing={0.4}>
-                        <Typography variant="subtitle2">Create chat app hello</Typography>
-                        <Typography variant="body1" component={Link} to={'//https://www.youtube.com'}>
+                        <Typography variant="subtitle2">{msg.message}</Typography>
+                        <Typography variant="body1" component={Link} href={'https://www.youtube.com'}>
                             www.youtube.com
                         </Typography>
                     </Stack>

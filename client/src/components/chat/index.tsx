@@ -9,7 +9,7 @@ const Conversation = () => {
             <ChatHeader />
             {/* chat messages */}
             <Scrollbar
-                scrollbar
+                scrollbar={true}
                 sx={{
                     flexGrow: 1,
                     width: '100%',

@@ -28,7 +28,7 @@ export const ToggleSidebar = () => {
         dispatch(slice.actions.toggleSidebar());
     };
 };
-export const UpdateSidebarType = (type:string) => {
+export const UpdateSidebarType = (type: string) => {
     return async () => {
         dispatch(
             slice.actions.updateSidebarType({
