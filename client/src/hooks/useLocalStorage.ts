@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 
-// ----------------------------------------------------------------------
-
 export default function useLocalStorage(key: string, defaultValue: string) {
     const [value, setValue] = useState(() => {
         const storedValue = localStorage.getItem(key);

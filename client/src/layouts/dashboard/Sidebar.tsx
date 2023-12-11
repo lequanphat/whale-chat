@@ -65,10 +65,7 @@ const Sidebar = () => {
                                     key={item.index}
                                     sx={{
                                         width: 'max-content',
-                                        color:
-                                            theme.palette.mode === 'light'
-                                                ? theme.palette.primary.contrastText
-                                                : '#fff',
+                                        color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
                                     }}
                                     onClick={() => {
                                         setSelected(item.index);
@@ -82,7 +79,12 @@ const Sidebar = () => {
                         {selected === 3 ? (
                             <Box sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
                                 {' '}
-                                <IconButton sx={{ width: 'max-content', color: '#fff' }}>
+                                <IconButton
+                                    sx={{
+                                        width: 'max-content',
+                                        color: '#fff',
+                                    }}
+                                >
                                     <RiSettings3Line />
                                 </IconButton>
                             </Box>
@@ -93,7 +95,7 @@ const Sidebar = () => {
                                 }}
                                 sx={{
                                     width: 'max-content',
-                                    color: theme.palette.mode === 'light' ? theme.palette.primary.contrastText : '#fff',
+                                    color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
                                 }}
                             >
                                 <RiSettings3Line />

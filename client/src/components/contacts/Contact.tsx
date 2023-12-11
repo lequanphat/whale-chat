@@ -7,7 +7,7 @@ import { MdBlock } from 'react-icons/md';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useDispatch } from 'react-redux';
-import { ToggleSidebar, UpdateSidebarType } from '../../store/slices/appSlice';
+import { toggleSidebar, updateSidebarType } from '../../store/slices/appSlice';
 import avatar from '../../assets/quanphat.jpg';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
@@ -39,7 +39,7 @@ function Contact() {
                     <Typography variant="subtitle2">Contact Info</Typography>
                     <IconButton
                         onClick={() => {
-                            dispatch(ToggleSidebar());
+                            dispatch(toggleSidebar());
                         }}
                     >
                         <IoCloseOutline />
@@ -73,7 +73,7 @@ function Contact() {
                     <Typography variant="subtitle2">Media, Links and Docs</Typography>
                     <IconButton
                         onClick={() => {
-                            dispatch(UpdateSidebarType('SHARED'));
+                            dispatch(updateSidebarType({ type: 'SHARED' }));
                         }}
                     >
                         <RxCaretRight size={26} />

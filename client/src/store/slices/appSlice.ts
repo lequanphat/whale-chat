@@ -37,3 +37,5 @@ export const UpdateSidebarType = (type: string) => {
         );
     };
 };
+
+export const { toggleSidebar, updateSidebarType } = slice.actions;

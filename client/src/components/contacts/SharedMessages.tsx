@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { Grid, IconButton, Stack, Tab, Tabs, ThemeOptions, Typography } from '@mui/material';
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
-import { UpdateSidebarType } from '../../store/slices/appSlice';
+import {  updateSidebarType } from '../../store/slices/appSlice';
 import { useState } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { faker } from '@faker-js/faker';
@@ -35,7 +35,7 @@ export default function SharedMessages() {
             >
                 <IconButton
                     onClick={() => {
-                        dispatch(UpdateSidebarType('CONTACT'));
+                        dispatch(updateSidebarType({ type: 'CONTACT' }));
                     }}
                 >
                     <GoChevronLeft size={22} />
