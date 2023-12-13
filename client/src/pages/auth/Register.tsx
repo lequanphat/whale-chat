@@ -77,10 +77,18 @@ function Register() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#000',
+                backgroundColor: '#fff',
             }}
         >
-            <Box p={3} sx={{ width: '25rem', backgroundColor: 'white', borderRadius: 1 }}>
+            <Box
+                p={3}
+                sx={{
+                    width: '24rem',
+                    backgroundColor: 'white',
+                    borderRadius: 1,
+                    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+                }}
+            >
                 <Typography variant="h5" component="h1" mb={2}>
                     Register
                 </Typography>
@@ -145,7 +153,7 @@ function Register() {
                     error={confirmPasswordError}
                 />
                 {registerError && <p className="register-error">{registerError}</p>}
-                <Button type="submit" variant="contained" fullWidth>
+                <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
                     Register
                 </Button>
                 {/* <Stack direction="row" alignItems="center" width="100%" justifyContent="space-between" py={1.4}>
@@ -164,7 +172,7 @@ function Register() {
                         component="p"
                         sx={{ color: 'var(--primary-color)', cursor: 'pointer' }}
                         onClick={() => {
-                            navigate('/login');
+                            navigate('/auth/login');
                         }}
                     >
                         Login
