@@ -1,6 +1,7 @@
+
 /client/node_modules
 /server/node_modules
 /server/.env
 /client/.env
-/client/src/routes/index.tsx
-/client/src/layout/dashboard/index.tsx
+
+
