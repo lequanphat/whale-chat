@@ -1,9 +1,8 @@
 import { ComponentType, Suspense, lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from '../layouts/dashboard';
+import MainLayout from '../layouts/main';
 import { DEFAULT_PATH } from '../config';
-import Login from '../pages/auth/Login';
-import Register from '../pages/auth/Register';
 
 interface Props {}
 
@@ -18,18 +17,24 @@ const Loadable = (Component: ComponentType<Props>) => (props: Props) => {
 export default function Router() {
     return useRoutes([
         {
+            path: '/auth',
+            element: <MainLayout />,
+            children: [
+                { path: 'login', element: <Login /> },
+                { path: 'register', element: <Register /> },
+            ],
+        },
+        {
             path: '/',
             element: <DashboardLayout />,
             children: [
                 { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
                 { path: 'app', element: <GeneralApp /> },
                 { path: 'settings', element: <Settings /> },
-                { path: '404', element: <h1>404</h1> },
+                { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to="/404" replace /> },
             ],
         },
-        { path: '/login', element: <Login /> },
-        { path: '/register', element: <Register /> },
         { path: '*', element: <Navigate to="/404" replace /> },
     ]);
 }
@@ -37,3 +42,6 @@ export default function Router() {
 // dinamic import
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const Settings = Loadable(lazy(() => import('../pages/dashboard/Settings')));
+const Login = Loadable(lazy(() => import('../pages/auth/Login')));
+const Register = Loadable(lazy(() => import('../pages/auth/Register')));
+const Page404 = Loadable(lazy(() => import('../pages/errors/Page404')));

@@ -1,9 +1,17 @@
 import { Avatar, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { Scrollbar } from '../../components/scrollbar/Scrollbar';
-import { GoChevronLeft } from 'react-icons/go';
-import { IoBagOutline, IoKeyOutline, IoColorPaletteOutline } from 'react-icons/io5';
+import { GoChevronLeft, GoBell } from 'react-icons/go';
+import {
+    IoBagOutline,
+    IoKeyOutline,
+    IoColorPaletteOutline,
+    IoAlertCircleOutline,
+    IoImageOutline,
+    IoAccessibilityOutline,
+} from 'react-icons/io5';
+import { CiKeyboard } from 'react-icons/ci';
 import { faker } from '@faker-js/faker';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import ShortCuts from '../../components/dialog/ShortCuts';
 interface SettingsType {
     key: number;
@@ -11,58 +19,69 @@ interface SettingsType {
     title: string;
     onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
-const Settings_List: SettingsType[] = [
-    {
-        key: 0,
-        icon: <GoChevronLeft size={20} />,
-        title: 'Notifications',
-        onClick: () => {},
-    },
-    {
-        key: 1,
-        icon: <IoBagOutline size={20} />,
-        title: 'Privacy',
-        onClick: () => {},
-    },
-    {
-        key: 2,
-        icon: <IoKeyOutline size={20} />,
-        title: 'Security',
-        onClick: () => {},
-    },
-    {
-        key: 3,
-        icon: <IoColorPaletteOutline size={20} />,
-        title: 'Theme',
-        onClick: () => {},
-    },
-    {
-        key: 4,
-        icon: <GoChevronLeft />,
-        title: 'Chat Wallpaper',
-        onClick: () => {},
-    },
-    {
-        key: 5,
-        icon: <GoChevronLeft />,
-        title: 'Request Account Info',
-        onClick: () => {},
-    },
-    {
-        key: 6,
-        icon: <GoChevronLeft />,
-        title: 'Keyboarch Shortcuts',
-        onClick: () => {},
-    },
-    {
-        key: 7,
-        icon: <GoChevronLeft />,
-        title: 'Help',
-        onClick: () => {},
-    },
-];
+
 export default function Settings() {
     const theme = useTheme();
+    const [openShortcuts, setOpenShortcuts] = useState(false);
+    const handleOpenShortcuts = () => {
+        setOpenShortcuts(true);
+    };
+    const handleCloseShortcuts = () => {
+        setOpenShortcuts(false);
+    };
+    const Settings_List: SettingsType[] = useMemo(
+        () => [
+            {
+                key: 0,
+                icon: <GoBell size={19} />,
+                title: 'Notifications',
+                onClick: () => {},
+            },
+            {
+                key: 1,
+                icon: <IoBagOutline size={19} />,
+                title: 'Privacy',
+                onClick: () => {},
+            },
+            {
+                key: 2,
+                icon: <IoKeyOutline size={20} />,
+                title: 'Security',
+                onClick: () => {},
+            },
+            {
+                key: 3,
+                icon: <IoColorPaletteOutline size={20} />,
+                title: 'Theme',
+                onClick: () => {},
+            },
+            {
+                key: 4,
+                icon: <IoImageOutline size={20} />,
+                title: 'Chat Wallpaper',
+                onClick: () => {},
+            },
+            {
+                key: 5,
+                icon: <IoAccessibilityOutline size={20} />,
+                title: 'Request Account Info',
+                onClick: () => {},
+            },
+            {
+                key: 6,
+                icon: <CiKeyboard size={20} />,
+                title: 'Keyboarch Shortcuts',
+                onClick: handleOpenShortcuts,
+            },
+            {
+                key: 7,
+                icon: <IoAlertCircleOutline size={20} />,
+                title: 'Help',
+                onClick: () => {},
+            },
+        ],
+        [],
+    );
     return (
         <>
             <Stack direction="row" width="100%">
@@ -120,7 +139,7 @@ export default function Settings() {
                 </Scrollbar>
                 {/* Right Panel  */}
             </Stack>
-            <ShortCuts open={true} handleClose={() => {}} />
+            {openShortcuts && <ShortCuts open={openShortcuts} handleClose={handleCloseShortcuts} />}
         </>
     );
 }
