@@ -1,8 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import Transition from './Transition';
 
-export default function BlockDialog({ open, handleClose }) {
+export function SettingsDialog({ open, handleClose }) {
     return (
-        <Dialog open={open} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description">
+        <Dialog open={open} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description" TransitionComponent={Transition}>
             <DialogTitle>Block this contact</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description">

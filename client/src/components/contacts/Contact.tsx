@@ -13,7 +13,7 @@ import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useState } from 'react';
-import BlockDialog from '../dialog/BlockDialog';
+import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
 
 function Contact() {
     const theme = useTheme();
@@ -146,7 +146,7 @@ function Contact() {
                 </Stack>
             </Scrollbar>
             {openBlock && <BlockDialog open={openBlock} handleClose={handleCloseBlock} />}
-            {openDelete && <BlockDialog open={openDelete} handleClose={handleCloseDelete} />}
+            {openDelete && <DeleteDialog open={openDelete} handleClose={handleCloseDelete} />}
         </Stack>
     );
 }

@@ -1,4 +1,4 @@
-import { Box, Button, Divider, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Button, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { IoAlertCircleOutline } from 'react-icons/io5';
 import { CiSearch } from 'react-icons/ci';
 import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
@@ -6,7 +6,7 @@ import { MdOutlineArchive } from 'react-icons/md';
 import ChatElement from './ChatElement';
 import { ChatList } from '../../data';
 import { Scrollbar } from '../scrollbar/Scrollbar';
-import { useTheme } from '@emotion/react';
+
 const Chats = () => {
     const theme = useTheme();
     return (
