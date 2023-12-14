@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { loginSchema } from './Scheme';
-import { Typography, Button, Stack, Box } from '@mui/material';
-import logo from '../../assets/logo.png';
+import { Typography, Button, Stack } from '@mui/material';
 import AuthSocial from './AuthSocial';
 import AuthInput from '../../components/input/AuthInput';
+import AuthContainer from './AuthContainer';
 interface FormValues {
     username: string;
     password: string;
@@ -29,36 +29,35 @@ const Login = () => {
         initialValues,
         initialErrors,
         validationSchema: loginSchema,
-        onSubmit: (values) => {
-            console.log('Form submitted with values:', values);
-        },
+        onSubmit: undefined,
     });
 
-    // const handleLogin = async () => {
-    // e.preventDefault();
-    // // validate
-    // if (errors.password || errors.username) {
-    //     if (errors.password) {
-    //         setPasswordError(errors.password);
-    //     }
-    //     if (errors.username) {
-    //         setUsernameError(errors.username);
-    //     }
-    //     return;
-    // }
-    // // call api
-    // const response = await dispatch(
-    //     userLogin({
-    //         username: values.username,
-    //         password: values.password,
-    //     }),
-    // );
-    // if (response.error) {
-    //     setLoginError(response.payload.error);
-    //     return;
-    // }
-    // navigate('/');
-    // };
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        // validate
+        if (errors.password || errors.username) {
+            if (errors.password) {
+                setPasswordError(errors.password);
+            }
+            if (errors.username) {
+                setUsernameError(errors.username);
+            }
+            return;
+        }
+        // call api
+        // const response = await dispatch(
+        //     userLogin({
+        //         username: values.username,
+        //         password: values.password,
+        //     }),
+        // );
+        // if (response.error) {
+        //     setLoginError(response.payload.error);
+        //     return;
+        // }
+        setLoginError('Can not find username');
+        // navigate('/');
+    };
 
     // const googleLogin = async () => {
     //     window.open('http://localhost:2411/api/auth/login/google', '_self');
@@ -79,38 +78,13 @@ const Login = () => {
         setValues({ ...values, [event.target.name]: event.target.value });
     };
     return (
-        <Box
-            sx={{
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#fff',
-            }}
-        >
-            <Box
-                p={3}
-                sx={{
-                    width: '25rem',
-                    backgroundColor: 'white',
-                    borderRadius: 1,
-                    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
-                }}
-            >
-                <Stack direction="row" alignItems="center" spacing={1} justifyContent="start" pb={4}>
-                    <img src={logo} alt="logo" style={{ width: 60, height: 60 }} />
-                    <Typography variant="h5" component="h1" color={'#3498db'}>
-                        LOGIN
-                    </Typography>
-                </Stack>
-
+        <AuthContainer title="LOGIN">
+            <>
                 <AuthInput
                     title="Username"
                     name="username"
                     value={values.username}
                     error={usernameError}
-                    type={undefined}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setUsernameError, errors.username);
                     }}
@@ -119,11 +93,11 @@ const Login = () => {
                     }}
                 />
                 <AuthInput
+                    password
                     title="Password"
                     value={values.password}
                     name="password"
                     error={passwordError}
-                    type={'password'}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setPasswordError, errors.password);
                     }}
@@ -132,32 +106,38 @@ const Login = () => {
                     }}
                 />
 
-                {loginError && <p className="login-error">{loginError}</p>}
+                {loginError && (
+                    <Typography variant="body1" color={'#e74c3c'} fontSize={14} pb={1}>
+                        *{loginError}
+                    </Typography>
+                )}
                 <Button
                     type="submit"
                     variant="contained"
                     fullWidth
                     sx={{
-                        backgroundColor: '#3498db', // Màu nền của button
+                        bgcolor: '#3498db', // Màu nền của button
                         padding: '10px 24px', // Padding cho button
                         '&:hover': {
-                            backgroundColor: '#2980b9', // Màu nền hover
+                            bgcolor: '#2980b9', // Màu nền hover
                         },
                     }}
+                    onClick={handleLogin}
                 >
                     LOGIN
                 </Button>
                 <Typography
-                    variant="subtitle2"
+                    variant="body2"
+                    fontSize={14}
                     component="p"
-                    pt={1}
+                    pt={1.2}
                     color="#2980b9"
                     sx={{ cursor: 'pointer' }}
                     onClick={() => {
-                        alert('Ráng mà nhớ!! Có cái mật khẩu cũng quên!!');
+                        navigate('/auth/forgot-password');
                     }}
                 >
-                    Forgot password
+                    Forgot password ?
                 </Typography>
 
                 <AuthSocial />
@@ -177,8 +157,8 @@ const Login = () => {
                         Register
                     </Typography>
                 </Stack>
-            </Box>
-        </Box>
+            </>
+        </AuthContainer>
     );
 };
 

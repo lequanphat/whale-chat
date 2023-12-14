@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { registerSchema } from './Scheme';
 import Button from '@mui/material/Button';
-import { Box, Stack, Typography } from '@mui/material';
-import logo from '../../assets/logo.png';
+import { Stack, Typography } from '@mui/material';
 import AuthInput from '../../components/input/AuthInput';
+import AuthContainer from './AuthContainer';
 interface FormValues {
     username: string;
     email: string;
@@ -79,37 +79,13 @@ function Register() {
         handleChange(event);
     };
     return (
-        <Box
-            sx={{
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#fff',
-            }}
-        >
-            <Box
-                p={3}
-                sx={{
-                    width: '24rem',
-                    backgroundColor: 'white',
-                    borderRadius: 1,
-                    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
-                }}
-            >
-                <Stack direction="row" alignItems="center" spacing={1} justifyContent="start" pb={4}>
-                    <img src={logo} alt="logo" style={{ width: 60, height: 60 }} />
-                    <Typography variant="h5" component="h1" color={'#3498db'}>
-                        REGISTER
-                    </Typography>
-                </Stack>
+        <AuthContainer title="REGISTER">
+            <>
                 <AuthInput
                     title="Username"
                     name="username"
                     value={values.username}
                     error={usernameError}
-                    type={undefined}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setUsernameError, errors.username);
                     }}
@@ -122,7 +98,6 @@ function Register() {
                     name="email"
                     value={values.email}
                     error={emailError}
-                    type={undefined}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setEmailError, errors.email);
                     }}
@@ -131,11 +106,11 @@ function Register() {
                     }}
                 />
                 <AuthInput
+                    password
                     title="Password"
                     name="password"
                     value={values.password}
                     error={passwordError}
-                    type={undefined}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setPasswordError, errors.password);
                     }}
@@ -144,11 +119,11 @@ function Register() {
                     }}
                 />
                 <AuthInput
+                    password
                     title="Confirm Password"
                     name="confirmPassword"
                     value={values.confirmPassword}
                     error={confirmPasswordError}
-                    type={undefined}
                     handleBlur={(e) => {
                         handleBlurCustom(e, setconfirmPasswordError, errors.confirmPassword);
                     }}
@@ -156,7 +131,11 @@ function Register() {
                         handleChangeCustom(e, setconfirmPasswordError);
                     }}
                 />
-                {registerError && <p className="register-error">{registerError}</p>}
+                {registerError && (
+                    <Typography variant="body1" color={'#e74c3c'} fontSize={14} pb={1}>
+                        *{registerError}
+                    </Typography>
+                )}
                 <Button
                     type="submit"
                     variant="contained"
@@ -187,8 +166,8 @@ function Register() {
                         Login
                     </Typography>
                 </Stack>
-            </Box>
-        </Box>
+            </>
+        </AuthContainer>
     );
 }
 

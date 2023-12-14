@@ -1,12 +1,11 @@
 
-import { Avatar, Box, Divider, IconButton, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import StyledBadge from '../avatar/StyledBadge';
 import { IoSearchOutline, IoVideocamOutline } from 'react-icons/io5';
 import { PiPhoneLight } from "react-icons/pi";
 import { GoChevronDown } from 'react-icons/go';
-import { useTheme } from '@emotion/react';
 import quanphat from '../../assets/quanphat.jpg';
-import { ToggleSidebar } from '../../store/slices/appSlice';
+import { toggleSidebar } from '../../store/slices/appSlice';
 import { useDispatch } from 'react-redux';
 const ChatHeader = () => {
     const theme = useTheme();
@@ -25,7 +24,7 @@ const ChatHeader = () => {
                     <Box>
                         <StyledBadge
                             onClick={() => {
-                                dispatch(ToggleSidebar());
+                                dispatch(toggleSidebar());
                             }}
                             overlap="circular"
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -43,13 +42,13 @@ const ChatHeader = () => {
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <IconButton>
-                        <IoVideocamOutline />
+                        <IoVideocamOutline size={22} />
                     </IconButton>
                     <IconButton>
-                        <PiPhoneLight />
+                        <PiPhoneLight size={22} />
                     </IconButton>
                     <IconButton>
-                        <IoSearchOutline />
+                        <IoSearchOutline size={22} />
                     </IconButton>
                     <Divider orientation="vertical" flexItem />
                     <IconButton>

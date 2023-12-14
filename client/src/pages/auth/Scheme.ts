@@ -27,3 +27,14 @@ export const registerSchema = yup.object({
         .oneOf([yup.ref('password')], 'Invalid confirm password')
         .required('Please enter your confirm password'),
 });
+
+export const forgotPasswordSchema = yup.object({
+    email: yup.string().email('Invalid email').required('Please enter your email'),
+});
+export const resetPasswordSchema = yup.object({
+    password: passwordValidation,
+    confirmPassword: yup
+        .string()
+        .oneOf([yup.ref('password')], 'Invalid confirm password')
+        .required('Please enter your confirm password'),
+});
