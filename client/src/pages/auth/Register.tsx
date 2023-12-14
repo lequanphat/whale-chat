@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { registerSchema } from './Scheme';
-import TextInput from '../../components/input/TextInput';
 import Button from '@mui/material/Button';
 import { Box, Stack, Typography } from '@mui/material';
+import logo from '../../assets/logo.png';
+import AuthInput from '../../components/input/AuthInput';
 interface FormValues {
     username: string;
     email: string;
@@ -18,10 +19,10 @@ const initialValues: FormValues = {
     confirmPassword: '',
 };
 const initialErrors: FormValues = {
-    username: 'Please enter username',
-    email: 'Please enter email',
-    password: 'Please enter password',
-    confirmPassword: 'Please enter password',
+    username: 'Please enter your username',
+    email: 'Please enter your email',
+    password: 'Please enter your password',
+    confirmPassword: 'Please enter your password',
 };
 function Register() {
     const navigate = useNavigate();
@@ -97,80 +98,80 @@ function Register() {
                     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
                 }}
             >
-                <Typography variant="h5" component="h1" mb={2}>
-                    Register
-                </Typography>
-                <TextInput
+                <Stack direction="row" alignItems="center" spacing={1} justifyContent="start" pb={4}>
+                    <img src={logo} alt="logo" style={{ width: 60, height: 60 }} />
+                    <Typography variant="h5" component="h1" color={'#3498db'}>
+                        REGISTER
+                    </Typography>
+                </Stack>
+                <AuthInput
                     title="Username"
-                    placeholder={'Enter username'}
                     name="username"
-                    id="username"
                     value={values.username}
-                    onBlur={(e) => {
-                        handleBlurCustom(e, setUsernameError, errors.username);
-                    }}
-                    onChange={(e) => {
-                        handleChangeCustom(e, setUsernameError);
-                    }}
                     error={usernameError}
                     type={undefined}
+                    handleBlur={(e) => {
+                        handleBlurCustom(e, setUsernameError, errors.username);
+                    }}
+                    handleChange={(e) => {
+                        handleChangeCustom(e, setUsernameError);
+                    }}
                 />
-                <TextInput
+                <AuthInput
                     title="Email"
-                    placeholder={'Eg.nguyenvana@gmail.com'}
                     name="email"
-                    id="email"
                     value={values.email}
-                    onBlur={(e) => {
-                        handleBlurCustom(e, setEmailError, errors.email);
-                    }}
-                    onChange={(e) => {
-                        handleChangeCustom(e, setEmailError);
-                    }}
                     error={emailError}
                     type={undefined}
+                    handleBlur={(e) => {
+                        handleBlurCustom(e, setEmailError, errors.email);
+                    }}
+                    handleChange={(e) => {
+                        handleChangeCustom(e, setEmailError);
+                    }}
                 />
-                <TextInput
-                    type={'password'}
+                <AuthInput
                     title="Password"
-                    placeholder={'Enter password'}
                     name="password"
-                    id="password"
                     value={values.password}
-                    onBlur={(e) => {
+                    error={passwordError}
+                    type={undefined}
+                    handleBlur={(e) => {
                         handleBlurCustom(e, setPasswordError, errors.password);
                     }}
-                    onChange={(e) => {
+                    handleChange={(e) => {
                         handleChangeCustom(e, setPasswordError);
                     }}
-                    error={passwordError}
                 />
-                <TextInput
-                    type={'password'}
+                <AuthInput
                     title="Confirm Password"
-                    placeholder={'Enter confirm password'}
                     name="confirmPassword"
-                    id="confirmPassword"
                     value={values.confirmPassword}
-                    onBlur={(e) => {
+                    error={confirmPasswordError}
+                    type={undefined}
+                    handleBlur={(e) => {
                         handleBlurCustom(e, setconfirmPasswordError, errors.confirmPassword);
                     }}
-                    onChange={(e) => {
+                    handleChange={(e) => {
                         handleChangeCustom(e, setconfirmPasswordError);
                     }}
-                    error={confirmPasswordError}
                 />
                 {registerError && <p className="register-error">{registerError}</p>}
-                <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-                    Register
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                        backgroundColor: '#3498db', // Màu nền của button
+                        padding: '10px 24px', // Padding cho button
+                        '&:hover': {
+                            backgroundColor: '#2980b9', // Màu nền hover
+                        },
+                    }}
+                >
+                    JOIN NOW
                 </Button>
-                {/* <Stack direction="row" alignItems="center" width="100%" justifyContent="space-between" py={1.4}>
-                    <Divider sx={{ width: '35%' }} />
-                    <Typography variant="caption" sx={{ color: '#ccc' }}>
-                        Login with
-                    </Typography>
-                    <Divider sx={{ width: '35%' }} />
-                </Stack> */}
+
                 <Stack direction="row" justifyContent="center" alignItems="center" mt={3}>
                     <Typography variant="body1" component="p" mr={0.5}>
                         You already have an account?
@@ -178,7 +179,7 @@ function Register() {
                     <Typography
                         variant="body2"
                         component="p"
-                        sx={{ color: 'var(--primary-color)', cursor: 'pointer' }}
+                        sx={{ color: '#3498db', cursor: 'pointer' }}
                         onClick={() => {
                             navigate('/auth/login');
                         }}

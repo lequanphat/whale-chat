@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { loginSchema } from './Scheme';
-import { Typography, Button, Stack, Box, useTheme } from '@mui/material';
+import { Typography, Button, Stack, Box } from '@mui/material';
 import logo from '../../assets/logo.png';
 import AuthSocial from './AuthSocial';
 import AuthInput from '../../components/input/AuthInput';
@@ -16,11 +16,10 @@ const initialValues: FormValues = {
     password: '',
 };
 const initialErrors: FormValues = {
-    username: 'Please enter username',
-    password: 'Please enter password',
+    username: 'Please enter your username',
+    password: 'Please enter your password',
 };
 const Login = () => {
-    // const theme = useTheme();
     const navigate = useNavigate();
     const [loginError, setLoginError] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -170,7 +169,7 @@ const Login = () => {
                     <Typography
                         variant="body2"
                         component="p"
-                        sx={{ color: 'var(--primary-color)', cursor: 'pointer' }}
+                        sx={{ color: '#2980b9', cursor: 'pointer' }}
                         onClick={() => {
                             navigate('/auth/register');
                         }}
