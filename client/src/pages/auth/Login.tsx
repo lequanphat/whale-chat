@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { loginSchema } from './Scheme';
-import TextInput from '../../components/input/TextInput';
-import { Typography, Button, Stack, Box } from '@mui/material';
+import { Typography, Button, Stack, Box, useTheme } from '@mui/material';
+import logo from '../../assets/logo.png';
+import AuthSocial from './AuthSocial';
+import AuthInput from '../../components/input/AuthInput';
 interface FormValues {
     username: string;
     password: string;
@@ -17,13 +19,14 @@ const initialErrors: FormValues = {
     username: 'Please enter username',
     password: 'Please enter password',
 };
-function Login() {
+const Login = () => {
+    // const theme = useTheme();
     const navigate = useNavigate();
     const [loginError, setLoginError] = useState('');
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    const { values, handleBlur, handleChange, errors } = useFormik<FormValues>({
+    const { values, setValues, handleBlur, handleChange, errors } = useFormik({
         initialValues,
         initialErrors,
         validationSchema: loginSchema,
@@ -61,17 +64,21 @@ function Login() {
     // const googleLogin = async () => {
     //     window.open('http://localhost:2411/api/auth/login/google', '_self');
     // };
-    const handleBlurCustom = (event: any, setError: any, error: any) => {
+    const handleBlurCustom = (
+        event: React.FocusEvent<HTMLInputElement>,
+        setError: (error: string) => void,
+        error: string,
+    ) => {
         setError(error);
         setLoginError('');
         handleBlur(event);
     };
-    const handleChangeCustom = (event: any, setError: any) => {
+    const handleChangeCustom = (event: React.ChangeEvent<HTMLInputElement>, setError: (error: string) => void) => {
         setError('');
         setLoginError('');
         handleChange(event);
+        setValues({ ...values, [event.target.name]: event.target.value });
     };
-
     return (
         <Box
             sx={{
@@ -92,53 +99,69 @@ function Login() {
                     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
                 }}
             >
-                <Typography variant="h5" component="h1" mb={2}>
-                    LOGIN
-                </Typography>
-                <TextInput
+                <Stack direction="row" alignItems="center" spacing={1} justifyContent="start" pb={4}>
+                    <img src={logo} alt="logo" style={{ width: 60, height: 60 }} />
+                    <Typography variant="h5" component="h1" color={'#3498db'}>
+                        LOGIN
+                    </Typography>
+                </Stack>
+
+                <AuthInput
                     title="Username"
-                    placeholder={'Enter username'}
                     name="username"
-                    id="username"
                     value={values.username}
-                    onBlur={(e) => {
-                        handleBlurCustom(e, setUsernameError, errors.username);
-                    }}
-                    onChange={(e) => {
-                        handleChangeCustom(e, setUsernameError);
-                    }}
                     error={usernameError}
                     type={undefined}
+                    handleBlur={(e) => {
+                        handleBlurCustom(e, setUsernameError, errors.username);
+                    }}
+                    handleChange={(e) => {
+                        handleChangeCustom(e, setUsernameError);
+                    }}
                 />
-                <TextInput
+                <AuthInput
                     title="Password"
-                    placeholder={'Enter password'}
-                    name="password"
-                    type={'password'}
-                    id="password"
                     value={values.password}
-                    onBlur={(e) => {
+                    name="password"
+                    error={passwordError}
+                    type={'password'}
+                    handleBlur={(e) => {
                         handleBlurCustom(e, setPasswordError, errors.password);
                     }}
-                    onChange={(e) => {
+                    handleChange={(e) => {
                         handleChangeCustom(e, setPasswordError);
                     }}
-                    error={passwordError}
                 />
+
                 {loginError && <p className="login-error">{loginError}</p>}
-                <Button type="submit" variant="contained" fullWidth sx={{ mt: 1 }}>
-                    Login
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                        backgroundColor: '#3498db', // Màu nền của button
+                        padding: '10px 24px', // Padding cho button
+                        '&:hover': {
+                            backgroundColor: '#2980b9', // Màu nền hover
+                        },
+                    }}
+                >
+                    LOGIN
                 </Button>
-                <Typography variant="body1" component="p" py={1}>
+                <Typography
+                    variant="subtitle2"
+                    component="p"
+                    pt={1}
+                    color="#2980b9"
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => {
+                        alert('Ráng mà nhớ!! Có cái mật khẩu cũng quên!!');
+                    }}
+                >
                     Forgot password
                 </Typography>
-                {/* <Stack direction="row" alignItems="center" width="100%" justifyContent="space-between" py={1.4}>
-                    <Divider sx={{ width: '35%' }} />
-                    <Typography variant="caption" sx={{ color: '#ccc' }}>
-                        Login with
-                    </Typography>
-                    <Divider sx={{ width: '35%' }} />
-                </Stack> */}
+
+                <AuthSocial />
 
                 <Stack direction="row" justifyContent="center" mt={3}>
                     <Typography variant="body1" component="p" mr={0.5}>
@@ -158,6 +181,6 @@ function Login() {
             </Box>
         </Box>
     );
-}
+};
 
 export default Login;

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { RiSettings3Line } from 'react-icons/ri';
 import CustomSwitch from '../../components/switch/CustomSwitch';
 import avatar from '../../assets/avatar_4.jpg';
+import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 const Sidebar = () => {
@@ -33,14 +34,13 @@ const Sidebar = () => {
                 <Stack alignItems="center" spacing={4}>
                     <Box
                         sx={{
-                            backgroundColor: theme.palette.primary.main,
-                            height: 50,
-                            width: 50,
+                            height: 54,
+                            width: 54,
                             borderRadius: 1.5,
                             overflow: 'hidden',
                         }}
                     >
-                        <img src={avatar} alt="logo" style={{ objectFit: 'contain' }} />
+                        <img src={logo} alt="logo" />
                     </Box>
                     <Stack spacing={3} sx={{ width: 'max-content' }} direction="column" alignItems="center">
                         {Nav_Buttons.map((item) =>

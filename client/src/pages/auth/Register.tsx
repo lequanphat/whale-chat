@@ -5,6 +5,24 @@ import { registerSchema } from './Scheme';
 import TextInput from '../../components/input/TextInput';
 import Button from '@mui/material/Button';
 import { Box, Stack, Typography } from '@mui/material';
+interface FormValues {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+const initialValues: FormValues = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+};
+const initialErrors: FormValues = {
+    username: 'Please enter username',
+    email: 'Please enter email',
+    password: 'Please enter password',
+    confirmPassword: 'Please enter password',
+};
 function Register() {
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
@@ -13,18 +31,8 @@ function Register() {
     const [confirmPasswordError, setconfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
     const { values, errors, handleBlur, handleChange } = useFormik({
-        initialValues: {
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-        },
-        initialErrors: {
-            username: 'Please enter username',
-            email: 'Please enter email',
-            password: 'Please enter password',
-            confirmPassword: 'Please enter password',
-        },
+        initialValues,
+        initialErrors,
         validationSchema: registerSchema,
         onSubmit: (values) => {
             console.log('Form submitted with values:', values);
