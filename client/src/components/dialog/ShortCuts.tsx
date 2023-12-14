@@ -134,7 +134,7 @@ export default function ShortCuts({ open, handleClose }) {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" onClick={handleClose}>
+                <Button variant="outlined" onClick={handleClose}>
                     OK
                 </Button>
             </DialogActions>

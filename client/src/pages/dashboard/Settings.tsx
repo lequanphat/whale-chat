@@ -95,15 +95,15 @@ export default function Settings() {
                         boxShadow: '0px 0px 2px rgba(0,0,0,.25)',
                     }}
                 >
+                    {/* Header  */}
+                    <Stack direction="row" alignItems="center" p={1} spacing={0.4}>
+                        <IconButton>
+                            <GoChevronLeft />
+                        </IconButton>
+                        <Typography variant="h6">Settings</Typography>
+                    </Stack>
                     <Stack p={3.2} spacing={5}>
-                        {/* Header  */}
-                        <Stack direction="row" alignItems="center" spacing={0.4}>
-                            <IconButton>
-                                <GoChevronLeft />
-                            </IconButton>
-                            <Typography variant="h6">Settings</Typography>
-                        </Stack>
-                        {/* Profile  */}
+                        {/* Settings  */}
                         <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar
                                 sx={{ width: 54, height: 54 }}

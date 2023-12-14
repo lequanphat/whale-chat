@@ -33,6 +33,7 @@ export default function Router() {
                 { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
                 { path: 'app', element: <GeneralApp /> },
                 { path: 'settings', element: <Settings /> },
+                { path: 'profile', element: <Profile /> },
                 { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to="/404" replace /> },
             ],
@@ -44,6 +45,7 @@ export default function Router() {
 // dinamic import
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const Settings = Loadable(lazy(() => import('../pages/dashboard/Settings')));
+const Profile = Loadable(lazy(() => import('../pages/dashboard/Profile')));
 const Login = Loadable(lazy(() => import('../pages/auth/Login')));
 const Register = Loadable(lazy(() => import('../pages/auth/Register')));
 const ForgotPassword = Loadable(lazy(() => import('../pages/auth/ForgotPassword')));
