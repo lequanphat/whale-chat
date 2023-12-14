@@ -8,6 +8,7 @@
 /client/.env
 
 /client/src/routes/index.tsx
+/client/src/store/index.ts
 
 
 
