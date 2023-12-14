@@ -18,17 +18,17 @@ const corsOptions = {
     origin: ['http://localhost:9999'],
 };
 
-const store = session.MemoryStore();
+// const store = session.MemoryStore();
 
-app.use(
-    session({
-        secret: 'keyboard cat',
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false, maxAge: 1000 * 60 },
-        store: store,
-    }),
-);
+// app.use(
+//     session({
+//         secret: 'keyboard cat',
+//         resave: false,
+//         saveUninitialized: true,
+//         cookie: { secure: false, maxAge: 1000 * 60 },
+//         store: store,
+//     }),
+// );
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -43,6 +43,8 @@ app.use('/storage', express.static('storage'));
 
 routes(app);
 app.use(errorHandler)
+
+
 
 // connect to db
 mongoose
