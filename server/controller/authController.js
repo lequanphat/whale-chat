@@ -16,27 +16,42 @@ const authController = {
             if (error) {
                 return res.status(200).json({ msg: error.message, status: false });
             }
-
-            // check user exists
-            const emailCheck = await userModel.findOne({ email });
-            if (emailCheck) {
-                return res.status(200).json({ msg: 'Email is already used', status: false });
-            }
-
-            // create user
+            // hash pasword and generate verify code
             const salt = await brcypt.genSalt();
             const hashedPassword = await brcypt.hash(password, salt);
 
             const { verifyCode, verifyCodeExpiredTime } = OtpGenerator();
             console.log({ verifyCode });
-            const user = await userModel.create({
-                displayName: email,
-                email,
-                password: hashedPassword,
-                verified: false,
-                verifyCode: verifyCode,
-                verifyCodeExpiredTime: verifyCodeExpiredTime,
-            });
+
+            // check user exists
+            const emailCheck = await userModel.findOne({ email });
+            let user;
+            if (emailCheck) {
+                if (emailCheck.verified) {
+                    return res.status(200).json({ msg: 'Email is already used', status: false });
+                }
+                user = await userModel.findOneAndUpdate(
+                    { email },
+                    {
+                        $set: {
+                            password: hashedPassword,
+                            verifyCode: verifyCode,
+                            verifyCodeExpiredTime: verifyCodeExpiredTime,
+                        },
+                    },
+                    { new: true },
+                );
+            } else {
+                user = await userModel.create({
+                    displayName: email,
+                    email,
+                    password: hashedPassword,
+                    verified: false,
+                    verifyCode: verifyCode,
+                    verifyCodeExpiredTime: verifyCodeExpiredTime,
+                });
+            }
+
             const { error: er } = sendMail({
                 email,
                 subject: 'Verify your account',
@@ -61,10 +76,14 @@ const authController = {
             if (!user) {
                 return res.status(200).json({ msg: 'Verify-Code has expired', status: false });
             }
-            const newUser = await userModel.findOneAndUpdate({ _id: id }, { $set: { verified: true } }, { new: true });
+            const newUser = await userModel.findOneAndUpdate(
+                { _id: id },
+                { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
+                { new: true },
+            );
             return res.status(200).json({ newUser, status: true });
         } catch (error) {
-            return res.status(200).json({ msg: 'Error in verify account', status: false });
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
     login: async (req, res, next) => {
@@ -72,7 +91,7 @@ const authController = {
             // Authentication
             const { email, password } = req.body;
             const user = await userModel.findOne({ email });
-            if (!user) {
+            if (!user || (user && !user.verified)) {
                 return res.status(200).json({ msg: 'Incorrect email', status: false });
             }
             const isPasswordValid = await brcypt.compare(password, user.password);

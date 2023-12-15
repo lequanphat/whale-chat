@@ -6,17 +6,18 @@ Content-Type: application/json
 
 {
     "email": "lequanphat3579@gmail.com",
-    "password": "abc123123"
+    "password": "abc12345"
 }
 
 ###
+
 
 POST http://localhost:2411/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "123",
-    "password": ""
+    "email": "lequanphat3579@gmail.com",
+    "password": "abc12345"
 }
 
 ### 
