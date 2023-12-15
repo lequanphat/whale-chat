@@ -3,7 +3,7 @@ import * as yup from 'yup';
 const usernameValidation = yup
     .string()
     .matches(/^[a-zA-Z0-9]+$/, 'Username must only have number and characters')
-    .min(5, 'Username must have at least 10 characters')
+    .min(10, 'Username must have at least 10 characters')
     .max(25, 'Username must not exceed 25 charecters')
     .required('Please enter your username');
 
