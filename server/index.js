@@ -10,6 +10,7 @@ import { authenticateToken } from './middlewares/auth.js';
 // import passport from 'passport';
 // import passportService from './utils/passportService.js';
 import errorHandler from './middlewares/errors.js';
+import { MONGO_URL } from './config/index.js';
 dotenv.config();
 
 const app = express();
@@ -48,7 +49,7 @@ app.use(errorHandler)
 
 // connect to db
 mongoose
-    .connect(process.env.MONGO_URL)
+    .connect(MONGO_URL)
     .then(() => {
         // run port
         console.log('DB connection successfully');

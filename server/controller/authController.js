@@ -5,7 +5,8 @@ import brcypt from 'bcrypt';
 
 import { registerSchema } from '../utils/schemaService.js';
 import { OtpGenerator } from '../utils/OTPService.js';
-
+import { sendMail } from '../utils/MailService.js';
+import { BACKEND_SERVER_PATH } from '../config/index.js';
 const authController = {
     register: async (req, res, next) => {
         try {
@@ -26,18 +27,44 @@ const authController = {
             const salt = await brcypt.genSalt();
             const hashedPassword = await brcypt.hash(password, salt);
 
-            const { otp, otp_expiry_time } = OtpGenerator();
-            // const user = await userModel.create({
-            //     email,
-            //     password: hashedPassword,
-            //     verified: false,
-            //     verifyCode: otp,
-            //     verifyCodeExpiredTime: otp_expiry_time,
-            // });
-
-            return res.status(200).json({ msg: 'Send OTP successfully', otp, otp_expiry_time, status: false });
+            const { verifyCode, verifyCodeExpiredTime } = OtpGenerator();
+            console.log({ verifyCode });
+            const user = await userModel.create({
+                displayName: email,
+                email,
+                password: hashedPassword,
+                verified: false,
+                verifyCode: verifyCode,
+                verifyCodeExpiredTime: verifyCodeExpiredTime,
+            });
+            const { error: er } = sendMail({
+                email,
+                subject: 'Verify your account',
+                text: `Click the link to verify your account: ${BACKEND_SERVER_PATH}/api/auth/verify-account/${user.id}/${verifyCode}`,
+            });
+            if (er) {
+                return res.status(200).json({ msg: 'Error in send mail', status: false });
+            }
+            return res.status(200).json({ msg: 'Send OTP successfully', status: false });
         } catch (error) {
-            return res.status(200).json({ msg: 'Error in register', status: false });
+            return res.status(200).json({ msg: error.message, status: false });
+        }
+    },
+    verifyAccount: async (req, res, next) => {
+        try {
+            const { id, code } = req.params;
+            const user = await userModel.findOne({
+                _id: id,
+                verifyCode: code,
+                verifyCodeExpiredTime: { $gt: Date.now() },
+            });
+            if (!user) {
+                return res.status(200).json({ msg: 'Verify-Code has expired', status: false });
+            }
+            const newUser = await userModel.findOneAndUpdate({ _id: id }, { $set: { verified: true } }, { new: true });
+            return res.status(200).json({ newUser, status: true });
+        } catch (error) {
+            return res.status(200).json({ msg: 'Error in verify account', status: false });
         }
     },
     login: async (req, res, next) => {

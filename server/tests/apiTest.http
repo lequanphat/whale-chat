@@ -5,8 +5,8 @@ POST http://localhost:2411/api/auth/register
 Content-Type: application/json
 
 {
-    "email": "quanphat3579@gmail.com",
-    "password": "123123123"
+    "email": "lequanphat3579@gmail.com",
+    "password": "abc123123"
 }
 
 ###
@@ -15,7 +15,7 @@ POST http://localhost:2411/api/auth/login
 Content-Type: application/json
 
 {
-    "username": "123",
+    "email": "123",
     "password": ""
 }
 
