@@ -3,44 +3,50 @@ import { saveCookie } from '../utils/CookieService.mjs';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/JWTService.js';
 import brcypt from 'bcrypt';
 
+import { registerSchema } from '../utils/schemaService.js';
+import { OtpGenerator } from '../utils/OTPService.js';
+
 const authController = {
     register: async (req, res, next) => {
         try {
-            const { username, email, password } = req.body;
-            const usernameCheck = await userModel.findOne({ username });
-            if (usernameCheck) {
-                return res.status(200).json({ msg: 'Username is already used', status: false });
+            const { email, password } = req.body;
+            // check data
+            const { value, error } = registerSchema.validate({ email, password });
+            if (error) {
+                return res.status(200).json({ msg: error.message, status: false });
             }
+
+            // check user exists
             const emailCheck = await userModel.findOne({ email });
             if (emailCheck) {
                 return res.status(200).json({ msg: 'Email is already used', status: false });
             }
-            const hashedPassword = await brcypt.hash(password, 10);
 
-            const user = await userModel.create({
-                username,
-                email,
-                password: hashedPassword,
-            });
+            // create user
+            const salt = await brcypt.genSalt();
+            const hashedPassword = await brcypt.hash(password, salt);
 
-            const accessToken = signAccessToken({ id: user.id });
-            const refreshToken = signRefreshToken({ id: user.id });
-            saveCookie(res, 'access_token', accessToken);
-            saveCookie(res, 'refresh_token', refreshToken);
-            const { password: pw, ...newUser } = user;
-            console.log(newUser);
-            return res.status(200).json({ status: true, user: newUser });
+            const { otp, otp_expiry_time } = OtpGenerator();
+            // const user = await userModel.create({
+            //     email,
+            //     password: hashedPassword,
+            //     verified: false,
+            //     verifyCode: otp,
+            //     verifyCodeExpiredTime: otp_expiry_time,
+            // });
+
+            return res.status(200).json({ msg: 'Send OTP successfully', otp, otp_expiry_time, status: false });
         } catch (error) {
-            next(error);
+            return res.status(200).json({ msg: 'Error in register', status: false });
         }
     },
     login: async (req, res, next) => {
         try {
             // Authentication
-            const { username, password } = req.body;
-            const user = await userModel.findOne({ username });
+            const { email, password } = req.body;
+            const user = await userModel.findOne({ email });
             if (!user) {
-                return res.status(200).json({ msg: 'Incorrect username', status: false });
+                return res.status(200).json({ msg: 'Incorrect email', status: false });
             }
             const isPasswordValid = await brcypt.compare(password, user.password);
             if (!isPasswordValid) {
@@ -54,9 +60,9 @@ const authController = {
             saveCookie(res, 'refresh_token', refreshToken);
             const { password: pw, ...newUser } = user._doc;
             console.log(newUser);
-            return res.status(200).json({ user: newUser, status: true });
+            return res.status(200).json({ user: newUser, token: accessToken, status: true });
         } catch (error) {
-            next(error);
+            return res.status(200).json({ msg: 'Error in login', status: false });
         }
     },
     logout: async (req, res, next) => {

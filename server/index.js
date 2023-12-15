@@ -6,9 +6,9 @@ import routes from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import { authenticateToken } from './middlewares/auth.js';
-import session from 'express-session';
-import passport from 'passport';
-import passportService from './utils/passportService.js';
+// import session from 'express-session';
+// import passport from 'passport';
+// import passportService from './utils/passportService.js';
 import errorHandler from './middlewares/errors.js';
 dotenv.config();
 
@@ -30,8 +30,8 @@ const corsOptions = {
 //     }),
 // );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use(express.json());
 app.use(cookieParser());

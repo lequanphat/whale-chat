@@ -1,12 +1,22 @@
 ### check server
 
 
+POST http://localhost:2411/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "quanphat3579@gmail.com",
+    "password": "123123123"
+}
+
+###
+
 POST http://localhost:2411/api/auth/login
 Content-Type: application/json
 
 {
-    "username": "quanphat",
-    "password": "123123123"
+    "username": "123",
+    "password": ""
 }
 
 ### 
