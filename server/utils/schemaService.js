@@ -16,7 +16,7 @@ import Joi from 'joi';
 export const passwordSchema = Joi.string()
     .min(6)
     .max(20)
-    .pattern(new RegExp('^[a-zA-Z0-9]{6,20}$'))
+    .pattern(new RegExp(/^[a-zA-Z0-9]{6,20}$/))
     .message('Invalid password');
 
 export const registerSchema = Joi.object({

@@ -6,6 +6,7 @@ const passwordValidation = yup
     .string()
     .min(6, 'Password must have at least 6 characters')
     .max(20, 'Password must not exceed 20 characters')
+    .matches(/^[a-zA-Z0-9]{6,20}$/, 'Password only contains number and characters')
     .required('Please enter your password');
 
 const confirmPasswordValidation = yup

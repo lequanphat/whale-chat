@@ -108,7 +108,7 @@ export const userForgotPassword = createAsyncThunk(
 );
 export const userChangePassword = createAsyncThunk(
     'auth/change-password',
-    async (data: { password: string }, { rejectWithValue }) => {
+    async (data: { password: string; token: string }, { rejectWithValue }) => {
         try {
             const response = await api.post('/auth/change-password', data);
             if (response.data.status === false) {

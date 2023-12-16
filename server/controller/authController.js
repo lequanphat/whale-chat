@@ -11,7 +11,7 @@ const authController = {
     register: async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            // vallidate 
+            // vallidate
             const { value, error } = registerSchema.validate({ email, password });
             if (error) {
                 return res.status(200).json({ msg: error.message, status: false });
@@ -203,24 +203,22 @@ const authController = {
             }
             // sign token to change password
             const resetPasswordToken = signAccessToken({ id: user.id });
-            saveCookie(res, 'reset_password_token', resetPasswordToken);
             // redirect to change password ui
-            return res.redirect(`${CLIENT_URL}/auth/reset-password`);
+            return res.redirect(`${CLIENT_URL}/auth/reset-password/${resetPasswordToken}`);
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }
     },
     changePassword: async (req, res, next) => {
         try {
-            const { password } = req.body;
+            const { password, token } = req.body;
             // validate password
             const { error, value } = passwordSchema.validate(password);
             if (error) {
                 res.status(200).json({ msg: error.message, status: false });
             }
             // verify token
-            const reset_password_token = req.cookies['reset_password_token'];
-            const { err, data } = verifyAccessToken(reset_password_token);
+            const { err, data } = verifyAccessToken(token);
             if (err) {
                 return res.status(200).json({ msg: err.message, status: false });
             }
@@ -238,9 +236,7 @@ const authController = {
                     .status(200)
                     .json({ msg: 'Please confirm email before change your password.', status: false });
             }
-            // clear token after change password
-            res.clearCookie('reset_password_token');  
-            return res.status(200).json({ msg: 'Change password succesfully!', status: true }); 
+            return res.status(200).json({ msg: 'Change password succesfully!', status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }

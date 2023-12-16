@@ -4,7 +4,7 @@ import AuthInput from '../../components/input/AuthInput';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { resetPasswordSchema } from './Scheme';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from '../../store';
 import { userChangePassword } from '../../store/slices/authSlice';
@@ -19,6 +19,7 @@ const initialErrors = {
 export default function ResetPassword() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { token } = useParams();
     const [resetPasswordError, setResetPasswordError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
@@ -54,7 +55,7 @@ export default function ResetPassword() {
             }
             return;
         }
-        const response = await dispatch(userChangePassword({ password: values.password }));
+        const response = await dispatch(userChangePassword({ password: values.password, token }));
         if (response.error) {
             setResetPasswordError(response.payload.error);
             return;

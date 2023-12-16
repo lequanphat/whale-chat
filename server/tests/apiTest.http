@@ -34,16 +34,16 @@ POST http://localhost:2411/api/auth/forgot-password
 Content-Type: application/json
 
 {
-    "email": "lequanphat3579@gmail.com1"
+    "email": "lequanphat3579@gmail.com"
 }
 
 ###
 POST http://localhost:2411/api/auth/change-password
 Content-Type: application/json
-Cookie: reset_password_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2NhOWZjNDJlNDRmMzdjNWU1ZTBlOCIsImlhdCI6MTcwMjc0MTA2MCwiZXhwIjoxNzAyNzQxMzYwfQ.jBrXyhX2bPS1pMt5rAnSqiGJJFbxrGOku7EJiBgqCJU
 
 {
-    "password": "123"
+    "password": "abc123",
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2NhOWZjNDJlNDRmMzdjNWU1ZTBlOCIsImlhdCI6MTcwMjc0MzMxOSwiZXhwIjoxNzAyNzQzNjE5fQ.z7TsSQDAR53TgM4DD8cfLGa52xQlvjjXAbXRDbcmk9c"
 }
 
 ###
