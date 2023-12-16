@@ -52,12 +52,12 @@ const Login = () => {
             email: values.email,
             password: values.password,
         };
-        const response = dispatch(userLogin(data));
+        const response = await dispatch(userLogin(data));
         if (response.error) {
             setLoginError(response.payload.error);
             return;
         }
-        console.log(response.payload);
+        
     };
 
     // const googleLogin = async () => {

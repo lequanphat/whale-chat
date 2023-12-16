@@ -55,7 +55,13 @@ export const userSlice = createSlice({
                 state.avatar = '';
                 state.token = '';
             })
-            .addCase(userLogout.rejected, () => {});
+            .addCase(userLogout.rejected, () => {})
+            .addCase(userForgotPassword.pending, () => {})
+            .addCase(userForgotPassword.fulfilled, () => {})
+            .addCase(userForgotPassword.rejected, () => {})
+            .addCase(userChangePassword.pending, () => {})
+            .addCase(userChangePassword.fulfilled, () => {})
+            .addCase(userChangePassword.rejected, () => {});
     },
 });
 
@@ -80,11 +86,40 @@ export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWith
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
-        return response.data.user;
+        return response.data;
     } catch (error) {
         return rejectWithValue({ error });
     }
 });
+
+export const userForgotPassword = createAsyncThunk(
+    'auth/forgot-password',
+    async (data: { email: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/forgot-password', data);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return response.data;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
+export const userChangePassword = createAsyncThunk(
+    'auth/change-password',
+    async (data: { password: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/change-password', data);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return response.data;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
 
 export const { setUser, resetUser } = userSlice.actions;
 export default userSlice.reducer;

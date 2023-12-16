@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { resetPasswordSchema } from './Scheme';
 import { useNavigate } from 'react-router-dom';
 import { GoChevronLeft } from 'react-icons/go';
+import { useDispatch } from '../../store';
+import { userChangePassword } from '../../store/slices/authSlice';
 const initialValues = {
     password: '',
     confirmPassword: '',
@@ -15,7 +17,9 @@ const initialErrors = {
     confirmPassword: '',
 };
 export default function ResetPassword() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [resetPasswordError, setResetPasswordError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const { values, setValues, handleBlur, handleChange, errors } = useFormik({
@@ -29,13 +33,33 @@ export default function ResetPassword() {
         setError: (error: string) => void,
         error: string,
     ) => {
+        setResetPasswordError('');
         setError(error);
         handleBlur(event);
     };
     const handleChangeCustom = (event: React.ChangeEvent<HTMLInputElement>, setError: (error: string) => void) => {
         setError('');
+        setResetPasswordError('');
         handleChange(event);
         setValues({ ...values, [event.target.name]: event.target.value });
+    };
+
+    const handleChangePassword = async () => {
+        if (errors.password || errors.confirmPassword) {
+            if (errors.password) {
+                setPasswordError(errors.password);
+            }
+            if (errors.confirmPassword) {
+                setConfirmPasswordError(errors.confirmPassword);
+            }
+            return;
+        }
+        const response = await dispatch(userChangePassword({ password: values.password }));
+        if (response.error) {
+            setResetPasswordError(response.payload.error);
+            return;
+        }
+        navigate('/auth/login');
     };
     return (
         <AuthContainer title="RESET PASSWORD">
@@ -69,6 +93,11 @@ export default function ResetPassword() {
                         handleChangeCustom(e, setConfirmPasswordError);
                     }}
                 />
+                {resetPasswordError && (
+                    <Typography variant="body1" color={'#e74c3c'} fontSize={14} pb={1}>
+                        *{resetPasswordError}
+                    </Typography>
+                )}
                 <Button
                     type="submit"
                     variant="contained"
@@ -80,9 +109,7 @@ export default function ResetPassword() {
                             bgcolor: '#2980b9', // Màu nền hover
                         },
                     }}
-                    onClick={() => {
-                        navigate('/auth/reset-password');
-                    }}
+                    onClick={handleChangePassword}
                 >
                     SUBMIT
                 </Button>

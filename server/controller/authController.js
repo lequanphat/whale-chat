@@ -3,15 +3,15 @@ import { saveCookie } from '../utils/CookieService.mjs';
 import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../utils/JWTService.js';
 import brcypt from 'bcrypt';
 
-import { registerSchema } from '../utils/schemaService.js';
+import { passwordSchema, registerSchema } from '../utils/schemaService.js';
 import { OtpGenerator } from '../utils/OTPService.js';
 import { sendMail } from '../utils/MailService.js';
-import { BACKEND_SERVER_PATH } from '../config/index.js';
+import { BACKEND_SERVER_PATH, CLIENT_URL } from '../config/index.js';
 const authController = {
     register: async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            // check data
+            // vallidate 
             const { value, error } = registerSchema.validate({ email, password });
             if (error) {
                 return res.status(200).json({ msg: error.message, status: false });
@@ -52,7 +52,7 @@ const authController = {
                     avatar: `${BACKEND_SERVER_PATH}/storage/default_avatar.jpeg`,
                 });
             }
-
+            // send mail
             const { error: er } = sendMail({
                 email,
                 subject: 'Verify your account',
@@ -61,6 +61,7 @@ const authController = {
             if (er) {
                 return res.status(200).json({ msg: 'Error in send mail', status: false });
             }
+            // response
             return res.status(200).json({ msg: 'Send OTP successfully', status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
@@ -69,6 +70,7 @@ const authController = {
     verifyAccount: async (req, res, next) => {
         try {
             const { id, code } = req.params;
+            // check user exists
             const user = await userModel.findOne({
                 _id: id,
                 verifyCode: code,
@@ -77,11 +79,13 @@ const authController = {
             if (!user) {
                 return res.status(200).json({ msg: 'Verify-Code has expired', status: false });
             }
+            // verify account
             const newUser = await userModel.findOneAndUpdate(
                 { _id: id },
                 { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
                 { new: true },
             );
+            // response
             return res.status(200).json({ newUser, status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
@@ -116,8 +120,10 @@ const authController = {
     },
     logout: async (req, res, next) => {
         try {
+            // clear all tokens
             res.clearCookie('access_token');
             res.clearCookie('refresh_token');
+            // response
             return res.status(200).json({ msg: 'logout', status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
@@ -154,16 +160,18 @@ const authController = {
     forgotPassword: async (req, res, next) => {
         try {
             const { email } = req.body;
+            // gen verify code
             const { verifyCode, verifyCodeExpiredTime } = OtpGenerator();
+            // check user exists and assign verify-code
             const user = await userModel.findOneAndUpdate(
                 { email },
                 { $set: { verifyCode, verifyCodeExpiredTime } },
                 { new: true },
             );
             if (!user) {
-                return res.status(200).json({ msg: 'Could not find any accounts with this email.', status: false });
+                return res.status(200).json({ msg: 'There is no user with this email address', status: false });
             }
-
+            // send mail
             const { error: er } = sendMail({
                 email,
                 subject: 'Change password',
@@ -172,6 +180,7 @@ const authController = {
             if (er) {
                 return res.status(200).json({ msg: 'Error in send mail', status: false });
             }
+            // response
             return res.status(200).json({ msg: 'Send OTP successfully', status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
@@ -180,6 +189,7 @@ const authController = {
     verifyChangePassword: async (req, res, next) => {
         try {
             const { id, code } = req.params;
+            // check user exists
             const user = await userModel.findOneAndUpdate(
                 {
                     _id: id,
@@ -191,9 +201,11 @@ const authController = {
             if (!user) {
                 return res.status(200).json({ msg: 'Verify-Code has expired', status: false });
             }
+            // sign token to change password
             const resetPasswordToken = signAccessToken({ id: user.id });
             saveCookie(res, 'reset_password_token', resetPasswordToken);
-            return res.status(200).json({ resetPasswordToken, status: true });
+            // redirect to change password ui
+            return res.redirect(`${CLIENT_URL}/auth/reset-password`);
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }
@@ -201,14 +213,18 @@ const authController = {
     changePassword: async (req, res, next) => {
         try {
             const { password } = req.body;
+            // validate password
+            const { error, value } = passwordSchema.validate(password);
+            if (error) {
+                res.status(200).json({ msg: error.message, status: false });
+            }
+            // verify token
             const reset_password_token = req.cookies['reset_password_token'];
-            console.log(req);
-            console.log(reset_password_token);
             const { err, data } = verifyAccessToken(reset_password_token);
             if (err) {
                 return res.status(200).json({ msg: err.message, status: false });
             }
-            console.log(data);
+            // hash password
             const salt = await brcypt.genSalt();
             const hashedPassword = await brcypt.hash(password, salt);
             const user = await userModel.findOneAndUpdate(
@@ -216,11 +232,15 @@ const authController = {
                 { $set: { password: hashedPassword } },
                 { new: true },
             );
+            // check user exists
             if (!user) {
-                return res.status(200).json({ msg: 'Can not find user', status: false });
+                return res
+                    .status(200)
+                    .json({ msg: 'Please confirm email before change your password.', status: false });
             }
-
-            return res.status(200).json({ user, status: true }); // redirect login
+            // clear token after change password
+            res.clearCookie('reset_password_token');  
+            return res.status(200).json({ msg: 'Change password succesfully!', status: true }); 
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }
