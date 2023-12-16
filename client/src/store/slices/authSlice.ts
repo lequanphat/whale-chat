@@ -1,179 +1,90 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { autoLogin, setAvatar } from '../../api/internal';
-import authApi from '../../api/authApi';
+import api from '../../api/internal';
+import { authType } from '../interface';
 
-const initialState = {
+const initialState: authType = {
     id: '',
     email: '',
-    username: '',
+    displayName: '',
     avatar: '',
     auth: false,
+    token: '',
+    isLoading: false,
 };
 
 export const userSlice = createSlice({
-    name: 'user',
+    name: 'auth',
     initialState: initialState,
     reducers: {
         setUser: (state, action) => {
-            const { id, username, email, auth, avatar } = action.payload;
+            const { id, email, displayName, auth, avatar, token } = action.payload;
             state.id = id;
-            state.username = username;
             state.email = email;
+            state.displayName = displayName;
             state.avatar = avatar;
             state.auth = auth;
+            state.token = token;
         },
-        resetUser: (state, action) => {
+        resetUser: (state) => {
             state.id = '';
-            state.username = '';
             state.email = '';
+            state.displayName = '';
             state.auth = false;
             state.avatar = '';
-        },
-        setAvatarUser: (state, action) => {
-            const { avatar } = action.payload;
-            state.avatar = avatar;
+            state.token = '';
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(userLogin.pending, (state) => {})
+            .addCase(userLogin.pending, () => {})
             .addCase(userLogin.fulfilled, (state, action) => {
                 state.id = action.payload._id;
                 state.email = action.payload.email;
-                state.username = action.payload.username;
+                state.displayName = action.payload.displayName;
                 state.avatar = action.payload.avatar;
+                state.token = action.payload.token;
                 state.auth = true;
             })
-            .addCase(userLogin.rejected, (state, error) => {})
-            .addCase(userRegister.pending, (state) => {})
-            .addCase(userRegister.fulfilled, (state, action) => {
-                state.id = action.payload._id;
-                state.email = action.payload.email;
-                state.username = action.payload.username;
-                state.avatar = action.payload.avatar;
-                state.auth = true;
-            })
-            .addCase(userRegister.rejected, (state, error) => {})
-            .addCase(userSetAvatar.pending, (state) => {})
-            .addCase(userSetAvatar.fulfilled, (state, action) => {
-                state.avatar = action.payload.avatar;
-            })
-            .addCase(userSetAvatar.rejected, (state, error) => {})
-            .addCase(userLogout.pending, (state) => {})
-            .addCase(userLogout.fulfilled, (state, action) => {
+            .addCase(userLogin.rejected, () => {})
+            .addCase(userLogout.pending, () => {})
+            .addCase(userLogout.fulfilled, (state) => {
                 state.id = '';
-                state.username = '';
                 state.email = '';
-                state.avatar = '';
+                state.displayName = '';
                 state.auth = false;
+                state.avatar = '';
+                state.token = '';
             })
-            .addCase(userLogout.rejected, (state, error) => {})
-            .addCase(userRefresh.pending, (state) => {})
-            .addCase(userRefresh.fulfilled, (state, action) => {
-                state.id = action.payload._id;
-                state.username = action.payload.username;
-                state.email = action.payload.email;
-                state.avatar = action.payload.avatar;
-                state.auth = action.payload.auth;
-            })
-            .addCase(userRefresh.rejected, (state, error) => {})
-            .addCase(getUser.pending, (state) => {})
-            .addCase(getUser.fulfilled, (state, action) => {
-                state.id = action.payload._id;
-                state.username = action.payload.username;
-                state.email = action.payload.email;
-                state.avatar = action.payload.avatar;
-                state.auth = true;
-            })
-            .addCase(getUser.rejected, (state, error) => {});
+            .addCase(userLogout.rejected, () => {});
     },
 });
 
-export const userLogin = createAsyncThunk('user/login', async (data, { rejectWithValue }) => {
+export const userLogin = createAsyncThunk(
+    'auth/login',
+    async (data: { email: string; password: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/login', data);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return response.data.user;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
+
+export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
     try {
-        const response = await authApi.post('/api/auth/login', data);
+        const response = await api.post('/auth/logout');
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
         return response.data.user;
     } catch (error) {
-        return rejectWithValue({ error: 'error in login' });
-    }
-});
-export const userRegister = createAsyncThunk('user/register', async (data, { rejectWithValue }) => {
-    try {
-        const response = await authApi.post('/api/auth/register', data);
-        if (response.data.status === false) {
-            return rejectWithValue({ error: response.data.msg });
-        }
-        return response.data.user;
-    } catch (error) {
-        return rejectWithValue({ error: 'error in register' });
-    }
-});
-export const userSetAvatar = createAsyncThunk('user/set-avatar', async (data, { rejectWithValue }) => {
-    try {
-        const response = await setAvatar(data.id, { avatar: data.avatar });
-
-        if (response.data.status === false) {
-            return rejectWithValue({ error: response.data.msg });
-        }
-        return response.data.user;
-    } catch (error) {
-        return rejectWithValue({ error: 'error in set avatar' });
-    }
-});
-export const userLogout = createAsyncThunk('user/logout', async (data, { rejectWithValue }) => {
-    try {
-        const response = await api.post('/api/auth/logout');
-        if (response.response?.data?.message) {
-            rejectWithValue({ error: response.response.data.message });
-            return;
-        }
-        return { msg: 'logout' };
-    } catch (error) {
-        return rejectWithValue({ error: 'error in logout' });
-    }
-});
-export const getUser = createAsyncThunk('user/get-user', async (data, { rejectWithValue }) => {
-    try {
-        const response = await api.get('/api/user/user');
-        if (!response.data.user) {
-            rejectWithValue({ error: 'Unauthorizied ...' });
-            return;
-        }
-        return response.data.user;
-    } catch (error) {
-        return rejectWithValue({ error: 'error in get user' });
-    }
-});
-export const userRefresh = createAsyncThunk('user/refresh', async (data, { rejectWithValue }) => {
-    try {
-        const response = await autoLogin();
-        if (response.status === 200) {
-            const user = {
-                _id: response.data.user._id,
-                email: response.data.user.email,
-                username: response.data.user.username,
-                avatar: response.data.user.avatar,
-                auth: true,
-            };
-            return user;
-        } else {
-            const user = {
-                _id: '',
-                email: '',
-                username: '',
-                avatar: '',
-                auth: false,
-            };
-            return user;
-        }
-    } catch (error) {
-        return rejectWithValue({ error: 'error in refresh' });
+        return rejectWithValue({ error });
     }
 });
 
-
-export const { setUser, resetUser, setAvatarUser } = userSlice.actions;
+export const { setUser, resetUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -6,7 +6,10 @@ import avatar from '../../assets/avatar_4.jpg';
 import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
+import { useDispatch } from '../../store';
+import { userLogout } from '../../store/slices/authSlice';
 const Sidebar = () => {
+    const dispatch = useDispatch();
     const [selected, setSelected] = useState(0);
     const theme = useTheme();
     const { onToggleMode } = useSettings();
@@ -123,7 +126,14 @@ const Sidebar = () => {
                         <Stack spacing={1} px={1}>
                             {Profile_Menu.map((item, index) => {
                                 return (
-                                    <MenuItem key={index}>
+                                    <MenuItem
+                                        key={index}
+                                        onClick={() => {
+                                            if (index == 2) {
+                                                dispatch(userLogout());
+                                            }
+                                        }}
+                                    >
                                         <Stack
                                             width={100}
                                             direction="row"

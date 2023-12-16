@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { dispatch } from '../index';
+import { appType } from '../interface';
 
-const initialState = {
+const initialState: appType = {
     sidebar: {
         open: false,
         type: 'CONTACT', // CONTACT, STARRED, SHARED
@@ -22,20 +22,5 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
-
-export const ToggleSidebar = () => {
-    return async () => {
-        dispatch(slice.actions.toggleSidebar());
-    };
-};
-export const UpdateSidebarType = (type: string) => {
-    return async () => {
-        dispatch(
-            slice.actions.updateSidebarType({
-                type,
-            }),
-        );
-    };
-};
 
 export const { toggleSidebar, updateSidebarType } = slice.actions;

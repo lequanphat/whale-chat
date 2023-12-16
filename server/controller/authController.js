@@ -49,6 +49,7 @@ const authController = {
                     verified: false,
                     verifyCode: verifyCode,
                     verifyCodeExpiredTime: verifyCodeExpiredTime,
+                    avatar: `${BACKEND_SERVER_PATH}/storage/default_avatar.jpeg`,
                 });
             }
 
@@ -104,20 +105,22 @@ const authController = {
             const refreshToken = signRefreshToken({ id: user.id });
             saveCookie(res, 'access_token', accessToken);
             saveCookie(res, 'refresh_token', refreshToken);
-            const { password: pw, ...newUser } = user._doc;
-            console.log(newUser);
-            return res.status(200).json({ user: newUser, token: accessToken, status: true });
+            // filter data
+            const { _id: id, displayName, email: em, avatar } = user._doc;
+            return res
+                .status(200)
+                .json({ user: { id, displayName, email: em, avatar, token: accessToken }, status: true });
         } catch (error) {
-            return res.status(200).json({ msg: 'Error in login', status: false });
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
     logout: async (req, res, next) => {
         try {
             res.clearCookie('access_token');
             res.clearCookie('refresh_token');
-            return res.json({ msg: 'logout' });
+            return res.status(200).json({ msg: 'logout', status: true });
         } catch (error) {
-            next(error);
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
     refreshToken: async (req, res, next) => {
