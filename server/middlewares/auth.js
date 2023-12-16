@@ -6,7 +6,9 @@ const authenticateToken = (req, res, next) => {
         req.originalUrl === '/api/auth/login' ||
         req.originalUrl === '/api/auth/register' ||
         req.originalUrl === '/api/auth/refresh-token' ||
+        req.originalUrl === '/api/auth/forgot-password' ||
         req.originalUrl.includes('/api/auth/verify-account/') ||
+        req.originalUrl.includes('/api/auth/change-password') ||
         req.originalUrl.includes('storage')
     ) {
         return next(); // Cho phép tiếp tục nếu là route login hoặc register

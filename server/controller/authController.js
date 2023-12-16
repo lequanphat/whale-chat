@@ -1,6 +1,6 @@
 import userModel from '../model/userModel.js';
 import { saveCookie } from '../utils/CookieService.mjs';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/JWTService.js';
+import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../utils/JWTService.js';
 import brcypt from 'bcrypt';
 
 import { registerSchema } from '../utils/schemaService.js';
@@ -60,7 +60,7 @@ const authController = {
             if (er) {
                 return res.status(200).json({ msg: 'Error in send mail', status: false });
             }
-            return res.status(200).json({ msg: 'Send OTP successfully', status: false });
+            return res.status(200).json({ msg: 'Send OTP successfully', status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }
@@ -146,6 +146,80 @@ const authController = {
             });
         } catch (error) {
             return next(new Error('Unauthorized kkk'));
+        }
+    },
+    forgotPassword: async (req, res, next) => {
+        try {
+            const { email } = req.body;
+            const { verifyCode, verifyCodeExpiredTime } = OtpGenerator();
+            const user = await userModel.findOneAndUpdate(
+                { email },
+                { $set: { verifyCode, verifyCodeExpiredTime } },
+                { new: true },
+            );
+            if (!user) {
+                return res.status(200).json({ msg: 'Could not find any accounts with this email.', status: false });
+            }
+
+            const { error: er } = sendMail({
+                email,
+                subject: 'Change password',
+                text: `Click the link to change your password: ${BACKEND_SERVER_PATH}/api/auth/change-password/${user.id}/${verifyCode}`,
+            });
+            if (er) {
+                return res.status(200).json({ msg: 'Error in send mail', status: false });
+            }
+            return res.status(200).json({ msg: 'Send OTP successfully', status: true });
+        } catch (error) {
+            return res.status(200).json({ msg: error.message, status: false });
+        }
+    },
+    verifyChangePassword: async (req, res, next) => {
+        try {
+            const { id, code } = req.params;
+            const user = await userModel.findOneAndUpdate(
+                {
+                    _id: id,
+                    verifyCode: code,
+                    verifyCodeExpiredTime: { $gt: Date.now() },
+                },
+                { $set: { verifyCode: '', verifyCodeExpiredTime: 0 } },
+            );
+            if (!user) {
+                return res.status(200).json({ msg: 'Verify-Code has expired', status: false });
+            }
+            const resetPasswordToken = signAccessToken({ id: user.id });
+            saveCookie(res, 'reset_password_token', resetPasswordToken);
+            return res.status(200).json({ resetPasswordToken, status: true });
+        } catch (error) {
+            return res.status(200).json({ msg: error.message, status: false });
+        }
+    },
+    changePassword: async (req, res, next) => {
+        try {
+            const { password } = req.body;
+            const reset_password_token = req.cookies['reset_password_token'];
+            console.log(req);
+            console.log(reset_password_token);
+            const { err, data } = verifyAccessToken(reset_password_token);
+            if (err) {
+                return res.status(200).json({ msg: err.message, status: false });
+            }
+            console.log(data);
+            const salt = await brcypt.genSalt();
+            const hashedPassword = await brcypt.hash(password, salt);
+            const user = await userModel.findOneAndUpdate(
+                { _id: data.id },
+                { $set: { password: hashedPassword } },
+                { new: true },
+            );
+            if (!user) {
+                return res.status(200).json({ msg: 'Can not find user', status: false });
+            }
+
+            return res.status(200).json({ user, status: true });
+        } catch (error) {
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
 };

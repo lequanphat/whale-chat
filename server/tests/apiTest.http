@@ -17,11 +17,29 @@ Content-Type: application/json
 
 {
     "email": "lequanphat3579@gmail.com",
-    "password": "abc12345"
+    "password": "abczyz123"
 }
 
-### 
+###
 
+POST http://localhost:2411/api/auth/forgot-password
+Content-Type: application/json
+
+{
+    "email": "lequanphat3579@gmail.com"
+}
+
+###
+
+POST http://localhost:2411/api/auth/change-password
+Content-Type: application/json
+Cookie: reset_password_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2NhOWZjNDJlNDRmMzdjNWU1ZTBlOCIsImlhdCI6MTcwMjcxMzUxOSwiZXhwIjoxNzAyNzEzODE5fQ.ErPj7VO5hMmUGFrWWcJlAODLUphCQxYhK47HO_moSMo
+
+{
+    "password": "abczyz123"
+}
+
+###
 POST http://localhost:2411/api/auth/logout
 Content-Type: application/json
 # Set-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NmI2ZTViNjg0ODViZDdhOWI2MTYwYyIsImlhdCI6MTcwMTc2NjEzMCwiZXhwIjoxNzAxNzY3OTMwfQ.2suBhtT392ZsJZ26VOugS7aAZE635gl4xh72Fbh-otw
