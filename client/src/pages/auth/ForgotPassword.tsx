@@ -1,4 +1,4 @@
-import { Button, IconButton, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { GoChevronLeft } from 'react-icons/go';
 import AuthContainer from './AuthContainer';
 import AuthInput from '../../components/input/AuthInput';
@@ -69,11 +69,10 @@ export default function ForgotPassword() {
                     onClick={() => {
                         navigate('/auth/register');
                     }}
+                    color="#999"
                 >
-                    <IconButton>
-                        <GoChevronLeft />
-                    </IconButton>
-                    <Typography variant="body2" color="#999" fontSize={14}>
+                    <GoChevronLeft size={22} />
+                    <Typography variant="body2"  fontSize={14}>
                         Return to Register
                     </Typography>
                 </Stack>

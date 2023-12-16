@@ -217,7 +217,7 @@ const authController = {
                 return res.status(200).json({ msg: 'Can not find user', status: false });
             }
 
-            return res.status(200).json({ user, status: true });
+            return res.status(200).json({ user, status: true }); // redirect login
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }

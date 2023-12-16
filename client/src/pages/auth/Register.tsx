@@ -6,20 +6,18 @@ import Button from '@mui/material/Button';
 import { Stack, Typography } from '@mui/material';
 import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
+import AuthSocial from './AuthSocial';
 interface FormValues {
-    username: string;
     email: string;
     password: string;
     confirmPassword: string;
 }
 const initialValues: FormValues = {
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',
 };
 const initialErrors: FormValues = {
-    username: 'Please enter your username',
     email: 'Please enter your email',
     password: 'Please enter your password',
     confirmPassword: 'Please enter your password',
@@ -27,7 +25,6 @@ const initialErrors: FormValues = {
 function Register() {
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
-    const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setconfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -40,34 +37,22 @@ function Register() {
         },
     });
 
-    // const handleRegister = async () => {
-    //     e.preventDefault();
-    //     // validate
-    //     if (errors.password || errors.username || errors.confirmPassword || errors.email) {
-    //         if (errors.password) {
-    //             setPasswordError(errors.password);
-    //         }
-    //         if (errors.username) {
-    //             setUsernameError(errors.username);
-    //         }
-    //         if (errors.email) {
-    //             setEmailError(errors.email);
-    //         }
-    //         if (errors.confirmPassword) {
-    //             setconfirmPasswordError(errors.confirmPassword);
-    //         }
-    //         return;
-    //     }
-    //     // call api
-    //     const { username, email, password, confirmPassword } = values;
-    //     const response = await dispatch(userRegister({ username, email, password, confirmPassword }));
-    //     if (response.error) {
-    //         setRegisterError(response.payload.error);
-    //         return;
-    //     }
-    //     console.log(response);
-    //     navigate('/set-avatar/' + response.payload._id);
-    // };
+    const handleRegister = async () => {
+        // validate
+        if (errors.password || errors.confirmPassword || errors.email) {
+            if (errors.password) {
+                setPasswordError(errors.password);
+            }
+            if (errors.email) {
+                setEmailError(errors.email);
+            }
+            if (errors.confirmPassword) {
+                setconfirmPasswordError(errors.confirmPassword);
+            }
+            return;
+        }
+        // call api
+    };
     const handleBlurCustom = (event, setError, error) => {
         setError(error);
         setRegisterError('');
@@ -81,18 +66,6 @@ function Register() {
     return (
         <AuthContainer title="REGISTER">
             <>
-                <AuthInput
-                    title="Username"
-                    name="username"
-                    value={values.username}
-                    error={usernameError}
-                    handleBlur={(e) => {
-                        handleBlurCustom(e, setUsernameError, errors.username);
-                    }}
-                    handleChange={(e) => {
-                        handleChangeCustom(e, setUsernameError);
-                    }}
-                />
                 <AuthInput
                     title="Email"
                     name="email"
@@ -147,10 +120,11 @@ function Register() {
                             backgroundColor: '#2980b9', // Màu nền hover
                         },
                     }}
+                    onClick={handleRegister}
                 >
                     JOIN NOW
                 </Button>
-
+                <AuthSocial />
                 <Stack direction="row" justifyContent="center" alignItems="center" mt={3}>
                     <Typography variant="body1" component="p" mr={0.5}>
                         You already have an account?

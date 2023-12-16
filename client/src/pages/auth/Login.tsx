@@ -8,21 +8,21 @@ import AuthSocial from './AuthSocial';
 import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
 interface FormValues {
-    username: string;
+    email: string;
     password: string;
 }
 const initialValues: FormValues = {
-    username: '',
+    email: '',
     password: '',
 };
 const initialErrors: FormValues = {
-    username: 'Please enter your username',
+    email: 'Please enter your email',
     password: 'Please enter your password',
 };
 const Login = () => {
     const navigate = useNavigate();
     const [loginError, setLoginError] = useState('');
-    const [usernameError, setUsernameError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
     const { values, setValues, handleBlur, handleChange, errors } = useFormik({
@@ -35,28 +35,16 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         // validate
-        if (errors.password || errors.username) {
+        if (errors.password || errors.email) {
             if (errors.password) {
                 setPasswordError(errors.password);
             }
-            if (errors.username) {
-                setUsernameError(errors.username);
+            if (errors.email) {
+                setEmailError(errors.email);
             }
             return;
         }
-        // call api
-        // const response = await dispatch(
-        //     userLogin({
-        //         username: values.username,
-        //         password: values.password,
-        //     }),
-        // );
-        // if (response.error) {
-        //     setLoginError(response.payload.error);
-        //     return;
-        // }
         setLoginError('Can not find username');
-        // navigate('/');
     };
 
     // const googleLogin = async () => {
@@ -81,15 +69,15 @@ const Login = () => {
         <AuthContainer title="LOGIN">
             <>
                 <AuthInput
-                    title="Username"
-                    name="username"
-                    value={values.username}
-                    error={usernameError}
+                    title="Email"
+                    name="email"
+                    value={values.email}
+                    error={emailError}
                     handleBlur={(e) => {
-                        handleBlurCustom(e, setUsernameError, errors.username);
+                        handleBlurCustom(e, setEmailError, errors.email);
                     }}
                     handleChange={(e) => {
-                        handleChangeCustom(e, setUsernameError);
+                        handleChangeCustom(e, setEmailError);
                     }}
                 />
                 <AuthInput
@@ -127,7 +115,7 @@ const Login = () => {
                     LOGIN
                 </Button>
                 <Typography
-                    variant="body2"
+                    variant="body1"
                     fontSize={14}
                     component="p"
                     pt={1.2}

@@ -1,4 +1,4 @@
-import { Button, IconButton, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import AuthContainer from './AuthContainer';
 import AuthInput from '../../components/input/AuthInput';
 import { useFormik } from 'formik';
@@ -44,6 +44,7 @@ export default function ResetPassword() {
                     Please set your new password.
                 </Typography>
                 <AuthInput
+                    password
                     title="Password"
                     name="password"
                     error={passwordError}
@@ -56,6 +57,7 @@ export default function ResetPassword() {
                     }}
                 />
                 <AuthInput
+                    password
                     title="Confirm Password"
                     name="confirmPassword"
                     error={confirmPasswordError}
@@ -92,11 +94,10 @@ export default function ResetPassword() {
                     onClick={() => {
                         navigate('/auth/login');
                     }}
+                    color="#999"
                 >
-                    <IconButton>
-                        <GoChevronLeft />
-                    </IconButton>
-                    <Typography variant="body2" color="#999" fontSize={14}>
+                    <GoChevronLeft size={22} />
+                    <Typography variant="body2" fontSize={14}>
                         Return to Login
                     </Typography>
                 </Stack>
