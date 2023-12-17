@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET as ATS, REFRESH_TOKEN_SECRET as RTS } from '../config/index.js';
 
-const signAccessToken = (payload, expiryTime = '5m', secret = ATS) => {
+const signAccessToken = (payload, expiryTime = '60m', secret = ATS) => {
     return jwt.sign(payload, secret, { expiresIn: expiryTime });
 };
 const signRefreshToken = (payload, expiryTime = '60m', secret = RTS) => {

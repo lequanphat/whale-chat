@@ -3,10 +3,11 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import routes from './routes/index.js';
 import cookieParser from 'cookie-parser';
-import { Server } from 'socket.io';
+
 import { authenticateToken } from './middlewares/auth.js';
 import errorHandler from './middlewares/errors.js';
-import { CLIENT_URL, MONGO_URL } from './config/index.js';
+import { CLIENT_URL, MONGO_URL, PORT } from './config/index.js';
+import socketServer from './socket/socketServer.js';
 
 const app = express();
 const corsOptions = {
@@ -30,27 +31,10 @@ mongoose
     .then(() => {
         // run port
         console.log('DB connection successfully');
-        const server = app.listen(process.env.PORT, () => {
-            console.log(`[${process.env.PORT}]running`);
+        const server = app.listen(PORT, () => {
+            console.log(`[${PORT}]running`);
         });
-        const io = new Server(server, {
-            cors: corsOptions,
-        });
-        global.onlineUsers = new Map();
-        io.on('connection', (socket) => {
-            console.log(`User connected ${socket.id}`);
-
-            global.chatSocket = socket;
-            socket.on('add-user', (userId) => {
-                onlineUsers.set(userId, socket.id);
-            });
-            socket.on('send-msg', (data) => {
-                const sendUserSocket = onlineUsers.get(data.to);
-                if (sendUserSocket) {
-                    socket.to(sendUserSocket).emit('msg-recieve', data);
-                }
-            });
-        });
+        socketServer(server);
     })
     .catch((error) => {
         console.log(error.message);
