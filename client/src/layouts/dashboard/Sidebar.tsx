@@ -9,6 +9,7 @@ import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
 import { openSnackbar } from '../../store/slices/appSlice';
 import { useDispatch } from 'react-redux';
+import { resetContacts } from '../../store/slices/contactsSlice';
 const Sidebar = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
@@ -32,6 +33,7 @@ const Sidebar = () => {
             return;
         }
         dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
+        dispatch(resetContacts());
     };
     return (
         <Box
@@ -51,6 +53,9 @@ const Sidebar = () => {
                             width: 54,
                             borderRadius: 1.5,
                             overflow: 'hidden',
+                        }}
+                        onClick={() => {
+                            window.location.reload();
                         }}
                     >
                         <img src={logo} alt="logo" />

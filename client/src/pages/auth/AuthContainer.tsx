@@ -10,6 +10,7 @@ const AuthContainer = ({ title, children, ...props }: AuthContainerTypes) => {
         <Box
             {...props}
             sx={{
+                position: 'relative',
                 width: '100vw',
                 height: '100vh',
                 display: 'flex',
@@ -22,9 +23,10 @@ const AuthContainer = ({ title, children, ...props }: AuthContainerTypes) => {
                 p={3}
                 sx={{
                     width: '25rem',
-                    backgroundColor: 'white',
+                    bgcolor: 'rgba(255,255,255,.8)',
                     borderRadius: 1,
                     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+                    zIndex: 1,
                 }}
             >
                 <Stack direction="row" alignItems="center" spacing={1} justifyContent="start" pb={4}>

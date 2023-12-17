@@ -124,7 +124,7 @@ export const Chat_History = [
     },
     {
         type: 'divider',
-        text: 'Today',
+        text: 'Wed, 13/12/2023',
     },
     {
         type: 'msg',
@@ -152,6 +152,10 @@ export const Chat_History = [
         img: avatar,
         incoming: true,
         outgoing: false,
+    },
+    {
+        type: 'divider',
+        text: 'Sun, 17/12/2023',
     },
     {
         type: 'msg',

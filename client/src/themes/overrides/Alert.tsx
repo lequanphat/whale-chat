@@ -13,6 +13,8 @@ export default function Alert(theme) {
     },
   });
 
+
+
   const filledStyle = (color) => ({
     color: theme.palette[color].contrastText,
   });

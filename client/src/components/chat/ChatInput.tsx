@@ -3,8 +3,9 @@ import StyledInput from '../input/StyledInput';
 import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
-import { useState } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline } from 'react-icons/io5';
+import { EmojiClickData } from 'emoji-picker-react';
 const Actions = [
     {
         color: '#4da5fe',
@@ -35,36 +36,26 @@ const Actions = [
 function ChatInput() {
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
-    // const [msg, setMsg] = useState('');
+    const [msg, setMsg] = useState('');
 
-    // const handleEmojiPickerHideShow = () => {
-    //     setShowEmojiPicker(!showEmojiPicker);
-    // };
-
-    // const handleEmojiClick = (emojiData, event) => {
-    //     console.log(emojiData);
-    //     let message = msg;
-    //     message += emojiData.emoji;
-    //     setMsg(message);
-    //     setShowEmojiPicker(false);
-    // };
-    // const sendChat = (event) => {
-    //     event.preventDefault();
-    //     if (pending){
-    //         return;
-    //     }
-    //     if (msg.length > 0) {
-    //         handleSendMsg(msg.trim());
-    //         setMsg('');
-    //     }
-    // };
+    const handleEmojiClick = useCallback(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        (emojiData: EmojiClickData, event: MouseEvent) => {
+            setMsg((pre) => pre + emojiData.emoji);
+        },
+        [setMsg],
+    );
     return (
         <Box width="100%" position="relative" p={0}>
             <Box display={openPicker ? 'block' : 'none'}>
-                <StyledEmojiPicker />
+                <StyledEmojiPicker handleEmojiClick={handleEmojiClick} />
             </Box>
 
             <StyledInput
+                value={msg}
+                onChange={(e) => {
+                    setMsg(e.target.value);
+                }}
                 fullWidth
                 placeholder="Write a message..."
                 variant="filled"

@@ -20,7 +20,20 @@ export interface appType {
         serverity: AlertColor;
     };
 }
+export interface Contacts {
+    _id: string;
+    displayName: string;
+    email: string;
+    avatar: string;
+}
+export interface contactsType {
+    contacts: Contacts[];
+    currentContact: number;
+    isLoading: boolean;
+}
+
 export interface stateType {
     app: appType;
     auth: authType;
+    contacts: contactsType;
 }

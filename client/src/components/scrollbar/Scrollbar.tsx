@@ -1,14 +1,10 @@
 import { styled } from '@mui/material/styles';
 import { Stack } from '@mui/material';
 
-interface ScrollbarProps {
-    scrollbar: boolean;
-}
-
-const Scrollbar = styled(Stack)(({ scrollbar }: ScrollbarProps) => ({
+const Scrollbar = styled(Stack)(() => ({
     overflowY: 'auto',
     '&::-webkit-scrollbar': {
-        display: scrollbar ? 'auto' : 'none',
+        display: 'none',
         width: '0.3rem',
     },
     '&::-webkit-scrollbar-thumb': {

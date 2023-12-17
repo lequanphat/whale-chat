@@ -1,14 +1,31 @@
 import { Box, Button, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import { IoAlertCircleOutline } from 'react-icons/io5';
+import { IoPersonAddOutline } from 'react-icons/io5';
 import { CiSearch } from 'react-icons/ci';
 import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
 import { MdOutlineArchive } from 'react-icons/md';
 import ChatElement from './ChatElement';
-import { ChatList } from '../../data';
 import { Scrollbar } from '../scrollbar/Scrollbar';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getAllContacts, setCurrentContact } from '../../store/slices/contactsSlice';
+import { stateType } from '../../store/interface';
 
 const Chats = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const theme = useTheme();
+    const { id } = useSelector((state: stateType) => state.auth);
+    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
+
+    useEffect(() => {
+        dispatch(getAllContacts({ id }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleSetCurrentChat = (index: number) => {
+        dispatch(setCurrentContact({ index }));
+    };
+
     return (
         <Box
             sx={{
@@ -22,7 +39,7 @@ const Chats = () => {
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6">Chats</Typography>
                     <IconButton>
-                        <IoAlertCircleOutline />
+                        <IoPersonAddOutline size={20} />
                     </IconButton>
                 </Stack>
                 <Stack sx={{ width: '100%' }}>
@@ -34,28 +51,34 @@ const Chats = () => {
                     </Search>
                 </Stack>
                 <Stack spacing={1}>
-                    <Stack direction="row" alignItems="center" spacing={.4}>
+                    <Stack direction="row" alignItems="center" spacing={0.4}>
                         <MdOutlineArchive size={22} />
                         <Button>Archive</Button>
                     </Stack>
                     <Divider />
                 </Stack>
-                <Scrollbar  scrollbar direction="column" sx={{ flexGrow: 1, overflow: 'auto', height: '100%' }} spacing={2}>
+                <Scrollbar direction="column" sx={{ flexGrow: 1, overflow: 'auto', height: '100%' }} spacing={2}>
                     <Stack spacing={1.6}>
                         <Typography variant="subtitle2" sx={{ color: '#676767' }}>
                             Pinned
                         </Typography>
-                        {ChatList.filter((item) => item.pinned).map((item) => {
-                            return <ChatElement key={item.id} {...item} />;
+                        {contacts.map((item, index) => {
+                            return (
+                                <ChatElement
+                                    key={item._id}
+                                    {...item}
+                                    selected={currentContact === index}
+                                    onClick={() => {
+                                        handleSetCurrentChat(index);
+                                    }}
+                                />
+                            );
                         })}
                     </Stack>
                     <Stack spacing={1.6}>
                         <Typography variant="subtitle2" sx={{ color: '#676767' }}>
                             All Chats
                         </Typography>
-                        {ChatList.filter((item) => !item.pinned).map((item, index) => {
-                            return <ChatElement key={index} {...item} />;
-                        })}
                     </Stack>
                 </Scrollbar>
             </Stack>

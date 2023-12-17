@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import { Box, Divider, IconButton, Link, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
 import avatar from '../../assets/quanphat.jpg';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
@@ -52,7 +51,11 @@ const MessagesOption = () => {
             >
                 <Stack spacing={1} px={1}>
                     {Message_Option.map((item, index) => {
-                        return <MenuItem key={index} onClick={handleClose}>{item.title}</MenuItem>;
+                        return (
+                            <MenuItem key={index} onClick={handleClose} sx={{ fontSize: 14, fontWeight: 400 }}>
+                                {item.title}
+                            </MenuItem>
+                        );
                     })}
                 </Stack>
             </Menu>
@@ -65,14 +68,14 @@ const TextMessage = ({ msg }) => {
     return (
         <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
             <Box
-                p={1.4}
                 sx={{
                     backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
-                    borderRadius: 1.2,
+                    borderRadius: 1.8,
                     width: 'max-content',
+                    p: '10px 16px',
                 }}
             >
-                <Typography variant="body1" color={msg.incoming ? theme.palette.text : '#fff'}>
+                <Typography variant="body1" color={msg.incoming ? theme.palette.text.primary : '#fff'}>
                     {msg.message}
                 </Typography>
             </Box>
@@ -100,7 +103,7 @@ const DocMessage = ({ msg }) => {
                     sx={{ backgroundColor: theme.palette.background.paper }}
                 >
                     <img src={avatar} alt="123" style={{ maxHeight: 50 }} />
-                    <Typography variant="h7">document.png</Typography>
+                    <Typography variant="body1">document.png</Typography>
                     <IconButton>
                         <MdOutlineFileDownload />
                     </IconButton>
@@ -163,11 +166,11 @@ const ReplyMessage = ({ msg }) => {
                             borderRadius: 1,
                         }}
                     >
-                        <Typography variant="body1" color={!msg.incoming ? theme.palette.text : '#fff'}>
+                        <Typography variant="body1" color={!msg.incoming ? theme.palette.text.primary : '#fff'}>
                             {msg.message}
                         </Typography>
                     </Stack>
-                    <Typography variant="body1" color={msg.incoming ? theme.palette.text : '#fff'}>
+                    <Typography variant="body1" color={msg.incoming ? theme.palette.text.primary : '#fff'}>
                         {msg.reply}
                     </Typography>
                 </Stack>
@@ -199,14 +202,21 @@ const MediaMessage = ({ msg }) => {
 
 const TimeLine = ({ text }) => {
     const theme = useTheme();
-    console.log(theme);
     return (
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Divider width="46%" />
-            <Typography variant="caption" sx={{ color: theme.palette.text }}>
+        <Stack direction="row" alignItems="center" justifyContent="center">
+            <Typography
+                variant="body1"
+                fontSize="12px"
+                sx={{
+                    color: theme.palette.text.primary,
+                    bgcolor: theme.palette.background.paper,
+                    borderRadius: '999px',
+                    p: '4px 16px',
+                    opacity: 0.8,
+                }}
+            >
                 {text}
             </Typography>
-            <Divider width="46%" />
         </Stack>
     );
 };

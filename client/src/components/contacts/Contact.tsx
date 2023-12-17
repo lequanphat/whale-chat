@@ -46,7 +46,7 @@ function Contact() {
                     </IconButton>
                 </Stack>
             </Box>
-            <Scrollbar scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
+            <Scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Avatar src={avatar} alt="avt" sx={{ width: 52, height: 52 }} />
                     <Stack spacing={0}>

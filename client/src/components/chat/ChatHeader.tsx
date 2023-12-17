@@ -1,15 +1,14 @@
-
 import { Avatar, Box, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import StyledBadge from '../avatar/StyledBadge';
-import { IoSearchOutline, IoVideocamOutline } from 'react-icons/io5';
-import { PiPhoneLight } from "react-icons/pi";
-import { GoChevronDown } from 'react-icons/go';
-import quanphat from '../../assets/quanphat.jpg';
+import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from 'react-icons/io5';
+import { PiPhoneLight } from 'react-icons/pi';
 import { toggleSidebar } from '../../store/slices/appSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { stateType } from '../../store/interface';
 const ChatHeader = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
     return (
         <Box
             sx={{
@@ -30,11 +29,11 @@ const ChatHeader = () => {
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                             variant="dot"
                         >
-                            <Avatar alt="Quan Phat" src={quanphat} />
+                            <Avatar alt="Quan Phat" src={contacts[currentContact].avatar} />
                         </StyledBadge>
                     </Box>
                     <Stack spacing={0}>
-                        <Typography variant="subtitle2">Quan Phat</Typography>
+                        <Typography variant="subtitle2">{contacts[currentContact].displayName}</Typography>
                         <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
                             Online
                         </Typography>
@@ -51,8 +50,12 @@ const ChatHeader = () => {
                         <IoSearchOutline size={22} />
                     </IconButton>
                     <Divider orientation="vertical" flexItem />
-                    <IconButton>
-                        <GoChevronDown />
+                    <IconButton
+                        onClick={() => {
+                            dispatch(toggleSidebar());
+                        }}
+                    >
+                        <IoInformationCircleOutline />
                     </IconButton>
                 </Stack>
             </Stack>

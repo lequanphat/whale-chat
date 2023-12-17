@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
+import { contactsType } from '../interface';
 
-const initialState = {
+const initialState: contactsType = {
     contacts: [],
-    currentContact: null,
+    currentContact: undefined,
     isLoading: false,
 };
 export const contactsSlide = createSlice({
@@ -11,7 +12,11 @@ export const contactsSlide = createSlice({
     initialState: initialState,
     reducers: {
         setCurrentContact(state, action) {
-            state.currentContact = { ...action.payload };
+            state.currentContact = action.payload.index;
+        },
+        resetContacts(state) {
+            state.currentContact = undefined;
+            state.contacts = [];
         },
     },
     extraReducers: (builder) => {
@@ -28,13 +33,19 @@ export const contactsSlide = createSlice({
             });
     },
 });
-export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (data, { rejectWithValue }) => {
-    try {
-        const response = await api.get(`/api/user/all-users/${data}`);
-        return { contacts: response.data };
-    } catch (error) {
-        return rejectWithValue({ error: 'error in get contacts' });
-    }
-});
-export const { setCurrentContact } = contactsSlide.actions;
+export const getAllContacts = createAsyncThunk(
+    'contacts/getAllContact',
+    async (data: { id: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/user/all-users/${data.id}`);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return { contacts: response.data.users };
+        } catch (error) {
+            return rejectWithValue({ error: 'error in get contacts' });
+        }
+    },
+);
+export const { setCurrentContact, resetContacts } = contactsSlide.actions;
 export default contactsSlide.reducer;

@@ -11,6 +11,7 @@ import SharedMessages from '../../components/contacts/SharedMessages';
 const GeneralApp = () => {
     const theme = useTheme();
     const { sidebar } = useSelector((store) => store.app);
+    const { currentContact } = useSelector((store) => store.contacts);
     return (
         <Stack direction="row" sx={{ width: '100%' }}>
             <Chats />
@@ -21,19 +22,19 @@ const GeneralApp = () => {
                     backgroundColor: theme.palette.mode === 'light' ? '#fff' : theme.palette.background.default,
                 }}
             >
-                <Conversation />
+                {currentContact !== undefined && <Conversation />}
             </Box>
             {sidebar.open &&
                 (() => {
                     switch (sidebar.type) {
                         case 'CONTACT':
-                            return <Contact />
+                            return <Contact />;
                         case 'STARRED':
-                            return <Contact />
+                            return <Contact />;
                         case 'SHARED':
-                            return <SharedMessages />
+                            return <SharedMessages />;
                         default:
-                            return <></>
+                            return <></>;
                     }
                 })()}
         </Stack>

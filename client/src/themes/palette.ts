@@ -2,7 +2,7 @@ import { alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-function createGradient(color1:string, color2:string) {
+function createGradient(color1: string, color2: string) {
     return `linear-gradient(to bottom, ${color1}, ${color2})`;
 }
 
@@ -29,11 +29,13 @@ const INFO = {
     darker: '#04297A',
 };
 const SUCCESS = {
-    lighter: '#E9FCD4',
+    // lighter: '#E9FCD4',
+    lighter: '#B72136',
     light: '#AAF27F',
     main: '#54D62C',
     dark: '#229A16',
-    darker: '#08660D',
+    // darker: '#08660D',
+    darker: '#FFC107',
 };
 const WARNING = {
     lighter: '#FFF7CD',
