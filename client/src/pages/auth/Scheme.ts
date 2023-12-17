@@ -14,6 +14,13 @@ const confirmPasswordValidation = yup
     .oneOf([yup.ref('password')], 'Password must match')
     .required('Please enter your confirm password');
 
+const displayNameValidation = yup
+    .string()
+    .matches(/^[^!@#$%^&*()=0-9/\\}{_+;:"'><.,\][]+$/, 'The name contains only letters and spaces')
+    .min(8, 'The name must have at least 8 characters')
+    .max(20, 'The name can only contain a maximum of 20 characters')
+    .test('no-consecutive-spaces', 'There are no consecutive spaces', (value) => !/\s{2,}/.test(value));
+
 export const loginSchema = yup.object({
     email: emailValidation,
     password: passwordValidation,
@@ -22,7 +29,7 @@ export const loginSchema = yup.object({
 export const registerSchema = yup.object({
     email: emailValidation,
     password: passwordValidation,
-    confirmPassword: confirmPasswordValidation,
+    displayName: displayNameValidation,
 });
 
 export const forgotPasswordSchema = yup.object({

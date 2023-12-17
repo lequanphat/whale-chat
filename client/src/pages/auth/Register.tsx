@@ -10,26 +10,26 @@ import AuthSocial from './AuthSocial';
 import { useDispatch } from '../../store';
 import { userRegister } from '../../store/slices/authSlice';
 interface FormValues {
+    displayName: string;
     email: string;
     password: string;
-    confirmPassword: string;
 }
 const initialValues: FormValues = {
     email: '',
     password: '',
-    confirmPassword: '',
+    displayName: '',
 };
 const initialErrors: FormValues = {
     email: 'Please enter your email',
     password: 'Please enter your password',
-    confirmPassword: 'Please enter your password',
+    displayName: 'Please enter your name',
 };
 function Register() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setconfirmPasswordError] = useState('');
+    const [displayNameError, setdisplayNameError] = useState('');
     const [emailError, setEmailError] = useState('');
     const { values, errors, handleBlur, handleChange } = useFormik({
         initialValues,
@@ -42,20 +42,21 @@ function Register() {
 
     const handleRegister = async () => {
         // validate
-        if (errors.password || errors.confirmPassword || errors.email) {
+        if (errors.password || errors.displayName || errors.email) {
             if (errors.password) {
                 setPasswordError(errors.password);
             }
             if (errors.email) {
                 setEmailError(errors.email);
             }
-            if (errors.confirmPassword) {
-                setconfirmPasswordError(errors.confirmPassword);
+            if (errors.displayName) {
+                setdisplayNameError(errors.displayName);
             }
             return;
         }
         // call api
         const data = {
+            displayName: values.displayName,
             email: values.email,
             password: values.password,
         };
@@ -80,7 +81,19 @@ function Register() {
         <AuthContainer title="REGISTER">
             <>
                 <AuthInput
-                    title="Email"
+                    title="Your name"
+                    name="displayName"
+                    value={values.displayName}
+                    error={displayNameError}
+                    handleBlur={(e) => {
+                        handleBlurCustom(e, setdisplayNameError, errors.displayName);
+                    }}
+                    handleChange={(e) => {
+                        handleChangeCustom(e, setdisplayNameError);
+                    }}
+                />
+                <AuthInput
+                    title="Email address"
                     name="email"
                     value={values.email}
                     error={emailError}
@@ -104,19 +117,7 @@ function Register() {
                         handleChangeCustom(e, setPasswordError);
                     }}
                 />
-                <AuthInput
-                    password
-                    title="Confirm Password"
-                    name="confirmPassword"
-                    value={values.confirmPassword}
-                    error={confirmPasswordError}
-                    handleBlur={(e) => {
-                        handleBlurCustom(e, setconfirmPasswordError, errors.confirmPassword);
-                    }}
-                    handleChange={(e) => {
-                        handleChangeCustom(e, setconfirmPasswordError);
-                    }}
-                />
+
                 {registerError && (
                     <Typography variant="body1" color={'#e74c3c'} fontSize={14} pb={1}>
                         *{registerError}

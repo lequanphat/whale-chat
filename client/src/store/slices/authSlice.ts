@@ -132,7 +132,7 @@ export const userChangePassword = createAsyncThunk(
 );
 export const userRegister = createAsyncThunk(
     'auth/register',
-    async (data: { email: string; password: string }, { rejectWithValue }) => {
+    async (data: { displayName: string; email: string; password: string }, { rejectWithValue }) => {
         try {
             const response = await api.post('/auth/register', data);
             if (response.data.status === false) {
