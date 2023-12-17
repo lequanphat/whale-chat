@@ -6,6 +6,11 @@ const initialState: appType = {
         open: false,
         type: 'CONTACT', // CONTACT, STARRED, SHARED
     },
+    snackbar: {
+        open: false,
+        message: '',
+        serverity: 'success',
+    },
 };
 
 const slice = createSlice({
@@ -18,9 +23,18 @@ const slice = createSlice({
         updateSidebarType(state, action) {
             state.sidebar.type = action.payload.type;
         },
+        openSnackbar(state, action) {
+            state.snackbar.open = true;
+            state.snackbar.message = action.payload.message;
+            state.snackbar.serverity = action.payload.serverity;
+        },
+        closeSnackbar(state) {
+            state.snackbar.open = false;
+            state.snackbar.message = '';
+        },
     },
 });
 
 export default slice.reducer;
 
-export const { toggleSidebar, updateSidebarType } = slice.actions;
+export const { toggleSidebar, updateSidebarType, closeSnackbar, openSnackbar } = slice.actions;

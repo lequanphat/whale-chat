@@ -6,8 +6,8 @@ import { useFormik } from 'formik';
 import { useState } from 'react';
 import { forgotPasswordSchema } from './Scheme';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from '../../store';
 import { userForgotPassword } from '../../store/slices/authSlice';
+import { useDispatch } from 'react-redux';
 const initialValues = {
     email: '',
 };
@@ -15,7 +15,8 @@ const initialErrors = {
     email: 'Please enter your email',
 };
 export default function ForgotPassword() {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const [forgotPasswordError, setForgotPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');

@@ -7,8 +7,8 @@ import { Stack, Typography } from '@mui/material';
 import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
 import AuthSocial from './AuthSocial';
-import { useDispatch } from '../../store';
 import { userRegister } from '../../store/slices/authSlice';
+import { useDispatch } from 'react-redux';
 interface FormValues {
     displayName: string;
     email: string;
@@ -25,7 +25,8 @@ const initialErrors: FormValues = {
     displayName: 'Please enter your name',
 };
 function Register() {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
     const [passwordError, setPasswordError] = useState('');

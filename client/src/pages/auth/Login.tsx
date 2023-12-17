@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -9,7 +7,8 @@ import AuthSocial from './AuthSocial';
 import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
 import { userLogin } from '../../store/slices/authSlice';
-import { useDispatch } from '../../store';
+import { useDispatch } from 'react-redux';
+import { openSnackbar } from '../../store/slices/appSlice';
 interface FormValues {
     email: string;
     password: string;
@@ -23,7 +22,8 @@ const initialErrors: FormValues = {
     password: 'Please enter your password',
 };
 const Login = () => {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const [loginError, setLoginError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -57,7 +57,7 @@ const Login = () => {
             setLoginError(response.payload.error);
             return;
         }
-        
+        dispatch(openSnackbar({ message: 'Login successfully!', serverity: 'success' }));
     };
 
     // const googleLogin = async () => {

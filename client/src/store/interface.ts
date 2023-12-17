@@ -1,3 +1,5 @@
+import { AlertColor } from '@mui/material';
+
 export interface authType {
     id: string;
     email: string;
@@ -11,6 +13,11 @@ export interface appType {
     sidebar: {
         open: boolean;
         type: string;
+    };
+    snackbar: {
+        open: boolean;
+        message: string;
+        serverity: AlertColor;
     };
 }
 export interface stateType {

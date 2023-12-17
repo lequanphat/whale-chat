@@ -18,7 +18,7 @@ const authenticateToken = (req, res, next) => {
         const accessToken = req.cookies['access_token'];
         if (!accessToken) {
             const error = {
-                status: 403,
+                status: 401,
                 message: 'Auth middleware: Unauthorized',
             };
             return next(error);
@@ -27,7 +27,7 @@ const authenticateToken = (req, res, next) => {
         if (err) {
             const error = {
                 status: 403,
-                message: 'Auth middleware: Token has expired',
+                message: 'Auth middleware: Forbiden',
             };
             return next(error);
         }

@@ -1,11 +1,13 @@
 import { Button, Typography } from '@mui/material';
 import AuthContainer from './AuthContainer';
-import { useDispatch } from '../../store';
 import { getUser } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { openSnackbar } from '../../store/slices/appSlice';
 
 export default function VerifyAccount() {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const handleJoinNow = async () => {
         const response = await dispatch(getUser());
@@ -13,6 +15,7 @@ export default function VerifyAccount() {
             alert(response.payload.error);
             return;
         }
+        dispatch(openSnackbar({ message: 'You have successfully registered your account!', serverity: 'success' }));
         navigate('/');
     };
     return (

@@ -6,10 +6,12 @@ import avatar from '../../assets/avatar_4.jpg';
 import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
-import { useDispatch } from '../../store';
-import { userLogout } from '../../store/slices/authSlice';
+import { resetUser, userLogout } from '../../store/slices/authSlice';
+import { openSnackbar } from '../../store/slices/appSlice';
+import { useDispatch } from 'react-redux';
 const Sidebar = () => {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const [selected, setSelected] = useState(0);
     const theme = useTheme();
     const { onToggleMode } = useSettings();
@@ -22,7 +24,15 @@ const Sidebar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const handleLogout = async () => {
+        const response = await dispatch(userLogout());
+        if (response.error) {
+            dispatch(openSnackbar({ message: 'Something went wrong!', serverity: 'error' }));
+            dispatch(resetUser());
+            return;
+        }
+        dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
+    };
     return (
         <Box
             p={2}
@@ -130,7 +140,7 @@ const Sidebar = () => {
                                         key={index}
                                         onClick={() => {
                                             if (index == 2) {
-                                                dispatch(userLogout());
+                                                handleLogout();
                                             }
                                         }}
                                     >

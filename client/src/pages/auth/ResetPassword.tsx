@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { resetPasswordSchema } from './Scheme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GoChevronLeft } from 'react-icons/go';
-import { useDispatch } from '../../store';
 import { userChangePassword } from '../../store/slices/authSlice';
+import { useDispatch } from 'react-redux';
 const initialValues = {
     password: '',
     confirmPassword: '',
@@ -17,7 +17,8 @@ const initialErrors = {
     confirmPassword: '',
 };
 export default function ResetPassword() {
-    const dispatch = useDispatch();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const { token } = useParams();
     const [resetPasswordError, setResetPasswordError] = useState('');

@@ -10,7 +10,12 @@ const api = axios.create({
 
 api.interceptors.response.use(
     (response) => response,
-    (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong'),
+    (error) => {
+        if (error.response.status === 403 || error.response.status === 401) {
+            console.log('Forbiden or UnAuthenticated');
+        }
+        Promise.reject((error.response && error.response.data) || 'Something went wrong');
+    },
 );
 
 export default api;
