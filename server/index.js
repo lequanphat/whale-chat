@@ -1,51 +1,28 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import routes from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import { authenticateToken } from './middlewares/auth.js';
-// import session from 'express-session';
-// import passport from 'passport';
-// import passportService from './utils/passportService.js';
 import errorHandler from './middlewares/errors.js';
-import { MONGO_URL } from './config/index.js';
-dotenv.config();
+import { CLIENT_URL, MONGO_URL } from './config/index.js';
 
 const app = express();
 const corsOptions = {
     credentials: true,
-    origin: ['http://localhost:9999'],
+    origin: [CLIENT_URL],
 };
-
-// const store = session.MemoryStore();
-
-// app.use(
-//     session({
-//         secret: 'keyboard cat',
-//         resave: false,
-//         saveUninitialized: true,
-//         cookie: { secure: false, maxAge: 1000 * 60 },
-//         store: store,
-//     }),
-// );
-
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(authenticateToken);
 
-
 app.use('/storage', express.static('storage'));
 
 routes(app);
-app.use(errorHandler)
-
-
+app.use(errorHandler);
 
 // connect to db
 mongoose
@@ -61,6 +38,8 @@ mongoose
         });
         global.onlineUsers = new Map();
         io.on('connection', (socket) => {
+            console.log(`User connected ${socket.id}`);
+
             global.chatSocket = socket;
             socket.on('add-user', (userId) => {
                 onlineUsers.set(userId, socket.id);

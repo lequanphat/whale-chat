@@ -5,9 +5,9 @@ POST http://localhost:2411/api/auth/register
 Content-Type: application/json
 
 {
-    "displayName": "phat",
-    "email": "lequanphat3579@gmail.com",
-    "password": "abc12345"
+    "displayName": "David Beckham",
+    "email": "beckham123@gmail.com",
+    "password": "123123"
 }
 
 ###
@@ -17,8 +17,8 @@ POST http://localhost:2411/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "lequanphat3579@gmail.com",
-    "password": "abczyz123"
+    "email": "ronaldo123@gmail.com",
+    "password": "123123"
 }
 
 ###
@@ -57,12 +57,9 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:2411/api/user/all-users/656b6e5b68485bd7a9b6160c
+GET http://localhost:2411/api/user/all-users/657eaa2600c3a388fb6c5b91
 Content-Type: application/json
-
-{
-    "username": "quanphat"
-}
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2VhYTI2MDBjM2EzODhmYjZjNWI5MSIsImlhdCI6MTcwMjgyMzk1MywiZXhwIjoxNzAyODI0MjUzfQ.hUq8xGAUwt0PWzL9TZnuLixYqE9UR-JPwLj-dyaHJrk
 
 ###
 

@@ -35,11 +35,10 @@ const userController = {
         try {
             const users = await userModel
                 .find({ _id: { $ne: req.params.id } })
-                .select(['email', 'username', 'avatar', '_id']);
-            console.log(users);
-            return res.json(users);
+                .select(['email', 'displayName', 'avatar', '_id']);
+            return res.status(200).json({ users, status: true });
         } catch (error) {
-            next(error);
+            return res.status(200).json({ msg: 'Fail in get all users' ,status: false });
         }
     },
 };
