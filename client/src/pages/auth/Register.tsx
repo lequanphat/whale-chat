@@ -7,6 +7,8 @@ import { Stack, Typography } from '@mui/material';
 import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
 import AuthSocial from './AuthSocial';
+import { useDispatch } from '../../store';
+import { userRegister } from '../../store/slices/authSlice';
 interface FormValues {
     email: string;
     password: string;
@@ -23,6 +25,7 @@ const initialErrors: FormValues = {
     confirmPassword: 'Please enter your password',
 };
 function Register() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -52,6 +55,16 @@ function Register() {
             return;
         }
         // call api
+        const data = {
+            email: values.email,
+            password: values.password,
+        };
+        const response = await dispatch(userRegister(data));
+        if (response.error) {
+            setRegisterError(response.payload.error);
+            return;
+        }
+        navigate('/auth/verify-email');
     };
     const handleBlurCustom = (event, setError, error) => {
         setError(error);

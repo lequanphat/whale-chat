@@ -11,7 +11,7 @@ const passwordValidation = yup
 
 const confirmPasswordValidation = yup
     .string()
-    .oneOf([yup.ref('password')], 'Invalid confirm password')
+    .oneOf([yup.ref('password')], 'Password must match')
     .required('Please enter your confirm password');
 
 export const loginSchema = yup.object({

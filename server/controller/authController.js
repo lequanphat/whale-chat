@@ -7,6 +7,7 @@ import { passwordSchema, registerSchema } from '../utils/schemaService.js';
 import { OtpGenerator } from '../utils/OTPService.js';
 import { sendMail } from '../utils/MailService.js';
 import { BACKEND_SERVER_PATH, CLIENT_URL } from '../config/index.js';
+import { emailFormat } from '../utils/emailFormatService.js';
 const authController = {
     register: async (req, res, next) => {
         try {
@@ -56,7 +57,11 @@ const authController = {
             const { error: er } = sendMail({
                 email,
                 subject: 'Verify your account',
-                text: `Click the link to verify your account: ${BACKEND_SERVER_PATH}/api/auth/verify-account/${user.id}/${verifyCode}`,
+                html: emailFormat(
+                    'Verify your account!',
+                    'this is content',
+                    `${BACKEND_SERVER_PATH}/api/auth/verify-account/${user.id}/${verifyCode}`,
+                ),
             });
             if (er) {
                 return res.status(200).json({ msg: 'Error in send mail', status: false });
@@ -85,8 +90,14 @@ const authController = {
                 { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
                 { new: true },
             );
+            // Authorrization
+            const accessToken = signAccessToken({ id: user.id });
+            const refreshToken = signRefreshToken({ id: user.id });
+            saveCookie(res, 'access_token', accessToken);
+            saveCookie(res, 'refresh_token', refreshToken);
             // response
-            return res.status(200).json({ newUser, status: true });
+
+            return res.redirect(`${CLIENT_URL}/auth/verify-account`);
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }
@@ -174,8 +185,12 @@ const authController = {
             // send mail
             const { error: er } = sendMail({
                 email,
-                subject: 'Change password',
-                text: `Click the link to change your password: ${BACKEND_SERVER_PATH}/api/auth/change-password/${user.id}/${verifyCode}`,
+                subject: 'Verify change password!',
+                html: emailFormat(
+                    'Verify change password!',
+                    'this is content',
+                    `${BACKEND_SERVER_PATH}/api/auth/change-password/${user.id}/${verifyCode}`,
+                ),
             });
             if (er) {
                 return res.status(200).json({ msg: 'Error in send mail', status: false });

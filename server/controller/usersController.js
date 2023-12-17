@@ -23,11 +23,12 @@ const userController = {
     getUser: async (req, res, next) => {
         try {
             const { id } = req.user;
+            const token = req.cookies['access_token'];
             const user = await userModel.findById(id);
-            const { password, ...newUser } = user._doc;
-            return res.status(200).json({ status: true, user: newUser });
+            const { _id, displayName, email, avatar } = user._doc;
+            return res.status(200).json({ status: true, user: { id: id, displayName, email, avatar, token } });
         } catch (error) {
-            return res.status(200).json({ status: false, message: 'Unautenticated' });
+            return res.status(200).json({ status: false, message: 'Unauthenticated' });
         }
     },
     getAllUsers: async (req, res, next) => {

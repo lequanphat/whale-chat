@@ -5,9 +5,10 @@ interface AuthContainerTypes {
     title: string;
     children: ReactElement;
 }
-const AuthContainer = ({ title, children }: AuthContainerTypes) => {
+const AuthContainer = ({ title, children, ...props }: AuthContainerTypes) => {
     return (
         <Box
+            {...props}
             sx={{
                 width: '100vw',
                 height: '100vh',

@@ -3,7 +3,7 @@ import passport from 'passport';
 import userController from '../controller/usersController.js';
 const router = express.Router();
 
-router.get('/user', userController.getUser);
+router.get('/get-user', userController.getUser);
 
 router.get('/login/google', passport.authenticate('google'));
 router.get(

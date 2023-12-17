@@ -38,7 +38,7 @@ export const userSlice = createSlice({
         builder
             .addCase(userLogin.pending, () => {})
             .addCase(userLogin.fulfilled, (state, action) => {
-                state.id = action.payload._id;
+                state.id = action.payload.id;
                 state.email = action.payload.email;
                 state.displayName = action.payload.displayName;
                 state.avatar = action.payload.avatar;
@@ -61,7 +61,17 @@ export const userSlice = createSlice({
             .addCase(userForgotPassword.rejected, () => {})
             .addCase(userChangePassword.pending, () => {})
             .addCase(userChangePassword.fulfilled, () => {})
-            .addCase(userChangePassword.rejected, () => {});
+            .addCase(userChangePassword.rejected, () => {})
+            .addCase(getUser.pending, () => {})
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.id = action.payload.id;
+                state.email = action.payload.email;
+                state.displayName = action.payload.displayName;
+                state.avatar = action.payload.avatar;
+                state.token = action.payload.token;
+                state.auth = true;
+            })
+            .addCase(getUser.rejected, () => {});
     },
 });
 
@@ -120,6 +130,30 @@ export const userChangePassword = createAsyncThunk(
         }
     },
 );
-
+export const userRegister = createAsyncThunk(
+    'auth/register',
+    async (data: { email: string; password: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/register', data);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return response.data;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
+export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithValue }) => {
+    try {
+        const response = await api.get('/user/get-user');
+        if (response.data.status === false) {
+            return rejectWithValue({ error: response.data.msg });
+        }
+        return response.data.user;
+    } catch (error) {
+        return rejectWithValue({ error });
+    }
+});
 export const { setUser, resetUser } = userSlice.actions;
 export default userSlice.reducer;
