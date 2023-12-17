@@ -5,6 +5,7 @@ POST http://localhost:2411/api/auth/register
 Content-Type: application/json
 
 {
+    "displayName": "phat",
     "email": "lequanphat3579@gmail.com",
     "password": "abc12345"
 }

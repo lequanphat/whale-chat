@@ -11,9 +11,9 @@ import { emailFormat } from '../utils/emailFormatService.js';
 const authController = {
     register: async (req, res, next) => {
         try {
-            const { email, password } = req.body;
+            const { displayName, email, password } = req.body;
             // vallidate
-            const { value, error } = registerSchema.validate({ email, password });
+            const { value, error } = registerSchema.validate({ email, password, displayName });
             if (error) {
                 return res.status(200).json({ msg: error.message, status: false });
             }
@@ -44,7 +44,7 @@ const authController = {
                 );
             } else {
                 user = await userModel.create({
-                    displayName: email,
+                    displayName,
                     email,
                     password: hashedPassword,
                     verified: false,
