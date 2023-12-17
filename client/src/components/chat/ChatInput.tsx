@@ -6,6 +6,10 @@ import StyledEmojiPicker from './StyledEmojiPicker';
 import { MouseEvent, useCallback, useState } from 'react';
 import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { stateType } from '../../store/interface';
+import { addIcon, setMessage } from '../../store/slices/chatSlice';
+
 const Actions = [
     {
         color: '#4da5fe',
@@ -34,16 +38,17 @@ const Actions = [
 ];
 
 function ChatInput() {
+    const dispatch = useDispatch();
+    const { message } = useSelector((state: stateType) => state.chat);
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
-    const [msg, setMsg] = useState('');
 
     const handleEmojiClick = useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         (emojiData: EmojiClickData, event: MouseEvent) => {
-            setMsg((pre) => pre + emojiData.emoji);
+            dispatch(addIcon(emojiData.emoji));
         },
-        [setMsg],
+        [],
     );
     return (
         <Box width="100%" position="relative" p={0}>
@@ -52,9 +57,9 @@ function ChatInput() {
             </Box>
 
             <StyledInput
-                value={msg}
+                value={message}
                 onChange={(e) => {
-                    setMsg(e.target.value);
+                    dispatch(setMessage(e.target.value));
                 }}
                 fullWidth
                 placeholder="Write a message..."

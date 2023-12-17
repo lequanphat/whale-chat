@@ -61,7 +61,6 @@ export const defaultLang = allLangs[0]; // English
 // DEFAULT ROOT PATH
 export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
 
-
-
 // INTERNAL_API_PATH
-export const INTERNAL_API_PATH = 'http://localhost:2411/api'
+export const INTERNAL_API_PATH = 'http://localhost:2411/api';
+export const BACKEND_SERVER_PATH = 'http://localhost:2411';

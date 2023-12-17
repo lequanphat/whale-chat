@@ -8,13 +8,16 @@ import { store } from './store';
 import { Provider as ReduxProvider } from 'react-redux';
 import SettingsProvider from './contexts/SettingsContext';
 import { BrowserRouter } from 'react-router-dom';
+import { SocketProvider } from './contexts/socketContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <ReduxProvider store={store}>
-        <SettingsProvider>
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        </SettingsProvider>
+        <SocketProvider>
+            <SettingsProvider>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </SettingsProvider>
+        </SocketProvider>
     </ReduxProvider>,
 );

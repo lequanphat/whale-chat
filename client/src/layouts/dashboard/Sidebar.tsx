@@ -122,7 +122,7 @@ const Sidebar = () => {
                     </Stack>
                 </Stack>
                 <Stack alignItems="center" spacing={2}>
-                    <CustomSwitch onChange={onToggleMode} />
+                    <CustomSwitch onChange={onToggleMode} checked={theme.palette.mode === 'light' ? false : true} />
                     <Avatar src={avatar} alt="temp" onClick={handleClick} />
                     <Menu
                         id="basic-menu-2"

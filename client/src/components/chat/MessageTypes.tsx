@@ -22,7 +22,7 @@ const Message_Option = [
     },
 ];
 
-const MessagesOption = () => {
+export const MessagesOption = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -79,7 +79,6 @@ const TextMessage = ({ msg }) => {
                     {msg.message}
                 </Typography>
             </Box>
-            <MessagesOption />
         </Stack>
     );
 };

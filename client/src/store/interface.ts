@@ -31,9 +31,14 @@ export interface contactsType {
     currentContact: number;
     isLoading: boolean;
 }
-
+export interface chatType {
+    message: string;
+    messages: object[];
+    recieveMessage: string;
+}
 export interface stateType {
     app: appType;
     auth: authType;
     contacts: contactsType;
+    chat: chatType;
 }
