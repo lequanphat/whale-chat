@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_SECRET as ATS, REFRESH_TOKEN_SECRET as RTS } from '../conf
 const signAccessToken = (payload, expiryTime = '60m', secret = ATS) => {
     return jwt.sign(payload, secret, { expiresIn: expiryTime });
 };
-const signRefreshToken = (payload, expiryTime = '60m', secret = RTS) => {
+const signRefreshToken = (payload, expiryTime = '1d', secret = RTS) => {
     return jwt.sign(payload, secret, { expiresIn: expiryTime });
 };
 const verifyAccessToken = (token, secret = ATS) => {

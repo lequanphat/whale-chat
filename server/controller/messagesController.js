@@ -13,7 +13,6 @@ const messagesController = {
         }
     },
     addImageMessage: async (req, res, next) => {
-        console.log(req.params);
         try {
             if (req.fileName) {
                 const { from, to, text } = req.body;
@@ -34,6 +33,29 @@ const messagesController = {
             return res.status(200).json({ msg: 'There is no image file', status: false });
         } catch (error) {
             next(error);
+        }
+    },
+    addDocMessage: async (req, res, next) => {
+        try {
+            if (req.fileName) {
+                const { from, to, text } = req.body;
+                console.log('text: ' + text);
+                const data = await messageModel.create({
+                    from,
+                    to,
+                    type: 'doc',
+                    doc: `${BACKEND_SERVER_PATH}/storage/uploads/docs/${req.filePath}`,
+                    text: req.fileName,
+                });
+                if (data) {
+                    console.log(data);
+                    return res.status(200).json({ message: data, status: true });
+                }
+                return res.status(200).json({ msg: req.file.originalname, status: false });
+            }
+            return res.status(200).json({ msg: 'File size too large. Max 20MB allowed.', status: false });
+        } catch (error) {
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
     getAllMessages: async (req, res, next) => {
