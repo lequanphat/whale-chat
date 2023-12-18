@@ -2,7 +2,7 @@ import { Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } fr
 import avatar from '../../assets/quanphat.jpg';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const Message_Option = [
     {
@@ -63,25 +63,26 @@ export const MessagesOption = () => {
     );
 };
 
-const TextMessage = ({ msg }) => {
+const TextMessage = React.forwardRef((props: { msg; fromSelf }, ref) => {
     const theme = useTheme();
     return (
-        <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
+        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
             <Box
+                ref={ref}
                 sx={{
-                    backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
+                    backgroundColor: props.fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
                     borderRadius: 1.8,
                     width: 'max-content',
                     p: '10px 16px',
                 }}
             >
-                <Typography variant="body1" color={msg.incoming ? theme.palette.text.primary : '#fff'}>
-                    {msg.message}
+                <Typography variant="body1" color={props.fromSelf ? '#fff' : theme.palette.text.primary}>
+                    {props.msg.text}
                 </Typography>
             </Box>
         </Stack>
     );
-};
+});
 
 const DocMessage = ({ msg }) => {
     const theme = useTheme();

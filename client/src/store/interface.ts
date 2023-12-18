@@ -33,7 +33,11 @@ export interface contactsType {
 }
 export interface chatType {
     message: string;
-    messages: object[];
+    messages: {
+        text: string;
+        from: string;
+        to: string;
+    }[];
     recieveMessage: string;
 }
 export interface stateType {

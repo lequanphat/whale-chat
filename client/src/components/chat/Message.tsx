@@ -1,43 +1,31 @@
 import { Box, Stack } from '@mui/material';
-import { Chat_History } from '../../data';
-import { DocMessage, LinkMessage, MediaMessage, ReplyMessage, TextMessage, TimeLine } from './MessageTypes';
-import { useSelector } from 'react-redux';
+import { TextMessage } from './MessageTypes';
+import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { getMessages } from '../../store/slices/chatSlice';
 
 const Message = () => {
-    const { recieveMessage } = useSelector((state: stateType) => state.chat);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
+    const { id } = useSelector((state: stateType) => state.auth);
+    const { messages } = useSelector((state: stateType) => state.chat);
+    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
+    const scrollRef = useRef(null);
+
     useEffect(() => {
-        Chat_History.push({
-            type: 'msg',
-            message: recieveMessage,
-            incoming: true,
-            outgoing: false,
-        });
-    }, [recieveMessage]);
+        dispatch(getMessages({ userId: id, contactId: contacts[currentContact]._id }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentContact, id, contacts]);
+
+    useEffect(() => {
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
     return (
         <Box p={2}>
             <Stack spacing={3}>
-                {Chat_History.map((msg, index) => {
-                    switch (msg.type) {
-                        case 'divider':
-                            return <TimeLine key={index} text={msg.text} />;
-                        case 'msg':
-                            switch (msg.subtype) {
-                                case 'img':
-                                    return <MediaMessage key={index} msg={msg} />;
-                                case 'doc':
-                                    return <DocMessage key={index} msg={msg} />;
-                                case 'link':
-                                    return <LinkMessage key={index} msg={msg} />;
-                                case 'reply':
-                                    return <ReplyMessage key={index} msg={msg} />;
-                                default:
-                                    return <TextMessage key={index} msg={msg} />;
-                            }
-                        default:
-                            return <></>;
-                    }
+                {messages.map((msg, index) => {
+                    return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
                 })}
             </Stack>
         </Box>
