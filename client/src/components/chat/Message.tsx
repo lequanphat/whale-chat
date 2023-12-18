@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { TextMessage } from './MessageTypes';
+import { MediaMessage, TextMessage } from './MessageTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { useEffect, useRef } from 'react';
@@ -24,9 +24,20 @@ const Message = () => {
     return (
         <Box p={2}>
             <Stack spacing={3}>
-                {messages.map((msg, index) => {
-                    return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
-                })}
+                {messages.map(
+                    (msg: { type: string; text: string; from: string; to: string; image?: string }, index: number) => {
+                        switch (msg.type) {
+                            case 'text':
+                                return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
+                            case 'image':
+                                return (
+                                    <MediaMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />
+                                );
+                            default:
+                                return <></>;
+                        }
+                    },
+                )}
             </Stack>
         </Box>
     );

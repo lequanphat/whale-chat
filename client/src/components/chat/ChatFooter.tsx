@@ -4,7 +4,7 @@ import ChatInput from './ChatInput';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addMessage, resetMessage } from '../../store/slices/chatSlice';
+import { addImageMessage, addMessage, resetAllField, resetMessage } from '../../store/slices/chatSlice';
 import { FormEvent } from 'react';
 
 const ChatFooter = () => {
@@ -12,18 +12,39 @@ const ChatFooter = () => {
     const dispatch = useDispatch<any>();
     const { id } = useSelector((state: stateType) => state.auth);
     const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
-    const { message } = useSelector((state: stateType) => state.chat);
+    const { text, image } = useSelector((state: stateType) => state.chat);
     const { emitMessage } = useChatSocket();
     const theme = useTheme();
 
-    const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
+    const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (message.trim() === '') {
+        if (image) {
+            console.log(image);
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('from', id);
+            formData.append('to', contacts[currentContact]._id);
+            formData.append('text', text);
+            const response = await dispatch(addImageMessage(formData));
+            console.log(response);
+
+            emitMessage({
+                type: 'image',
+                text,
+                image: response.payload.image,
+                from: response.payload.from,
+                to: response.payload.to,
+            });
+
+            dispatch(resetAllField());
             return;
         }
-        emitMessage({ text: message, from: id, to: contacts[currentContact]._id });
+        if (text.trim() === '') {
+            return;
+        }
+        emitMessage({ type: 'text', text, from: id, to: contacts[currentContact]._id });
         dispatch(resetMessage());
-        dispatch(addMessage({ from: id, to: contacts[currentContact]._id, text: message }));
+        dispatch(addMessage({ from: id, to: contacts[currentContact]._id, text }));
     };
     return (
         <Box

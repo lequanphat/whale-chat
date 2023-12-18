@@ -32,11 +32,15 @@ export interface contactsType {
     isLoading: boolean;
 }
 export interface chatType {
-    message: string;
+    text: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    image: any;
     messages: {
+        type: string;
         text: string;
         from: string;
         to: string;
+        image?: string;
     }[];
     recieveMessage: string;
 }

@@ -1,63 +1,151 @@
-import { Box, Fab, IconButton, InputAdornment, Stack, Tooltip } from '@mui/material';
+import { Box, Fab, IconButton, InputAdornment, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import StyledInput from '../input/StyledInput';
 import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
-import { MouseEvent, useCallback, useState } from 'react';
-import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline } from 'react-icons/io5';
+import { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'react';
+import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addIcon, setMessage } from '../../store/slices/chatSlice';
-
+import { addIcon, resetImage, setImage, setMessage } from '../../store/slices/chatSlice';
+import { IoCloseOutline } from 'react-icons/io5';
 const Actions = [
     {
         color: '#4da5fe',
         icon: <IoImageOutline size={22} />,
-        y: 102,
         title: 'Photo/Video',
     },
     {
         color: '#4da5fe',
         icon: <IoCameraOutline size={22} />,
-        y: 172,
-        title: 'Image',
+        title: 'Camera',
     },
     {
         color: '#4da5fe',
         icon: <IoReaderOutline size={22} />,
-        y: 242,
         title: 'Document',
     },
     {
         color: '#4da5fe',
+        icon: <IoMicOutline size={24} />,
+        title: 'Voice',
+    },
+
+    {
+        color: '#4da5fe',
         icon: <IoPersonOutline size={22} />,
-        y: 312,
         title: 'Contact',
     },
 ];
 
 function ChatInput() {
-    const dispatch = useDispatch();
-    const { message } = useSelector((state: stateType) => state.chat);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
+    const theme = useTheme();
+    const { text, image } = useSelector((state: stateType) => state.chat);
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
+    const imageInputRef = useRef(null);
+    const documentInputRef = useRef(null);
 
     const handleEmojiClick = useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        (emojiData: EmojiClickData, event: MouseEvent) => {
+        (emojiData: EmojiClickData, _event: MouseEvent) => {
             dispatch(addIcon(emojiData.emoji));
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
+    const handleChooseAction = (index: number) => {
+        setOpenActions(false);
+        if (!imageInputRef.current) {
+            return;
+        }
+        switch (index) {
+            case 0:
+                imageInputRef.current.click();
+                break;
+            case 1:
+                alert('Camera feature');
+                break;
+            case 2:
+                documentInputRef.current.click();
+                break;
+            case 3:
+                alert('Voice feature');
+                break;
+            case 4:
+                alert('Contacts feature');
+                break;
+
+            default:
+                break;
+        }
+    };
+    const handleChooseFile = (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files[0]);
+        console.log(typeof e.target.files[0]);
+
+        // call api here
+        dispatch(setImage(e.target.files[0]));
+    };
+    const handleResetChooseImage = () => {
+        dispatch(resetImage());
+    };
     return (
         <Box width="100%" position="relative" p={0}>
+            {image && (
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    position="absolute"
+                    spacing={8}
+                    sx={{
+                        top: '-110px',
+                        left: 0,
+                        p: '12px 12px',
+                        backgroundColor: theme.palette.background.paper,
+                        borderRadius: 1,
+                        boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px'
+                    }}
+                >
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <img src={URL.createObjectURL(image)} alt="pre-view" style={{ width: '80px' }} />
+                        <Typography
+                            variant="body1"
+                            maxWidth="200px"
+                            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {image.name}
+                        </Typography>
+                    </Stack>
+                    <IconButton onClick={handleResetChooseImage}>
+                        <IoCloseOutline />
+                    </IconButton>
+                </Stack>
+            )}
             <Box display={openPicker ? 'block' : 'none'}>
                 <StyledEmojiPicker handleEmojiClick={handleEmojiClick} />
             </Box>
-
+            <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*,video/*"
+                style={{ display: 'none' }} // Ẩn input element
+                onChange={(e) => {
+                    handleChooseFile(e);
+                }}
+            />
+            <input
+                ref={documentInputRef}
+                type="file"
+                accept="application/pdf,text/*"
+                style={{ display: 'none' }} // Ẩn input element
+            />
             <StyledInput
-                value={message}
+                value={text}
                 onChange={(e) => {
                     dispatch(setMessage(e.target.value));
                 }}
@@ -76,7 +164,14 @@ function ChatInput() {
                                             <Fab
                                                 color="primary"
                                                 aria-label="add"
-                                                sx={{ position: 'absolute', top: -item.y, backgroundColor: item.color }}
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: -(102 + index * 70),
+                                                    backgroundColor: item.color,
+                                                }}
+                                                onClick={() => {
+                                                    handleChooseAction(index);
+                                                }}
                                             >
                                                 {item.icon}
                                             </Fab>

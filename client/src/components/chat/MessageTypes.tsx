@@ -3,7 +3,7 @@ import avatar from '../../assets/quanphat.jpg';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { useState } from 'react';
-
+import default_img from '../../assets/default-img.jpg';
 const Message_Option = [
     {
         title: 'Reply',
@@ -63,7 +63,8 @@ export const MessagesOption = () => {
     );
 };
 
-const TextMessage = React.forwardRef((props: { msg; fromSelf }, ref) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TextMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
     return (
         <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
@@ -179,26 +180,40 @@ const ReplyMessage = ({ msg }) => {
     );
 };
 
-const MediaMessage = ({ msg }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MediaMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
+    const [imageLink, setImageLink] = useState(props.msg.image);
     return (
-        <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
+        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
             <Box
-                p={1.5}
+                ref={ref}
+                p={props.msg.text ? 1.5 : 0}
                 sx={{
-                    backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
-                    borderRadius: 1.2,
+                    backgroundColor: props.msg.text ? props.fromSelf ? theme.palette.primary.main : theme.palette.background.paper : 'transparent',
+                    borderRadius: '10px',
                     width: 'max-content',
                 }}
             >
                 <Stack spacing={1}>
-                    <img src={msg.img} alt={msg.message} style={{ maxHeight: 210, borderRadius: '10px' }} />
-                    <Typography variant="body1">{msg.message}</Typography>
+                    <img
+                        src={imageLink}
+                        alt={'image'}
+                        style={{ maxHeight: 210, borderRadius: '10px' }}
+                        onError={() => {
+                            setImageLink(default_img);
+                        }}
+                    />
+                    {props.msg.text && (
+                        <Typography variant="body1" color={props.fromSelf ? '#fff' : theme.palette.text.primary}>
+                            {props.msg.text}
+                        </Typography>
+                    )}
                 </Stack>
             </Box>
         </Stack>
     );
-};
+});
 
 const TimeLine = ({ text }) => {
     const theme = useTheme();

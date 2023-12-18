@@ -2,7 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 
 const initialState = {
-    message: '',
+    text: '',
+    image: undefined,
     recieveMessage: '',
     messages: [],
 };
@@ -11,19 +12,29 @@ const chatSlice = createSlice({
     initialState,
     reducers: {
         setMessage(state, action) {
-            state.message = action.payload;
+            state.text = action.payload;
         },
         setRecieveMessage(state, action) {
             state.recieveMessage = action.payload;
         },
         addIcon(state, action) {
-            state.message += action.payload;
+            state.text += action.payload;
         },
         resetMessage(state) {
-            state.message = '';
+            state.text = '';
         },
         addMessageToCurrentMessages(state, action) {
             state.messages.push(action.payload);
+        },
+        setImage(state, action) {
+            state.image = action.payload;
+        },
+        resetImage(state) {
+            state.image = null;
+        },
+        resetAllField(state) {
+            state.text = '';
+            state.image = null;
         },
     },
     extraReducers: (builder) => {
@@ -37,7 +48,12 @@ const chatSlice = createSlice({
             .addCase(addMessage.fulfilled, (state, action) => {
                 state.messages.push(action.payload);
             })
-            .addCase(addMessage.rejected, () => {});
+            .addCase(addMessage.rejected, () => {})
+            .addCase(addImageMessage.pending, () => {})
+            .addCase(addImageMessage.fulfilled, (state, action) => {
+                state.messages.push(action.payload);
+            })
+            .addCase(addImageMessage.rejected, () => {});
     },
 });
 
@@ -69,6 +85,31 @@ export const addMessage = createAsyncThunk(
         }
     },
 );
+export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (data: FormData, { rejectWithValue }) => {
+    try {
+        const response = await api.post('/message/upload-image', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        if (response.data.status === false) {
+            return rejectWithValue({ error: response.data.msg });
+        }
+        return response.data.message;
+    } catch (error) {
+        return rejectWithValue({ error });
+    }
+});
 
 export default chatSlice.reducer;
-export const { setMessage, resetMessage, addIcon, setRecieveMessage, addMessageToCurrentMessages } = chatSlice.actions;
+export const {
+    setMessage,
+    resetMessage,
+    addIcon,
+    setRecieveMessage,
+    addMessageToCurrentMessages,
+    setImage,
+    resetImage,
+    resetAllField,
+} = chatSlice.actions;
