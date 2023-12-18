@@ -1,12 +1,28 @@
 import messageModel from '../model/messageModel.js';
 
 const messagesController = {
-    addMessage: async (req, res, next) => {
+    addTextMessage: async (req, res, next) => {
         try {
             const { from, to, text } = req.body;
             const data = await messageModel.create({ from, to, text });
             if (data) return res.status(200).json({ message: data, status: true });
             return res.status(200).json({ msg: 'Fail to add message to the database!', status: false });
+        } catch (error) {
+            next(error);
+        }
+    },
+    addImageMessage: async (req, res, next) => {
+        console.log('ererere');
+        try {
+            if (req.file) {
+                // const { from, to, text } = req.body;
+                // const data = await messageModel.create({ from, to, text, type: 'image', image: req.file });
+                // if (data) {
+                //     return res.status(200).json({ message: data, status: true });
+                // }
+                return res.status(200).json({ msg: req.file.originalname, status: false });
+            }
+            return res.status(200).json({ msg: 'There is no image file', status: false });
         } catch (error) {
             next(error);
         }

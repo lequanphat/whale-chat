@@ -75,3 +75,10 @@ Content-Type: application/json
     "userId":"657f08fdda3579e3c56c986e",
     "contactId":"657f0899da3579e3c56c9866"
 }
+
+### 
+
+
+POST http://localhost:2411/api/message/upload-image
+Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZGEzNTc5ZTNjNTZjOTg2ZSIsImlhdCI6MTcwMjg5MzYwMywiZXhwIjoxNzAyODk3MjAzfQ._G04gcpQCAXl2Yq8JXgiiwz_KqveYuRh3QVsQ4UgKjQ

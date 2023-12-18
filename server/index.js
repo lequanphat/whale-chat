@@ -21,6 +21,7 @@ app.use(cors(corsOptions));
 app.use(authenticateToken);
 
 app.use('/storage', express.static('storage'));
+app.use('/storage', express.static('storage/uploads/images'));
 
 routes(app);
 app.use(errorHandler);
