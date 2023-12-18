@@ -19,6 +19,8 @@ const Message = () => {
     }, [currentContact, id, contacts]);
 
     useEffect(() => {
+        console.log('scroll into view');
+        
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
     return (

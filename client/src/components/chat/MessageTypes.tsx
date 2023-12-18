@@ -190,9 +190,14 @@ const MediaMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, r
                 ref={ref}
                 p={props.msg.text ? 1.5 : 0}
                 sx={{
-                    backgroundColor: props.msg.text ? props.fromSelf ? theme.palette.primary.main : theme.palette.background.paper : 'transparent',
+                    backgroundColor: props.msg.text
+                        ? props.fromSelf
+                            ? theme.palette.primary.main
+                            : theme.palette.background.paper
+                        : 'transparent',
                     borderRadius: '10px',
                     width: 'max-content',
+                    boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',
                 }}
             >
                 <Stack spacing={1}>

@@ -25,6 +25,7 @@ export const useChatSocket = () => {
 
             socket.off('recieve-message');
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contacts, currentContact]);
     const emitMessage = ({
         type,

@@ -11,7 +11,7 @@ const authenticateToken = (req, res, next) => {
         req.originalUrl.includes('/api/auth/change-password') ||
         req.originalUrl.includes('storage')
     ) {
-        return next(); // Cho phép tiếp tục nếu là route login hoặc register
+        return next();
     }
 
     try {

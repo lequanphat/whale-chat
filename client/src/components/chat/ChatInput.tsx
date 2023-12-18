@@ -48,7 +48,6 @@ function ChatInput() {
     const [openActions, setOpenActions] = useState(false);
     const imageInputRef = useRef(null);
     const documentInputRef = useRef(null);
-
     const handleEmojiClick = useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         (emojiData: EmojiClickData, _event: MouseEvent) => {
@@ -85,10 +84,9 @@ function ChatInput() {
     };
     const handleChooseFile = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.files[0]);
-        console.log(typeof e.target.files[0]);
-
         // call api here
         dispatch(setImage(e.target.files[0]));
+        e.target.value = '';
     };
     const handleResetChooseImage = () => {
         dispatch(resetImage());
@@ -108,7 +106,7 @@ function ChatInput() {
                         p: '12px 12px',
                         backgroundColor: theme.palette.background.paper,
                         borderRadius: 1,
-                        boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px'
+                        boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
                     }}
                 >
                     <Stack direction="row" alignItems="center" spacing={1}>
@@ -157,28 +155,30 @@ function ChatInput() {
 
                     startAdornment: (
                         <Stack>
-                            <Stack position="relative" display={openActions ? 'block' : 'none'}>
-                                {Actions.map((item, index) => {
-                                    return (
-                                        <Tooltip key={index} title={item.title} placement="right">
-                                            <Fab
-                                                color="primary"
-                                                aria-label="add"
-                                                sx={{
-                                                    position: 'absolute',
-                                                    top: -(102 + index * 70),
-                                                    backgroundColor: item.color,
-                                                }}
-                                                onClick={() => {
-                                                    handleChooseAction(index);
-                                                }}
-                                            >
-                                                {item.icon}
-                                            </Fab>
-                                        </Tooltip>
-                                    );
-                                })}
-                            </Stack>
+                            {openActions && (
+                                <Stack position="relative">
+                                    {Actions.map((item, index) => {
+                                        return (
+                                            <Tooltip key={index} title={item.title} placement="right">
+                                                <Fab
+                                                    color="primary"
+                                                    aria-label="add"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: -(102 + index * 70),
+                                                        backgroundColor: item.color,
+                                                    }}
+                                                    onClick={() => {
+                                                        handleChooseAction(index);
+                                                    }}
+                                                >
+                                                    {item.icon}
+                                                </Fab>
+                                            </Tooltip>
+                                        );
+                                    })}
+                                </Stack>
+                            )}
                             <InputAdornment position="end">
                                 <IconButton
                                     onClick={() => {
