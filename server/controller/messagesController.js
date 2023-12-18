@@ -1,39 +1,33 @@
 import messageModel from '../model/messageModel.js';
 
-const addMessage = async (req, res, next) => {
-    try {
-        const { from, to, message } = req.body;
-        const data = await messageModel.create({
-            message,
-            users: [from, to],
-            sender: from,
-        });
-        if (data) return res.json({ msg: 'Message added successfully!' });
-        return res.json({ msg: 'Fail to add message to the database!' });
-    } catch (error) {
-        next(error);
-    }
-};
-const getAllMessages = async (req, res, next) => {
-    try {
-        const { from, to } = req.body;
-        const messages = await messageModel.find({
-            users: {
-                $all: [from, to],
-            },
-        }).sort({updatedAt: 1});
-       
-        const projectMessages = messages.map((msg) => {
-            return {
-                fromSelf: msg.sender.toString() === from,
-                message: msg.message,
-            }
-        })
-        res.json(projectMessages);
+const messagesController = {
+    addMessage: async (req, res, next) => {
+        try {
+            const { from, to, text } = req.body;
+            const data = await messageModel.create({ from, to, text });
+            if (data) return res.status(200).json({ message: data, status: true });
+            return res.status(200).json({ msg: 'Fail to add message to the database!', status: false });
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAllMessages: async (req, res, next) => {
+        try {
+            const { userId, contactId } = req.body;
+            const messages = await messageModel
+                .find({
+                    $or: [
+                        { from: userId, to: contactId },
+                        { from: contactId, to: userId },
+                    ],
+                })
+                .sort({ createdAt: 1 });
 
-    } catch (error) {
-        next(error);
-    }
+            return res.status(200).json({ messages, status: true });
+        } catch (error) {
+            return res.status(200).json({ msg: 'userId or contactId is invalid', status: false });
+        }
+    },
 };
 
-export { addMessage, getAllMessages };
+export default messagesController;

@@ -62,5 +62,16 @@ Content-Type: application/json
 Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2VhYTI2MDBjM2EzODhmYjZjNWI5MSIsImlhdCI6MTcwMjgyMzk1MywiZXhwIjoxNzAyODI0MjUzfQ.hUq8xGAUwt0PWzL9TZnuLixYqE9UR-JPwLj-dyaHJrk
 
 ###
-
 GET http://localhost:2411/api/auth/refresh-token
+
+
+###
+
+
+POST http://localhost:2411/api/message/get-all-messages
+Content-Type: application/json
+
+{
+    "userId":"657f08fdda3579e3c56c986e",
+    "contactId":"657f0899da3579e3c56c9866"
+}
