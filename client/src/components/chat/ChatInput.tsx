@@ -8,8 +8,11 @@ import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMi
 import { EmojiClickData } from 'emoji-picker-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addIcon, resetImage, setImage, setMessage } from '../../store/slices/chatSlice';
+import { addIcon, resetDoc, resetImage, setDoc, setImage, setMessage } from '../../store/slices/chatSlice';
 import { IoCloseOutline } from 'react-icons/io5';
+import getFileImage from '../../utils/getFileImage';
+
+
 const Actions = [
     {
         color: '#4da5fe',
@@ -43,7 +46,7 @@ function ChatInput() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const theme = useTheme();
-    const { text, image } = useSelector((state: stateType) => state.chat);
+    const { text, image, doc } = useSelector((state: stateType) => state.chat);
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
     const imageInputRef = useRef(null);
@@ -82,7 +85,8 @@ function ChatInput() {
                 break;
         }
     };
-    const handleChooseFile = (e: ChangeEvent<HTMLInputElement>) => {
+    
+    const handleChooseImageFile = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.files[0]);
         // call api here
         dispatch(setImage(e.target.files[0]));
@@ -91,9 +95,17 @@ function ChatInput() {
     const handleResetChooseImage = () => {
         dispatch(resetImage());
     };
+    const handleResetChooseDoc = () => {
+        dispatch(resetDoc());
+    };
+    const handleChooseDocFile = (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files[0]);
+        dispatch(setDoc(e.target.files[0]));
+        e.target.value = '';
+    };
     return (
         <Box width="100%" position="relative" p={0}>
-            {image && (
+            {(image || doc) && (
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -101,7 +113,7 @@ function ChatInput() {
                     position="absolute"
                     spacing={8}
                     sx={{
-                        top: '-110px',
+                        top: '-90px',
                         left: 0,
                         p: '12px 12px',
                         backgroundColor: theme.palette.background.paper,
@@ -110,16 +122,20 @@ function ChatInput() {
                     }}
                 >
                     <Stack direction="row" alignItems="center" spacing={1}>
-                        <img src={URL.createObjectURL(image)} alt="pre-view" style={{ width: '80px' }} />
+                        <img
+                            src={image ? URL.createObjectURL(image) : getFileImage(doc.name)}
+                            alt="pre-view"
+                            style={{ height: '60px' }}
+                        />
                         <Typography
                             variant="body1"
                             maxWidth="200px"
                             sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
-                            {image.name}
+                            {image ? image.name : doc.name}
                         </Typography>
                     </Stack>
-                    <IconButton onClick={handleResetChooseImage}>
+                    <IconButton onClick={image ? handleResetChooseImage : handleResetChooseDoc}>
                         <IoCloseOutline />
                     </IconButton>
                 </Stack>
@@ -133,7 +149,7 @@ function ChatInput() {
                 accept="image/*,video/*"
                 style={{ display: 'none' }} // Ẩn input element
                 onChange={(e) => {
-                    handleChooseFile(e);
+                    handleChooseImageFile(e);
                 }}
             />
             <input
@@ -141,6 +157,9 @@ function ChatInput() {
                 type="file"
                 accept="application/pdf,text/*"
                 style={{ display: 'none' }} // Ẩn input element
+                onChange={(e) => {
+                    handleChooseDocFile(e);
+                }}
             />
             <StyledInput
                 value={text}
@@ -150,6 +169,8 @@ function ChatInput() {
                 fullWidth
                 placeholder="Write a message..."
                 variant="filled"
+                autoComplete='off'
+                
                 InputProps={{
                     disableUnderline: true,
 

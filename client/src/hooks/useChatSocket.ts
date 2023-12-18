@@ -14,6 +14,8 @@ export const useChatSocket = () => {
             return;
         }
         socket.on('recieve-message', (data) => {
+            console.log(data);
+            
             if (data.from === contacts[currentContact]._id) {
                 // Nếu tin nhắn đến từ chat hiện tại
                 dispatch(addMessageToCurrentMessages(data));
@@ -25,7 +27,7 @@ export const useChatSocket = () => {
 
             socket.off('recieve-message');
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contacts, currentContact]);
     const emitMessage = ({
         type,
@@ -33,14 +35,16 @@ export const useChatSocket = () => {
         to,
         from,
         image,
+        doc,
     }: {
         type: string;
         text: string;
         to: string;
         from: string;
         image?: string;
+        doc?: string;
     }) => {
-        socket.emit('send-message', { type, text, to, from, image });
+        socket.emit('send-message', { type, text, to, from, image, doc });
     };
     return { emitMessage };
 };

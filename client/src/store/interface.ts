@@ -35,6 +35,8 @@ export interface chatType {
     text: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     image: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    doc: any;
     messages: {
         type: string;
         text: string;

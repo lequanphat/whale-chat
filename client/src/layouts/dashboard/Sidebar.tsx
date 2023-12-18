@@ -10,6 +10,7 @@ import { resetUser, userLogout } from '../../store/slices/authSlice';
 import { openSnackbar } from '../../store/slices/appSlice';
 import { useDispatch } from 'react-redux';
 import { resetContacts } from '../../store/slices/contactsSlice';
+import { clearMessages } from '../../store/slices/chatSlice';
 const Sidebar = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
@@ -34,6 +35,7 @@ const Sidebar = () => {
         }
         dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
         dispatch(resetContacts());
+        dispatch(clearMessages());
     };
     return (
         <Box

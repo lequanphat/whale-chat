@@ -1,9 +1,11 @@
-import { Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
 import avatar from '../../assets/quanphat.jpg';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { useState } from 'react';
 import default_img from '../../assets/default-img.jpg';
+import { useSelector } from 'react-redux';
+import { stateType } from '../../store/interface';
 const Message_Option = [
     {
         title: 'Reply',
@@ -62,12 +64,20 @@ export const MessagesOption = () => {
         </>
     );
 };
-
+export const MessageWrapper = ({ children, fromSelf }) => {
+    const { avatar } = useSelector((state: stateType) => state.auth);
+    return (
+        <Stack direction="row" justifyContent={fromSelf === true ? 'end' : 'start'} width="100%" spacing={1}>
+            {!fromSelf && <Avatar src={avatar} />}
+            {children}
+        </Stack>
+    );
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TextMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
     return (
-        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
+        <MessageWrapper fromSelf={props.fromSelf}>
             <Box
                 ref={ref}
                 sx={{
@@ -81,38 +91,41 @@ const TextMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, re
                     {props.msg.text}
                 </Typography>
             </Box>
-        </Stack>
+        </MessageWrapper>
     );
 });
 
-const DocMessage = ({ msg }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const DocMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
     return (
-        <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
+        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
             <Box
-                p={1.5}
+                ref={ref}
+                p={1.2}
                 sx={{
-                    backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
+                    backgroundColor: props.fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
                     borderRadius: 1.2,
                     width: 'max-content',
                 }}
             >
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={3}
-                    sx={{ backgroundColor: theme.palette.background.paper }}
-                >
+                <Stack direction="row" alignItems="center" spacing={3} sx={{ backgroundColor: 'transparent' }}>
                     <img src={avatar} alt="123" style={{ maxHeight: 50 }} />
-                    <Typography variant="body1">document.png</Typography>
+                    <Typography
+                        variant="body1"
+                        color={props.fromSelf ? '#fff' : theme.palette.text.primary}
+                        sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
+                        {props.msg.text}
+                    </Typography>
                     <IconButton>
-                        <MdOutlineFileDownload />
+                        <MdOutlineFileDownload color={props.fromSelf ? '#fff' : theme.palette.text.primary} />
                     </IconButton>
                 </Stack>
             </Box>
         </Stack>
     );
-};
+});
 
 const LinkMessage = ({ msg }) => {
     const theme = useTheme();

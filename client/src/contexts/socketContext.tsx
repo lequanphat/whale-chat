@@ -34,6 +34,6 @@ export const SocketProvider = ({ children }) => {
         return () => {
             socketInstance.disconnect();
         };
-    }, []);
+    }, [id]);
     return <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>;
 };

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getAllContacts, setCurrentContact } from '../../store/slices/contactsSlice';
 import { stateType } from '../../store/interface';
+import { getMessages } from '../../store/slices/chatSlice';
 
 const Chats = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,8 +23,9 @@ const Chats = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSetCurrentChat = (index: number) => {
-        dispatch(setCurrentContact({ index }));
+    const handleSetCurrentChat = async (index: number) => {
+        await dispatch(setCurrentContact({ index }));
+        await dispatch(getMessages({ userId: id, contactId: contacts[index]._id }));
     };
 
     return (

@@ -4,15 +4,16 @@ import ChatInput from './ChatInput';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addImageMessage, addMessage, resetAllField, resetMessage } from '../../store/slices/chatSlice';
+import { addDocMessage, addImageMessage, addMessage, resetAllField, resetMessage } from '../../store/slices/chatSlice';
 import { FormEvent } from 'react';
+import { openSnackbar } from '../../store/slices/appSlice';
 
 const ChatFooter = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const { id } = useSelector((state: stateType) => state.auth);
     const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
-    const { text, image } = useSelector((state: stateType) => state.chat);
+    const { text, image, doc } = useSelector((state: stateType) => state.chat);
     const { emitMessage } = useChatSocket();
     const theme = useTheme();
 
@@ -36,6 +37,29 @@ const ChatFooter = () => {
                 to: response.payload.to,
             });
 
+            dispatch(resetAllField());
+            return;
+        }
+        if (doc) {
+            console.log(image);
+            const formData = new FormData();
+            formData.append('file', doc);
+            formData.append('from', id);
+            formData.append('to', contacts[currentContact]._id);
+            formData.append('text', text);
+            const response = await dispatch(addDocMessage(formData));
+            console.log(response);
+            if (response.error) {
+                dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
+                return;
+            }
+            emitMessage({
+                type: 'doc',
+                text: response.payload.text,
+                doc: response.payload.doc,
+                from: response.payload.from,
+                to: response.payload.to,
+            });
             dispatch(resetAllField());
             return;
         }

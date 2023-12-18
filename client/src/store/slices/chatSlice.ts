@@ -4,6 +4,7 @@ import api from '../../api/internal';
 const initialState = {
     text: '',
     image: undefined,
+    doc: undefined,
     recieveMessage: '',
     messages: [],
 };
@@ -28,6 +29,7 @@ const chatSlice = createSlice({
         },
         setImage(state, action) {
             state.image = action.payload;
+            state.doc = null;
         },
         resetImage(state) {
             state.image = null;
@@ -35,6 +37,17 @@ const chatSlice = createSlice({
         resetAllField(state) {
             state.text = '';
             state.image = null;
+            state.doc = null;
+        },
+        setDoc(state, action) {
+            state.doc = action.payload;
+            state.image = null;
+        },
+        resetDoc(state) {
+            state.doc = null;
+        },
+        clearMessages(state) {
+            state.messages = [];
         },
     },
     extraReducers: (builder) => {
@@ -53,7 +66,16 @@ const chatSlice = createSlice({
             .addCase(addImageMessage.fulfilled, (state, action) => {
                 state.messages.push(action.payload);
             })
-            .addCase(addImageMessage.rejected, () => {});
+            .addCase(addImageMessage.rejected, (state) => {
+                state.image = null;
+            })
+            .addCase(addDocMessage.pending, () => {})
+            .addCase(addDocMessage.fulfilled, (state, action) => {
+                state.messages.push(action.payload);
+            })
+            .addCase(addDocMessage.rejected, (state) => {
+                state.doc = null;
+            });
     },
 });
 
@@ -101,6 +123,22 @@ export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (d
         return rejectWithValue({ error });
     }
 });
+export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data: FormData, { rejectWithValue }) => {
+    try {
+        const response = await api.post('/message/upload-file', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        if (response.data.status === false) {
+            return rejectWithValue({ error: response.data.msg });
+        }
+        return response.data.message;
+    } catch (error) {
+        return rejectWithValue({ error });
+    }
+});
 
 export default chatSlice.reducer;
 export const {
@@ -112,4 +150,7 @@ export const {
     setImage,
     resetImage,
     resetAllField,
+    setDoc,
+    resetDoc,
+    clearMessages,
 } = chatSlice.actions;
