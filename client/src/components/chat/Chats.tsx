@@ -7,16 +7,15 @@ import ChatElement from './ChatElement';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getAllContacts, setCurrentContact } from '../../store/slices/contactsSlice';
 import { stateType } from '../../store/interface';
-import { getMessages } from '../../store/slices/chatSlice';
+import { getAllContacts, getMessages, setCurrentContact } from '../../store/slices/chatSlice';
 
 const Chats = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const theme = useTheme();
     const { id } = useSelector((state: stateType) => state.auth);
-    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
+    const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
 
     useEffect(() => {
         dispatch(getAllContacts({ id }));

@@ -9,8 +9,7 @@ import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
 import { openSnackbar } from '../../store/slices/appSlice';
 import { useDispatch } from 'react-redux';
-import { resetContacts } from '../../store/slices/contactsSlice';
-import { clearMessages } from '../../store/slices/chatSlice';
+import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
 const Sidebar = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();

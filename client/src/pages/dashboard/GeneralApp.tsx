@@ -11,7 +11,7 @@ import SharedMessages from '../../components/contacts/SharedMessages';
 const GeneralApp = () => {
     const theme = useTheme();
     const { sidebar } = useSelector((store) => store.app);
-    const { currentContact } = useSelector((store) => store.contacts);
+    const { currentContact } = useSelector((store) => store.chat);
     return (
         <Stack direction="row" sx={{ width: '100%' }}>
             <Chats />

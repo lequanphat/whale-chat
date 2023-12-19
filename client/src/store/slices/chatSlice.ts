@@ -2,56 +2,52 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 
 const initialState = {
-    text: '',
-    image: undefined,
-    doc: undefined,
     recieveMessage: '',
     messages: [],
+    contacts: [],
+    currentContact: undefined,
+    isLoading: false,
 };
 const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        setMessage(state, action) {
-            state.text = action.payload;
+        setCurrentContact(state, action) {
+            state.currentContact = action.payload.index;
         },
+        resetContacts(state) {
+            state.currentContact = undefined;
+            state.contacts = [];
+        },
+
         setRecieveMessage(state, action) {
             state.recieveMessage = action.payload;
         },
-        addIcon(state, action) {
-            state.text += action.payload;
-        },
-        resetMessage(state) {
-            state.text = '';
-        },
         addMessageToCurrentMessages(state, action) {
-            state.messages.push(action.payload);
+            if (action.payload.from === state.contacts[state.currentContact]._id) {
+                if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
+                    action.payload.avatar = state.contacts[state.currentContact].avatar;
+                }
+                state.messages.push(action.payload);
+            }
         },
-        setImage(state, action) {
-            state.image = action.payload;
-            state.doc = null;
-        },
-        resetImage(state) {
-            state.image = null;
-        },
-        resetAllField(state) {
-            state.text = '';
-            state.image = null;
-            state.doc = null;
-        },
-        setDoc(state, action) {
-            state.doc = action.payload;
-            state.image = null;
-        },
-        resetDoc(state) {
-            state.doc = null;
-        },
+
         clearMessages(state) {
             state.messages = [];
         },
     },
     extraReducers: (builder) => {
         builder
+            .addCase(getAllContacts.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getAllContacts.fulfilled, (state, action) => {
+                state.contacts = [...action.payload.contacts];
+                state.isLoading = false;
+            })
+            .addCase(getAllContacts.rejected, (state) => {
+                state.isLoading = false;
+            })
             .addCase(getMessages.pending, () => {})
             .addCase(getMessages.fulfilled, (state, action) => {
                 state.messages = [...action.payload];
@@ -72,9 +68,7 @@ const chatSlice = createSlice({
                     state.messages.push(action.payload.message);
                 }
             })
-            .addCase(addImageMessage.rejected, (state) => {
-                state.image = null;
-            })
+            .addCase(addImageMessage.rejected, () => {})
             .addCase(addDocMessage.pending, () => {})
             .addCase(addDocMessage.fulfilled, (state, action) => {
                 if (action.payload.messages) {
@@ -85,12 +79,23 @@ const chatSlice = createSlice({
                     state.messages.push(action.payload.message);
                 }
             })
-            .addCase(addDocMessage.rejected, (state) => {
-                state.doc = null;
-            });
+            .addCase(addDocMessage.rejected, () => {});
     },
 });
-
+export const getAllContacts = createAsyncThunk(
+    'contacts/getAllContact',
+    async (data: { id: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/user/all-users/${data.id}`);
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            return { contacts: response.data.users };
+        } catch (error) {
+            return rejectWithValue({ error: 'error in get contacts' });
+        }
+    },
+);
 export const getMessages = createAsyncThunk(
     'chat/getAllMessages',
     async (data: { userId: string; contactId: string }, { rejectWithValue }) => {
@@ -154,15 +159,11 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
 
 export default chatSlice.reducer;
 export const {
-    setMessage,
-    resetMessage,
-    addIcon,
+    setCurrentContact,
+    resetContacts,
+
     setRecieveMessage,
     addMessageToCurrentMessages,
-    setImage,
-    resetImage,
-    resetAllField,
-    setDoc,
-    resetDoc,
+
     clearMessages,
 } = chatSlice.actions;

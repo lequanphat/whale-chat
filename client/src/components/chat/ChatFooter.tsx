@@ -4,25 +4,27 @@ import ChatInput from './ChatInput';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addDocMessage, addImageMessage, addMessage, resetAllField, resetMessage } from '../../store/slices/chatSlice';
-import { FormEvent } from 'react';
+import { addDocMessage, addImageMessage, addMessage } from '../../store/slices/chatSlice';
+import { FormEvent, useState } from 'react';
 import { openSnackbar } from '../../store/slices/appSlice';
 
 const ChatFooter = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const { id } = useSelector((state: stateType) => state.auth);
-    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
-    const { text, image, doc } = useSelector((state: stateType) => state.chat);
+    const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+    const [docFile, setDocFile] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [text, setText] = useState('');
     const { emitMessage } = useChatSocket();
     const theme = useTheme();
 
     const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (image) {
-            console.log(image);
+        if (imageFile) {
+            console.log(imageFile);
             const formData = new FormData();
-            formData.append('image', image);
+            formData.append('image', imageFile);
             formData.append('from', id);
             formData.append('to', contacts[currentContact]._id);
             formData.append('text', text);
@@ -51,13 +53,14 @@ const ChatFooter = () => {
                 });
             }
 
-            dispatch(resetAllField());
+            setImageFile(null);
+            setText('');
             return;
         }
-        if (doc) {
-            console.log(image);
+        if (docFile) {
+            console.log(docFile);
             const formData = new FormData();
-            formData.append('file', doc);
+            formData.append('file', docFile);
             formData.append('from', id);
             formData.append('to', contacts[currentContact]._id);
             formData.append('text', text);
@@ -67,7 +70,7 @@ const ChatFooter = () => {
                 dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
                 return;
             }
-            
+
             const result = response.payload.messages;
             if (result) {
                 emitMessage({
@@ -92,14 +95,15 @@ const ChatFooter = () => {
                     to: response.payload.message.to,
                 });
             }
-            dispatch(resetAllField());
+            setDocFile(null);
+            setText('');
             return;
         }
         if (text.trim() === '') {
             return;
         }
         emitMessage({ type: 'text', text, from: id, to: contacts[currentContact]._id });
-        dispatch(resetMessage());
+        setText('');
         dispatch(addMessage({ from: id, to: contacts[currentContact]._id, text }));
     };
     return (
@@ -117,7 +121,14 @@ const ChatFooter = () => {
                 }}
             >
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <ChatInput />
+                    <ChatInput
+                        text={text}
+                        docFile={docFile}
+                        imageFile={imageFile}
+                        setDocFile={setDocFile}
+                        setImageFile={setImageFile}
+                        setText={setText}
+                    />
                     <Stack alignItems="center" justifyContent="center" sx={{ width: 46, height: 42 }}>
                         <IconButton type="submit">
                             <IoSendSharp color={theme.palette.primary.main} size={34} />

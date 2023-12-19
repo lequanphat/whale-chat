@@ -2,21 +2,22 @@ import { Box, Stack } from '@mui/material';
 import { DocMessage, MediaMessage, TextMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const Message = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   
+
     const { id } = useSelector((state: stateType) => state.auth);
     const { messages } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
-
 
     useEffect(() => {
         console.log('scroll into view');
 
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+    console.log('message render....');
+
     return (
         <Box p={2}>
             <Stack spacing={3}>
@@ -41,4 +42,5 @@ const Message = () => {
     );
 };
 
-export default Message;
+// eslint-disable-next-line react-refresh/only-export-components
+export default React.memo(Message);

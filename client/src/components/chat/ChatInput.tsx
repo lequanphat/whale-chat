@@ -3,15 +3,11 @@ import StyledInput from '../input/StyledInput';
 import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
-import { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'react';
 import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
-import { addIcon, resetDoc, resetImage, setDoc, setImage, setMessage } from '../../store/slices/chatSlice';
 import { IoCloseOutline } from 'react-icons/io5';
 import getFileImage from '../../utils/getFileImage';
-
 
 const Actions = [
     {
@@ -42,24 +38,19 @@ const Actions = [
     },
 ];
 
-function ChatInput() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dispatch = useDispatch<any>();
+const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile }) => {
     const theme = useTheme();
-    const { text, image, doc } = useSelector((state: stateType) => state.chat);
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
     const imageInputRef = useRef(null);
     const documentInputRef = useRef(null);
-    const handleEmojiClick = useCallback(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        (emojiData: EmojiClickData, _event: MouseEvent) => {
-            dispatch(addIcon(emojiData.emoji));
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [],
-    );
-    const handleChooseAction = (index: number) => {
+
+    const handleEmojiClick = useCallback((emojiData: EmojiClickData, _event: MouseEvent) => {
+        _event.preventDefault();
+        setText((pre) => pre + emojiData.emoji);
+    }, []);
+
+    const handleChooseAction = useCallback((index: number) => {
         setOpenActions(false);
         if (!imageInputRef.current) {
             return;
@@ -84,28 +75,27 @@ function ChatInput() {
             default:
                 break;
         }
-    };
-    
+    }, []);
+
     const handleChooseImageFile = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.files[0]);
-        // call api here
-        dispatch(setImage(e.target.files[0]));
+        setImageFile(e.target.files[0]);
         e.target.value = '';
     };
     const handleResetChooseImage = () => {
-        dispatch(resetImage());
+        setImageFile(null);
     };
     const handleResetChooseDoc = () => {
-        dispatch(resetDoc());
+        setDocFile(null);
     };
     const handleChooseDocFile = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.files[0]);
-        dispatch(setDoc(e.target.files[0]));
+        setDocFile(e.target.files[0]);
         e.target.value = '';
     };
     return (
         <Box width="100%" position="relative" p={0}>
-            {(image || doc) && (
+            {(imageFile || docFile) && (
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -123,7 +113,7 @@ function ChatInput() {
                 >
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <img
-                            src={image ? URL.createObjectURL(image) : getFileImage(doc.name)}
+                            src={imageFile ? URL.createObjectURL(imageFile) : getFileImage(docFile.name)}
                             alt="pre-view"
                             style={{ height: '60px' }}
                         />
@@ -132,10 +122,10 @@ function ChatInput() {
                             maxWidth="200px"
                             sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
-                            {image ? image.name : doc.name}
+                            {imageFile ? imageFile.name : docFile.name}
                         </Typography>
                     </Stack>
-                    <IconButton onClick={image ? handleResetChooseImage : handleResetChooseDoc}>
+                    <IconButton onClick={imageFile ? handleResetChooseImage : handleResetChooseDoc}>
                         <IoCloseOutline />
                     </IconButton>
                 </Stack>
@@ -164,13 +154,13 @@ function ChatInput() {
             <StyledInput
                 value={text}
                 onChange={(e) => {
-                    dispatch(setMessage(e.target.value));
+                    // dispatch(setMessage(e.target.value));
+                    setText(e.target.value);
                 }}
                 fullWidth
                 placeholder="Write a message..."
                 variant="filled"
-                autoComplete='off'
-                
+                autoComplete="off"
                 InputProps={{
                     disableUnderline: true,
 
@@ -226,6 +216,7 @@ function ChatInput() {
             />
         </Box>
     );
-}
+};
 
-export default ChatInput;
+// eslint-disable-next-line react-refresh/only-export-components
+export default React.memo(ChatInput);

@@ -11,7 +11,6 @@ const getFileImage = (name: string) => {
         const extendArray: string[] = name.split('.');
         const extend: string = extendArray[extendArray.length - 1];
         console.log(extend);
-
         switch (extend) {
             case 'csv':
             case 'xlsx':
@@ -37,4 +36,5 @@ const getFileImage = (name: string) => {
     }
     return fileImage;
 };
+
 export default getFileImage;

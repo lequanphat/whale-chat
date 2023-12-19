@@ -26,17 +26,11 @@ export interface Contacts {
     email: string;
     avatar: string;
 }
-export interface contactsType {
+
+export interface chatType {
     contacts: Contacts[];
     currentContact: number;
     isLoading: boolean;
-}
-export interface chatType {
-    text: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    image: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    doc: any;
     messages: {
         type: string;
         text: string;
@@ -49,6 +43,5 @@ export interface chatType {
 export interface stateType {
     app: appType;
     auth: authType;
-    contacts: contactsType;
     chat: chatType;
 }

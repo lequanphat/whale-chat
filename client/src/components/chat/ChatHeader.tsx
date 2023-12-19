@@ -8,7 +8,9 @@ import { stateType } from '../../store/interface';
 const ChatHeader = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const { contacts, currentContact } = useSelector((state: stateType) => state.contacts);
+    const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+    console.log('chat header render...');
+
     return (
         <Box
             sx={{
