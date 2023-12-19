@@ -1,11 +1,12 @@
 import { Avatar, Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
-import avatar from '../../assets/quanphat.jpg';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { useState } from 'react';
+import download from 'downloadjs';
 import default_img from '../../assets/default-img.jpg';
-import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
+import getFileImage from '../../utils/getFileImage';
+import api from '../../api/internal';
+
 const Message_Option = [
     {
         title: 'Reply',
@@ -64,11 +65,10 @@ export const MessagesOption = () => {
         </>
     );
 };
-export const MessageWrapper = ({ children, fromSelf }) => {
-    const { avatar } = useSelector((state: stateType) => state.auth);
+export const MessageWrapper = ({ children, fromSelf, avatar }) => {
     return (
-        <Stack direction="row" justifyContent={fromSelf === true ? 'end' : 'start'} width="100%" spacing={1}>
-            {!fromSelf && <Avatar src={avatar} />}
+        <Stack direction="row" justifyContent={fromSelf === true ? 'end' : 'start'} width="100%">
+            <Box width={'52px'}>{!fromSelf && avatar && <Avatar src={avatar} />}</Box>
             {children}
         </Stack>
     );
@@ -77,7 +77,7 @@ export const MessageWrapper = ({ children, fromSelf }) => {
 const TextMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
     return (
-        <MessageWrapper fromSelf={props.fromSelf}>
+        <MessageWrapper fromSelf={props.fromSelf} avatar={props.msg.avatar}>
             <Box
                 ref={ref}
                 sx={{
@@ -98,8 +98,16 @@ const TextMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, re
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DocMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const theme = useTheme();
+    const handleDownloadFile = async (filePath: string) => {
+        let fileName: string | string[] = filePath.split('/');
+        fileName = fileName[fileName.length - 1];
+        const response = await api.get(`/message/download/${fileName}`, {
+            responseType: 'blob',
+        });
+        download(response.data, fileName);
+    };
     return (
-        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
+        <MessageWrapper fromSelf={props.fromSelf} avatar={props.msg.avatar}>
             <Box
                 ref={ref}
                 p={1.2}
@@ -110,7 +118,7 @@ const DocMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref
                 }}
             >
                 <Stack direction="row" alignItems="center" spacing={3} sx={{ backgroundColor: 'transparent' }}>
-                    <img src={avatar} alt="123" style={{ maxHeight: 50 }} />
+                    <img src={getFileImage(props.msg.text)} alt="123" style={{ maxHeight: 50 }} />
                     <Typography
                         variant="body1"
                         color={props.fromSelf ? '#fff' : theme.palette.text.primary}
@@ -118,12 +126,12 @@ const DocMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref
                     >
                         {props.msg.text}
                     </Typography>
-                    <IconButton>
+                    <IconButton onClick={() => handleDownloadFile(props.msg.doc)}>
                         <MdOutlineFileDownload color={props.fromSelf ? '#fff' : theme.palette.text.primary} />
                     </IconButton>
                 </Stack>
             </Box>
-        </Stack>
+        </MessageWrapper>
     );
 });
 
@@ -197,7 +205,7 @@ const ReplyMessage = ({ msg }) => {
 const MediaMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
     const [imageLink, setImageLink] = useState(props.msg.image);
     return (
-        <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
+        <MessageWrapper fromSelf={props.fromSelf} avatar={props.msg.avatar}>
             <Box
                 ref={ref}
                 sx={{
@@ -215,7 +223,7 @@ const MediaMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, r
                     }}
                 />
             </Box>
-        </Stack>
+        </MessageWrapper>
     );
 });
 
