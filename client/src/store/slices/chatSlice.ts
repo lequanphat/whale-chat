@@ -64,14 +64,26 @@ const chatSlice = createSlice({
             .addCase(addMessage.rejected, () => {})
             .addCase(addImageMessage.pending, () => {})
             .addCase(addImageMessage.fulfilled, (state, action) => {
-                state.messages.push(action.payload);
+                if (action.payload.messages) {
+                    // image message and text message
+                    state.messages.push(...action.payload.messages);
+                } else {
+                    // only image message
+                    state.messages.push(action.payload.message);
+                }
             })
             .addCase(addImageMessage.rejected, (state) => {
                 state.image = null;
             })
             .addCase(addDocMessage.pending, () => {})
             .addCase(addDocMessage.fulfilled, (state, action) => {
-                state.messages.push(action.payload);
+                if (action.payload.messages) {
+                    // doc message and text message
+                    state.messages.push(...action.payload.messages);
+                } else {
+                    // only doc message
+                    state.messages.push(action.payload.message);
+                }
             })
             .addCase(addDocMessage.rejected, (state) => {
                 state.doc = null;
@@ -118,7 +130,7 @@ export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (d
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
-        return response.data.message;
+        return response.data;
     } catch (error) {
         return rejectWithValue({ error });
     }
@@ -134,7 +146,7 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
-        return response.data.message;
+        return response.data;
     } catch (error) {
         return rejectWithValue({ error });
     }

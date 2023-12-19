@@ -28,14 +28,28 @@ const ChatFooter = () => {
             formData.append('text', text);
             const response = await dispatch(addImageMessage(formData));
             console.log(response);
-
-            emitMessage({
-                type: 'image',
-                text,
-                image: response.payload.image,
-                from: response.payload.from,
-                to: response.payload.to,
-            });
+            const result = response.payload.messages;
+            if (result) {
+                emitMessage({
+                    type: 'image',
+                    image: result[0].image,
+                    from: result[0].from,
+                    to: result[0].to,
+                });
+                emitMessage({
+                    type: 'text',
+                    text: result[1].text,
+                    from: result[1].from,
+                    to: result[1].to,
+                });
+            } else {
+                emitMessage({
+                    type: 'image',
+                    image: response.payload.message.image,
+                    from: response.payload.message.from,
+                    to: response.payload.message.to,
+                });
+            }
 
             dispatch(resetAllField());
             return;
@@ -53,13 +67,31 @@ const ChatFooter = () => {
                 dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
                 return;
             }
-            emitMessage({
-                type: 'doc',
-                text: response.payload.text,
-                doc: response.payload.doc,
-                from: response.payload.from,
-                to: response.payload.to,
-            });
+            
+            const result = response.payload.messages;
+            if (result) {
+                emitMessage({
+                    type: 'doc',
+                    text: result[0].text,
+                    doc: result[0].doc,
+                    from: result[0].from,
+                    to: result[0].to,
+                });
+                emitMessage({
+                    type: 'text',
+                    text: result[1].text,
+                    from: result[1].from,
+                    to: result[1].to,
+                });
+            } else {
+                emitMessage({
+                    type: 'doc',
+                    text: response.payload.message.text,
+                    doc: response.payload.message.doc,
+                    from: response.payload.message.from,
+                    to: response.payload.message.to,
+                });
+            }
             dispatch(resetAllField());
             return;
         }

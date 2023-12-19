@@ -38,7 +38,7 @@ export const useChatSocket = () => {
         doc,
     }: {
         type: string;
-        text: string;
+        text?: string;
         to: string;
         from: string;
         image?: string;

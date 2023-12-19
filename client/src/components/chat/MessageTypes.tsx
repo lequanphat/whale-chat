@@ -195,39 +195,25 @@ const ReplyMessage = ({ msg }) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MediaMessage = React.forwardRef((props: { msg: any; fromSelf: boolean }, ref) => {
-    const theme = useTheme();
     const [imageLink, setImageLink] = useState(props.msg.image);
     return (
         <Stack direction="row" justifyContent={props.fromSelf ? 'end' : 'start'}>
             <Box
                 ref={ref}
-                p={props.msg.text ? 1.5 : 0}
                 sx={{
-                    backgroundColor: props.msg.text
-                        ? props.fromSelf
-                            ? theme.palette.primary.main
-                            : theme.palette.background.paper
-                        : 'transparent',
-                    borderRadius: '10px',
-                    width: 'max-content',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
                     boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',
                 }}
             >
-                <Stack spacing={1}>
-                    <img
-                        src={imageLink}
-                        alt={'image'}
-                        style={{ maxHeight: 210, borderRadius: '10px' }}
-                        onError={() => {
-                            setImageLink(default_img);
-                        }}
-                    />
-                    {props.msg.text && (
-                        <Typography variant="body1" color={props.fromSelf ? '#fff' : theme.palette.text.primary}>
-                            {props.msg.text}
-                        </Typography>
-                    )}
-                </Stack>
+                <img
+                    src={imageLink}
+                    alt={'image'}
+                    style={{ maxHeight: 210 }}
+                    onError={() => {
+                        setImageLink(default_img);
+                    }}
+                />
             </Box>
         </Stack>
     );
