@@ -1,23 +1,28 @@
 import userModel from '../model/userModel.js';
+import { BACKEND_SERVER_PATH } from '../config/index.js';
 const userController = {
-    setAvatarImage: async (req, res, next) => {
+    setAvatar: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const { avatar } = req.body;
-            if (id === undefined) {
-                return res.json({ msg: 'Where is id?', status: false });
+            if (!id) {
+                return res.status(200).json({ msg: 'Can not find user with id ' + id, status: false });
             }
-            const newUser = await userModel.findOneAndUpdate(
-                { _id: id },
-                { avatarImage: avatar },
+            if (!req.filePath) {
+                return res.status(200).json({ msg: 'Please upload an image to set your avatar!', status: false });
+            }
+            const user = await userModel.findByIdAndUpdate(
+                id,
                 {
-                    new: true,
-                    runValidators: true,
+                    avatar: `${BACKEND_SERVER_PATH}/storage/uploads/avatars/${req.filePath}`,
                 },
+                { new: true },
             );
-            return res.json({ status: true, user: newUser });
+            if (!user) {
+                return res.status(200).json({ msg: 'Can not find user with id ' + id, status: false });
+            }
+            return res.status(200).json({ avatar: user.avatar, status: true });
         } catch (error) {
-            next(error);
+            return res.status(200).json({ msg: error.message, status: false });
         }
     },
     getUser: async (req, res, next) => {
@@ -38,7 +43,7 @@ const userController = {
                 .select(['email', 'displayName', 'avatar', '_id']);
             return res.status(200).json({ users, status: true });
         } catch (error) {
-            return res.status(200).json({ msg: 'Fail in get all users' ,status: false });
+            return res.status(200).json({ msg: 'Fail in get all users', status: false });
         }
     },
 };

@@ -43,7 +43,7 @@ export const emailFormat = (title, content, link) => {
         <body>
             <div class="container">
                 <img
-                    src="http://localhost:2411/storage/logo.png"
+                    src="http://localhost:2411/storage/default/logo.png"
                     alt="Logo"
                     style="display: block; margin: 0 auto; width: 16%; height: 16%;"
                 />

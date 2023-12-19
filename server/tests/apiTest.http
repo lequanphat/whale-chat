@@ -82,3 +82,11 @@ Content-Type: application/json
 POST http://localhost:2411/api/message/upload-image
 Content-Type: application/json
 Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZGEzNTc5ZTNjNTZjOTg2ZSIsImlhdCI6MTcwMjg5MzYwMywiZXhwIjoxNzAyODk3MjAzfQ._G04gcpQCAXl2Yq8JXgiiwz_KqveYuRh3QVsQ4UgKjQ
+
+
+
+###
+
+POST http://localhost:2411/api/user/set-avatar/:id
+Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZGEzNTc5ZTNjNTZjOTg2ZSIsImlhdCI6MTcwMjk5OTI4NCwiZXhwIjoxNzAzMDAyODg0fQ.mZP1_F5TsABfjTE_K-iBE4vwIpB_MxQZRh4Tia3znmo

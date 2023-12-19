@@ -81,7 +81,7 @@ const messagesController = {
                     ],
                 })
                 .sort({ createdAt: 1 });
-            // messages = messages.slice(Math.max(messages.length - 20, 0));
+            messages = messages.slice(Math.max(messages.length - 20, 0));
             if (messages.length > 0) {
                 const contactUser = await userModel.findOne({ _id: contactId });
                 for (let i = 1; i < messages.length - 1; i++) {
