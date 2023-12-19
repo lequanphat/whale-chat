@@ -52,4 +52,8 @@ router.post('/get-all-messages', messagesController.getAllMessages);
 // upload router
 router.post('/upload-image', uploadImage.single('image'), messagesController.addImageMessage);
 router.post('/upload-file', uploadFile.single('file'), messagesController.addDocMessage);
+
+
+// download router
+router.get('/download/:filename',  messagesController.downLoadFile);
 export default router;

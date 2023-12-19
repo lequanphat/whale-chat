@@ -28,6 +28,9 @@ const messageSchema = new mongoose.Schema(
         doc: {
             type: String,
         },
+        avatar: {
+            type: String,   // no data here
+        },
     },
     { timestamps: true },
 );
