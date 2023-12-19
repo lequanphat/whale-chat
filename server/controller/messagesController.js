@@ -17,18 +17,24 @@ const messagesController = {
             if (req.fileName) {
                 const { from, to, text } = req.body;
 
-                const data = await messageModel.create({
+                const imageMessage = await messageModel.create({
                     from,
                     to,
-                    text,
                     type: 'image',
                     image: `${BACKEND_SERVER_PATH}/storage/uploads/images/${req.fileName}`,
                 });
-                if (data) {
+                if (!imageMessage) {
                     console.log(data);
-                    return res.status(200).json({ message: data, status: true });
+                    return res.status(200).json({ msg: 'Fail to add image message to database.', status: false });
                 }
-                return res.status(200).json({ msg: req.file.originalname, status: false });
+                if (text) {
+                    const textMessage = await messageModel.create({ from, to, text });
+                    if (textMessage) {
+                        console.log({ messages: [imageMessage, textMessage], status: true });
+                        return res.status(200).json({ messages: [imageMessage, textMessage], status: true });
+                    }
+                }
+                return res.status(200).json({ message: imageMessage, status: true });
             }
             return res.status(200).json({ msg: 'There is no image file', status: false });
         } catch (error) {
@@ -39,19 +45,25 @@ const messagesController = {
         try {
             if (req.fileName) {
                 const { from, to, text } = req.body;
-                console.log('text: ' + text);
-                const data = await messageModel.create({
+
+                const docMessage = await messageModel.create({
                     from,
                     to,
                     type: 'doc',
                     doc: `${BACKEND_SERVER_PATH}/storage/uploads/docs/${req.filePath}`,
                     text: req.fileName,
                 });
-                if (data) {
-                    console.log(data);
-                    return res.status(200).json({ message: data, status: true });
+                if (!docMessage) {
+                    return es.status(200).json({ msg: 'Fail to add doc message to database.', status: false });
                 }
-                return res.status(200).json({ msg: req.file.originalname, status: false });
+                if (text) {
+                    const textMessage = await messageModel.create({ from, to, text });
+                    if (textMessage) {
+                        console.log({ messages: [docMessage, textMessage], status: true });
+                        return res.status(200).json({ messages: [docMessage, textMessage], status: true });
+                    }
+                }
+                return res.status(200).json({ message: docMessage, status: true });
             }
             return res.status(200).json({ msg: 'File size too large. Max 20MB allowed.', status: false });
         } catch (error) {
