@@ -31,7 +31,9 @@ export interface chatType {
     contacts: Contacts[];
     currentContact: number;
     isLoading: boolean;
+    isMessagesLoading: boolean;
     messages: {
+        _id: string;
         type: string;
         text: string;
         from: string;

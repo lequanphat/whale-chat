@@ -87,7 +87,6 @@ export default function Settings() {
             <Stack direction="row" width="100%">
                 {/* Left Panel  */}
                 <Scrollbar
-                    scrollbar
                     sx={{
                         height: '100vh',
                         width: 320,
@@ -116,22 +115,15 @@ export default function Settings() {
                             </Stack>
                         </Stack>
                         <Stack spacing={4}>
-                            {Settings_List.map((item) => {
+                            {Settings_List.map((item, index) => {
                                 return (
-                                    <>
-                                        <Stack
-                                            key={item.key}
-                                            spacing={2}
-                                            sx={{ cursor: 'pointer' }}
-                                            onClick={item.onClick}
-                                        >
-                                            <Stack direction="row" alignItems="center" spacing={1.6}>
-                                                {item.icon}
-                                                <Typography variant="caption">{item.title}</Typography>
-                                            </Stack>
-                                            {item.key !== 7 && <Divider />}
+                                    <Stack key={index} spacing={2} sx={{ cursor: 'pointer' }} onClick={item.onClick}>
+                                        <Stack direction="row" alignItems="center" spacing={1.6}>
+                                            {item.icon}
+                                            <Typography variant="caption">{item.title}</Typography>
                                         </Stack>
-                                    </>
+                                        {item.key !== 7 && <Divider />}
+                                    </Stack>
                                 );
                             })}
                         </Stack>

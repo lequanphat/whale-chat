@@ -62,7 +62,9 @@ export const userSlice = createSlice({
             .addCase(userChangePassword.pending, () => {})
             .addCase(userChangePassword.fulfilled, () => {})
             .addCase(userChangePassword.rejected, () => {})
-            .addCase(getUser.pending, () => {})
+            .addCase(getUser.pending, (state) => {
+                state.isLoading = true;
+            })
             .addCase(getUser.fulfilled, (state, action) => {
                 state.id = action.payload.id;
                 state.email = action.payload.email;
@@ -70,8 +72,21 @@ export const userSlice = createSlice({
                 state.avatar = action.payload.avatar;
                 state.token = action.payload.token;
                 state.auth = true;
+                state.isLoading = false;
             })
-            .addCase(getUser.rejected, () => {});
+            .addCase(getUser.rejected, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(setAvatar.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(setAvatar.fulfilled, (state, action) => {
+                state.avatar = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(setAvatar.rejected, (state) => {
+                state.isLoading = false;
+            });
     },
 });
 
@@ -155,5 +170,26 @@ export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithV
         return rejectWithValue({ error });
     }
 });
+export const setAvatar = createAsyncThunk(
+    'user/setAvatar',
+    async ({ data, id }: { data: FormData; id: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post(`/user/set-avatar/${id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+
+            return response.data.avatar;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
+
 export const { setUser, resetUser } = userSlice.actions;
 export default userSlice.reducer;

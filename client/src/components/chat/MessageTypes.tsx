@@ -213,7 +213,7 @@ const MediaMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: 
             <Box
                 sx={{
                     width: 300,
-                    maxHeight: 210,
+                    maxHeight: 600,
                     borderRadius: 1.2,
                     overflow: 'hidden',
                     boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',

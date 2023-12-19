@@ -2,17 +2,20 @@ import { Avatar, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } fro
 import React, { useState } from 'react';
 import { RiSettings3Line } from 'react-icons/ri';
 import CustomSwitch from '../../components/switch/CustomSwitch';
-import avatar from '../../assets/avatar_4.jpg';
 import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
 import { openSnackbar } from '../../store/slices/appSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
+import { stateType } from '../../store/interface';
+import { useNavigate } from 'react-router-dom';
 const Sidebar = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
+    const navigate = useNavigate();
+    const { avatar } = useSelector((state: stateType) => state.auth);
     const [selected, setSelected] = useState(0);
     const theme = useTheme();
     const { onToggleMode } = useSettings();
@@ -35,6 +38,23 @@ const Sidebar = () => {
         dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
         dispatch(resetContacts());
         dispatch(clearMessages());
+    };
+    const handleAccountManager = (index) => {
+        switch (index) {
+            case 0:
+                navigate('/profile');
+                break;
+            case 1:
+                navigate('/settings');
+                break;
+            case 2:
+                handleLogout();
+                break;
+
+            default:
+                break;
+        }
+        setAnchorEl(null);
     };
     return (
         <Box
@@ -145,9 +165,7 @@ const Sidebar = () => {
                                     <MenuItem
                                         key={index}
                                         onClick={() => {
-                                            if (index == 2) {
-                                                handleLogout();
-                                            }
+                                            handleAccountManager(index);
                                         }}
                                     >
                                         <Stack

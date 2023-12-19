@@ -10,11 +10,9 @@ const Message = () => {
     const { id } = useSelector((state: stateType) => state.auth);
     const { messages } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
-
     useEffect(() => {
         console.log('scroll into view');
-
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, [messages]);
     console.log('message render....');
 
@@ -22,16 +20,20 @@ const Message = () => {
         <Box p={2}>
             <Stack spacing={3}>
                 {messages.map(
-                    (msg: { type: string; text: string; from: string; to: string; image?: string }, index: number) => {
+                    (msg: { _id: string; type: string; text: string; from: string; to: string; image?: string }) => {
                         switch (msg.type) {
                             case 'text':
-                                return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
+                                return (
+                                    <TextMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
+                                );
                             case 'image':
                                 return (
-                                    <MediaMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />
+                                    <MediaMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
                                 );
                             case 'doc':
-                                return <DocMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
+                                return (
+                                    <DocMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
+                                );
                             default:
                                 return <></>;
                         }

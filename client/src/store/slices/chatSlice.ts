@@ -7,6 +7,7 @@ const initialState = {
     contacts: [],
     currentContact: undefined,
     isLoading: false,
+    isMessagesLoading: false,
 };
 const chatSlice = createSlice({
     name: 'chat',
@@ -48,11 +49,16 @@ const chatSlice = createSlice({
             .addCase(getAllContacts.rejected, (state) => {
                 state.isLoading = false;
             })
-            .addCase(getMessages.pending, () => {})
+            .addCase(getMessages.pending, (state) => {
+                state.isMessagesLoading = true;
+            })
             .addCase(getMessages.fulfilled, (state, action) => {
                 state.messages = [...action.payload];
+                state.isMessagesLoading = false;
             })
-            .addCase(getMessages.rejected, () => {})
+            .addCase(getMessages.rejected, (state) => {
+                state.isMessagesLoading = false;
+            })
             .addCase(addMessage.pending, () => {})
             .addCase(addMessage.fulfilled, (state, action) => {
                 state.messages.push(action.payload);

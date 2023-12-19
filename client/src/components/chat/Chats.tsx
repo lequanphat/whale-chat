@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { stateType } from '../../store/interface';
 import { getAllContacts, getMessages, setCurrentContact } from '../../store/slices/chatSlice';
+import Loading from '../loading/Loading';
 
 const Chats = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const theme = useTheme();
     const { id } = useSelector((state: stateType) => state.auth);
-    const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+    const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
 
     useEffect(() => {
         dispatch(getAllContacts({ id }));
@@ -59,28 +60,34 @@ const Chats = () => {
                     <Divider />
                 </Stack>
                 <Scrollbar direction="column" sx={{ flexGrow: 1, overflow: 'auto', height: '100%' }} spacing={2}>
-                    <Stack spacing={1.6}>
-                        <Typography variant="subtitle2" sx={{ color: '#676767' }}>
-                            Pinned
-                        </Typography>
-                        {contacts.map((item, index) => {
-                            return (
-                                <ChatElement
-                                    key={item._id}
-                                    {...item}
-                                    selected={currentContact === index}
-                                    onClick={() => {
-                                        handleSetCurrentChat(index);
-                                    }}
-                                />
-                            );
-                        })}
-                    </Stack>
-                    <Stack spacing={1.6}>
-                        <Typography variant="subtitle2" sx={{ color: '#676767' }}>
-                            All Chats
-                        </Typography>
-                    </Stack>
+                    {isLoading ? (
+                        <Loading />
+                    ) : (
+                        <>
+                            <Stack spacing={1.6}>
+                                <Typography variant="subtitle2" sx={{ color: '#676767' }}>
+                                    Pinned
+                                </Typography>
+                                {contacts.map((item, index) => {
+                                    return (
+                                        <ChatElement
+                                            key={item._id}
+                                            {...item}
+                                            selected={currentContact === index}
+                                            onClick={() => {
+                                                handleSetCurrentChat(index);
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </Stack>
+                            <Stack spacing={1.6}>
+                                <Typography variant="subtitle2" sx={{ color: '#676767' }}>
+                                    All Chats
+                                </Typography>
+                            </Stack>
+                        </>
+                    )}
                 </Scrollbar>
             </Stack>
         </Box>
