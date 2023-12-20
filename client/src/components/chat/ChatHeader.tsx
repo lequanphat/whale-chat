@@ -23,21 +23,22 @@ const ChatHeader = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%" height="100%">
                 <Stack direction="row" spacing={2}>
                     <Box>
-                        <StyledBadge
-                            onClick={() => {
-                                dispatch(toggleSidebar());
-                            }}
-                            overlap="circular"
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            variant="dot"
-                        >
-                            <Avatar alt="Quan Phat" src={contacts[currentContact].avatar} />
-                        </StyledBadge>
+                        {contacts[currentContact].status==='online' ? (
+                            <StyledBadge
+                                overlap="circular"
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                variant="dot"
+                            >
+                                <Avatar alt="Remy Sharp" src={contacts[currentContact].avatar} />
+                            </StyledBadge>
+                        ) : (
+                            <Avatar alt="Remy Sharp" src={contacts[currentContact].avatar} />
+                        )}
                     </Box>
                     <Stack spacing={0}>
                         <Typography variant="subtitle2">{contacts[currentContact].displayName}</Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            Online
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }} textTransform="capitalize">
+                            {contacts[currentContact].status}
                         </Typography>
                     </Stack>
                 </Stack>

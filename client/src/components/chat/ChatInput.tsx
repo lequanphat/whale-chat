@@ -1,13 +1,13 @@
-import { Box, Fab, IconButton, InputAdornment, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Fab, IconButton, InputAdornment, Stack, Tooltip } from '@mui/material';
 import StyledInput from '../input/StyledInput';
 import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
-import React, { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
 import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
-import { IoCloseOutline } from 'react-icons/io5';
-import getFileImage from '../../utils/getFileImage';
+import MediaPreview from './MediaPreview';
+import VoicePreview from './VoicePreview';
 
 const Actions = [
     {
@@ -39,14 +39,14 @@ const Actions = [
 ];
 
 const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile }) => {
-    const theme = useTheme();
     const [openPicker, setOpenPicker] = useState(false);
     const [openActions, setOpenActions] = useState(false);
     const imageInputRef = useRef(null);
     const documentInputRef = useRef(null);
 
-    const handleEmojiClick = useCallback((emojiData: EmojiClickData, _event: MouseEvent) => {
-        _event.preventDefault();
+    const [isVoice, setIsVoice] = useState(false);
+
+    const handleEmojiClick = useCallback((emojiData: EmojiClickData) => {
         setText((pre) => pre + emojiData.emoji);
     }, []);
 
@@ -66,7 +66,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
                 documentInputRef.current.click();
                 break;
             case 3:
-                alert('Voice feature');
+                setIsVoice(true);
                 break;
             case 4:
                 alert('Contacts feature');
@@ -95,40 +95,14 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
     };
     return (
         <Box width="100%" position="relative" p={0}>
+            {isVoice && <VoicePreview />}
+
             {(imageFile || docFile) && (
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    position="absolute"
-                    spacing={8}
-                    sx={{
-                        top: '-90px',
-                        left: 0,
-                        p: '12px 12px',
-                        backgroundColor: theme.palette.background.paper,
-                        borderRadius: 1,
-                        boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
-                    }}
-                >
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <img
-                            src={imageFile ? URL.createObjectURL(imageFile) : getFileImage(docFile.name)}
-                            alt="pre-view"
-                            style={{ height: '60px' }}
-                        />
-                        <Typography
-                            variant="body1"
-                            maxWidth="200px"
-                            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                        >
-                            {imageFile ? imageFile.name : docFile.name}
-                        </Typography>
-                    </Stack>
-                    <IconButton onClick={imageFile ? handleResetChooseImage : handleResetChooseDoc}>
-                        <IoCloseOutline />
-                    </IconButton>
-                </Stack>
+                <MediaPreview
+                    imageFile={imageFile}
+                    docFile={docFile}
+                    handleReset={imageFile ? handleResetChooseImage : handleResetChooseDoc}
+                />
             )}
             <Box display={openPicker ? 'block' : 'none'}>
                 <StyledEmojiPicker handleEmojiClick={handleEmojiClick} />

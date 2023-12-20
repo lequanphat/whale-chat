@@ -23,6 +23,7 @@
     "react-avatar-edit": "^1.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
+    "react-mic": "^12.4.6",
     "react-redux": "^9.0.2",
     "react-router-dom": "^6.20.1",
     "redux-persist": "^6.0.0",
