@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Link, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, IconButton, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { ReactElement, useState } from 'react';
@@ -139,72 +139,6 @@ const DocMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: bo
     );
 });
 
-const LinkMessage = ({ msg }) => {
-    const theme = useTheme();
-    return (
-        <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
-            <Box
-                p={1.5}
-                sx={{
-                    backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
-                    borderRadius: 1.2,
-                    width: 'max-content',
-                }}
-            >
-                <Stack spacing={2}>
-                    <Stack
-                        alignItems="center"
-                        sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 1 }}
-                    >
-                        <img src={msg.preview} alt={msg.message} style={{ maxHeight: 210 }} />
-                    </Stack>
-                    <Stack spacing={0.4}>
-                        <Typography variant="subtitle2">{msg.message}</Typography>
-                        <Typography variant="body1" component={Link} href={'https://www.youtube.com'}>
-                            www.youtube.com
-                        </Typography>
-                    </Stack>
-                </Stack>
-            </Box>
-        </Stack>
-    );
-};
-
-const ReplyMessage = ({ msg }) => {
-    const theme = useTheme();
-    return (
-        <Stack direction="row" justifyContent={msg.incoming ? 'start' : 'end'}>
-            <Box
-                p={1.5}
-                sx={{
-                    backgroundColor: msg.incoming ? theme.palette.background.paper : theme.palette.primary.main,
-                    borderRadius: 1.2,
-                    width: 'max-content',
-                }}
-            >
-                <Stack spacing={2}>
-                    <Stack
-                        p={2}
-                        direction="column"
-                        alignItems="center"
-                        sx={{
-                            backgroundColor: msg.incoming ? theme.palette.primary.main : theme.palette.background.paper,
-                            borderRadius: 1,
-                        }}
-                    >
-                        <Typography variant="body1" color={!msg.incoming ? theme.palette.text.primary : '#fff'}>
-                            {msg.message}
-                        </Typography>
-                    </Stack>
-                    <Typography variant="body1" color={msg.incoming ? theme.palette.text.primary : '#fff'}>
-                        {msg.reply}
-                    </Typography>
-                </Stack>
-            </Box>
-        </Stack>
-    );
-};
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MediaMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
     const [imageLink, setImageLink] = useState(msg.image);
@@ -231,7 +165,14 @@ const MediaMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: 
         </MessageWrapper>
     );
 });
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const VoiceMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
+    return (
+        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar} ref={ref}>
+            <audio controls src={msg.voice} />
+        </MessageWrapper>
+    );
+});
 const TimeLine = ({ text }) => {
     const theme = useTheme();
     return (
@@ -253,4 +194,4 @@ const TimeLine = ({ text }) => {
     );
 };
 
-export { TimeLine, TextMessage, MediaMessage, ReplyMessage, LinkMessage, DocMessage };
+export { TimeLine, TextMessage, MediaMessage, DocMessage, VoiceMessage };

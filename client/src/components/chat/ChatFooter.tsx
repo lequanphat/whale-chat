@@ -1,12 +1,13 @@
 import { Box, IconButton, Stack, useTheme } from '@mui/material';
-import { IoSendSharp } from 'react-icons/io5';
+import { IoCloseOutline, IoSendSharp } from 'react-icons/io5';
 import ChatInput from './ChatInput';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addDocMessage, addImageMessage, addMessage } from '../../store/slices/chatSlice';
+import { addDocMessage, addImageMessage, addMessage, addVoiceMessage } from '../../store/slices/chatSlice';
 import { FormEvent, useState } from 'react';
 import { openSnackbar } from '../../store/slices/appSlice';
+import VoicePreview from './VoiceInput';
 
 const ChatFooter = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,12 +16,34 @@ const ChatFooter = () => {
     const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
     const [docFile, setDocFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [voiceFile, setVoiceFile] = useState(null);
+    const [openVoice, setOpenVoice] = useState<boolean>(false);
     const [text, setText] = useState('');
     const { emitMessage } = useChatSocket();
     const theme = useTheme();
 
     const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (voiceFile) {
+            console.log(voiceFile);
+            const formData = new FormData();
+            formData.append('audio', voiceFile.blob, 'recording.mp3');
+            formData.append('from', id);
+            formData.append('to', contacts[currentContact]._id);
+            const response = await dispatch(addVoiceMessage(formData));
+            console.log(response);
+
+            // emit
+            emitMessage({
+                type: 'voice',
+                voice: response.payload.message.voice,
+                from: response.payload.message.from,
+                to: response.payload.message.to,
+            });
+            // reset voice file
+            setVoiceFile(null);
+            return;
+        }
         if (imageFile) {
             console.log(imageFile);
             const formData = new FormData();
@@ -120,20 +143,39 @@ const ChatFooter = () => {
                     handleSendMessage(e);
                 }}
             >
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <ChatInput
-                        text={text}
-                        docFile={docFile}
-                        imageFile={imageFile}
-                        setDocFile={setDocFile}
-                        setImageFile={setImageFile}
-                        setText={setText}
-                    />
-                    <Stack alignItems="center" justifyContent="center" sx={{ width: 46, height: 42 }}>
-                        <IconButton type="submit">
-                            <IoSendSharp color={theme.palette.primary.main} size={34} />
-                        </IconButton>
-                    </Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between">
+                    {openVoice ? (
+                        <VoicePreview voiceFile={voiceFile} setVoiceFile={setVoiceFile} />
+                    ) : (
+                        <ChatInput
+                            text={text}
+                            docFile={docFile}
+                            imageFile={imageFile}
+                            setDocFile={setDocFile}
+                            setImageFile={setImageFile}
+                            setText={setText}
+                            setOpenVoice={setOpenVoice}
+                        />
+                    )}
+
+                    {!openVoice || voiceFile ? (
+                        <Stack alignItems="center" justifyContent="center" sx={{ width: 46, height: 42 }}>
+                            <IconButton type="submit">
+                                <IoSendSharp color={theme.palette.primary.main} size={34} />
+                            </IconButton>
+                        </Stack>
+                    ) : (
+                        <Stack alignItems="center" justifyContent="center" sx={{ width: 46, height: 42 }}>
+                            <IconButton
+                                onClick={() => {
+                                    setOpenVoice(false);
+                                    console.log(openVoice);
+                                }}
+                            >
+                                <IoCloseOutline color={theme.palette.primary.main} size={34} />
+                            </IconButton>
+                        </Stack>
+                    )}
                 </Stack>
             </form>
         </Box>

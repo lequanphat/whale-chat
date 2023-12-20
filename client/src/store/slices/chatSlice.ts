@@ -85,7 +85,12 @@ const chatSlice = createSlice({
                     state.messages.push(action.payload.message);
                 }
             })
-            .addCase(addDocMessage.rejected, () => {});
+            .addCase(addDocMessage.rejected, () => {})
+            .addCase(addVoiceMessage.pending, () => {})
+            .addCase(addVoiceMessage.fulfilled, (state, action) => {
+                state.messages.push(action.payload.message);
+            })
+            .addCase(addVoiceMessage.rejected, () => {});
     },
 });
 export const getAllContacts = createAsyncThunk(
@@ -162,7 +167,24 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
         return rejectWithValue({ error });
     }
 });
+export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (data: FormData, { rejectWithValue }) => {
+    try {
+        const response = await api.post('/message/upload-audio', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
 
+        if (response.data.status === false) {
+            return rejectWithValue({ error: response.data.msg });
+        }
+        console.log(response);
+
+        return response.data;
+    } catch (error) {
+        return rejectWithValue({ error });
+    }
+});
 export default chatSlice.reducer;
 export const {
     setCurrentContact,

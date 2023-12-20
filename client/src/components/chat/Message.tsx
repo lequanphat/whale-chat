@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { DocMessage, MediaMessage, TextMessage } from './MessageTypes';
+import { DocMessage, MediaMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import React, { useEffect, useRef } from 'react';
@@ -20,22 +20,25 @@ const Message = () => {
         <Box p={2}>
             <Stack spacing={3}>
                 {messages.map(
-                    (msg: { _id: string; type: string; text: string; from: string; to: string; image?: string }) => {
+                    (
+                        msg: { _id: string; type: string; text: string; from: string; to: string; image?: string },
+                        index: number,
+                    ) => {
                         switch (msg.type) {
                             case 'text':
-                                return (
-                                    <TextMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
-                                );
+                                return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
                             case 'image':
                                 return (
-                                    <MediaMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
+                                    <MediaMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />
                                 );
                             case 'doc':
+                                return <DocMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
+                            case 'voice':
                                 return (
-                                    <DocMessage ref={scrollRef} key={msg._id} msg={msg} fromSelf={msg.from === id} />
+                                    <VoiceMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />
                                 );
                             default:
-                                return <></>;
+                                return '123';
                         }
                     },
                 )}

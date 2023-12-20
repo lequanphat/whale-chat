@@ -2,12 +2,11 @@ import { useTheme } from '@emotion/react';
 import { Grid, IconButton, Stack, Tab, Tabs, ThemeOptions, Typography } from '@mui/material';
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
-import {  updateSidebarType } from '../../store/slices/appSlice';
+import { updateSidebarType } from '../../store/slices/appSlice';
 import { useState } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { faker } from '@faker-js/faker';
 import { SHARED_DOCS, SHARED_LINKS } from '../../data';
-import { DocMessage, LinkMessage } from '../chat/MessageTypes';
 
 export default function SharedMessages() {
     const dispatch = useDispatch();
@@ -50,7 +49,7 @@ export default function SharedMessages() {
                     <Tab label="Docs" />
                 </Tabs>
             </Stack>
-            <Scrollbar scrollbar height="calc(100vh - 134px)" p={3}>
+            <Scrollbar height="calc(100vh - 134px)" p={3}>
                 {(() => {
                     switch (value) {
                         case 0:
@@ -73,12 +72,12 @@ export default function SharedMessages() {
                         case 1:
                             // Links
                             return SHARED_LINKS.map((item, index) => {
-                                return <LinkMessage key={index} msg={item} />;
+                                return <>123</>;
                             });
                         case 2:
                             // Docs
                             return SHARED_DOCS.map((item, index) => {
-                                return <DocMessage key={index} msg={item} />;
+                                return <>123</>;
                             });
                         default:
                             return <></>;

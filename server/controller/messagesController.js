@@ -70,6 +70,27 @@ const messagesController = {
             return res.status(200).json({ msg: error.message, status: false });
         }
     },
+    addVoiceMessage: async (req, res, next) => {
+        try {
+            if (req.fileName) {
+                const { from, to } = req.body;
+                const voiceMessage = await messageModel.create({
+                    from,
+                    to,
+                    type: 'voice',
+                    voice: `${BACKEND_SERVER_PATH}/storage/uploads/audios/${req.fileName}`,
+                });
+                if (!voiceMessage) {
+                    return res.status(200).json({ msg: 'Fail to add voice message to database.', status: false });
+                }
+                console.log(voiceMessage);
+                return res.status(200).json({ message: voiceMessage, status: true });
+            }
+            return res.status(200).json({ msg: 'There is no voice file', status: false });
+        } catch (error) {
+            next(error);
+        }
+    },
     getAllMessages: async (req, res, next) => {
         try {
             const { userId, contactId } = req.body;
@@ -80,12 +101,12 @@ const messagesController = {
                         { from: contactId, to: userId },
                     ],
                 })
-                .select(['_id', 'type', 'from', 'to', 'text', 'image', 'doc'])
+                .select(['_id', 'type', 'from', 'to', 'text', 'image', 'doc', 'voice'])
                 .sort({ createdAt: 1 });
             messages = messages.slice(Math.max(messages.length - 20, 0));
             if (messages.length > 0) {
                 const contactUser = await userModel.findOne({ _id: contactId });
-                for (let i = 1; i < messages.length - 1; i++) {
+                for (let i = 1; i < messages.length; i++) {
                     if (messages[i - 1].from.toString() === userId) {
                         messages[i].avatar = contactUser.avatar;
                     }

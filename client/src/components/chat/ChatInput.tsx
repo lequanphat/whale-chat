@@ -7,7 +7,6 @@ import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
 import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
 import MediaPreview from './MediaPreview';
-import VoicePreview from './VoicePreview';
 
 const Actions = [
     {
@@ -38,13 +37,11 @@ const Actions = [
     },
 ];
 
-const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile }) => {
-    const [openPicker, setOpenPicker] = useState(false);
-    const [openActions, setOpenActions] = useState(false);
+const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile, setOpenVoice }) => {
+    const [openPicker, setOpenPicker] = useState<boolean>(false);
+    const [openActions, setOpenActions] = useState<boolean>(false);
     const imageInputRef = useRef(null);
     const documentInputRef = useRef(null);
-
-    const [isVoice, setIsVoice] = useState(false);
 
     const handleEmojiClick = useCallback((emojiData: EmojiClickData) => {
         setText((pre) => pre + emojiData.emoji);
@@ -66,7 +63,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
                 documentInputRef.current.click();
                 break;
             case 3:
-                setIsVoice(true);
+                setOpenVoice(true);
                 break;
             case 4:
                 alert('Contacts feature');
@@ -95,8 +92,6 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
     };
     return (
         <Box width="100%" position="relative" p={0}>
-            {isVoice && <VoicePreview />}
-
             {(imageFile || docFile) && (
                 <MediaPreview
                     imageFile={imageFile}

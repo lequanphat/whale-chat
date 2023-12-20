@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// type:  text, image, link, doc, timeline
+// type:  text, image, link, doc, voice, timeline
 
 const messageSchema = new mongoose.Schema(
     {
@@ -28,8 +28,11 @@ const messageSchema = new mongoose.Schema(
         doc: {
             type: String,
         },
+        voice: {
+            type: String,
+        },
         avatar: {
-            type: String,   // no data here
+            type: String, // no data here
         },
     },
     { timestamps: true },

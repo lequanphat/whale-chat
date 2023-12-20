@@ -28,6 +28,7 @@ export const useChatSocket = () => {
         from,
         image,
         doc,
+        voice,
     }: {
         type: string;
         text?: string;
@@ -35,8 +36,9 @@ export const useChatSocket = () => {
         from: string;
         image?: string;
         doc?: string;
+        voice?: string;
     }) => {
-        socket.emit('send-message', { type, text, to, from, image, doc });
+        socket.emit('send-message', { type, text, to, from, image, doc, voice });
     };
     return { emitMessage };
 };

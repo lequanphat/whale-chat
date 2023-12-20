@@ -27,19 +27,35 @@ const docStorage = multer.diskStorage({
         req.filePath = uniqueSuffix;
     },
 });
+const audioStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'storage/uploads/audios');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + req.user.id + '-' + file.originalname;
+        console.log(file);
+        cb(null, uniqueSuffix);
+        req.fileName = uniqueSuffix;
+    },
+});
 // upload images
 const uploadImage = multer({ storage: imageStorage });
 const fileFilter = (req, file, cb) => {
-    // Kiểm tra kích thước của file (20MB)
     if (file.size > 20 * 1024 * 1024) {
         return cb(new Error('File size too large. Max 20MB allowed.'));
     }
-    // Cho phép upload file nếu kích thước nhỏ hơn hoặc bằng 20MB
     cb(null, true);
 };
 //upload file
 const uploadFile = multer({
     storage: docStorage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 20 * 1024 * 1024, // 20MB
+    },
+});
+const uploadAudio = multer({
+    storage: audioStorage,
     fileFilter: fileFilter,
     limits: {
         fileSize: 20 * 1024 * 1024, // 20MB
@@ -53,7 +69,8 @@ router.post('/get-all-messages', messagesController.getAllMessages);
 router.post('/upload-image', uploadImage.single('image'), messagesController.addImageMessage);
 router.post('/upload-file', uploadFile.single('file'), messagesController.addDocMessage);
 
+router.post('/upload-audio', uploadAudio.single('audio'), messagesController.addVoiceMessage);
 
 // download router
-router.get('/download/:filename',  messagesController.downLoadFile);
+router.get('/download/:filename', messagesController.downLoadFile);
 export default router;
