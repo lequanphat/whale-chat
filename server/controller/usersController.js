@@ -17,7 +17,7 @@ const userController = {
         try {
             const users = await userModel
                 .find({ _id: { $ne: req.params.id } })
-                .select(['email', 'displayName', 'about', 'avatar', '_id']);
+                .select(['_id', 'email', 'displayName', 'about', 'avatar', 'status']);
             return res.status(200).json({ users, status: true });
         } catch (error) {
             return res.status(200).json({ msg: 'Fail in get all users', status: false });

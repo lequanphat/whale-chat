@@ -74,6 +74,7 @@ const Chats = () => {
                                             key={item._id}
                                             {...item}
                                             selected={currentContact === index}
+                                            online={item.status==='online'}
                                             onClick={() => {
                                                 handleSetCurrentChat(index);
                                             }}

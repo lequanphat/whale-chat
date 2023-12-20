@@ -18,7 +18,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
     msg = 'default message',
     time = '0:00',
     unread = 1,
-    online = true,
+    online = false,
     selected,
     onClick,
     ...props

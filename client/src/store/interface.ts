@@ -26,6 +26,7 @@ export interface Contacts {
     email: string;
     avatar: string;
     about:string;
+    status: string;
 }
 
 export interface chatType {

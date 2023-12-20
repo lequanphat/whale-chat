@@ -107,7 +107,7 @@ const authController = {
         try {
             // Authentication
             const { email, password } = req.body;
-            const user = await userModel.findOne({ email });
+            const user = await userModel.findOneAndUpdate({ email }, { status: 'online' }, { new: true });
             if (!user || (user && !user.verified)) {
                 return res.status(200).json({ msg: 'Incorrect email', status: false });
             }
@@ -133,6 +133,7 @@ const authController = {
     logout: async (req, res, next) => {
         try {
             // clear all tokens
+            const user = await userModel.findOneAndUpdate({ _id: req.user.id }, { status: 'offline' });
             res.clearCookie('access_token');
             res.clearCookie('refresh_token');
             // response
