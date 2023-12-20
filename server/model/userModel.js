@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
+        status: {
+            type: String,
+            default: 'online', // online, offline, block
+        },
         verified: {
             type: Boolean,
             default: false,
