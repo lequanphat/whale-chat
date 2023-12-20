@@ -80,6 +80,7 @@ const messagesController = {
                         { from: contactId, to: userId },
                     ],
                 })
+                .select(['_id', 'type', 'from', 'to', 'text', 'image', 'doc'])
                 .sort({ createdAt: 1 });
             messages = messages.slice(Math.max(messages.length - 20, 0));
             if (messages.length > 0) {

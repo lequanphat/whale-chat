@@ -6,18 +6,19 @@ import { PiPhoneLight } from 'react-icons/pi';
 import { MdBlock } from 'react-icons/md';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoMdNotificationsOutline } from 'react-icons/io';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar, updateSidebarType } from '../../store/slices/appSlice';
-import avatar from '../../assets/quanphat.jpg';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useState } from 'react';
 import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
+import { stateType } from '../../store/interface';
 
 function Contact() {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
     const [openBlock, setOpenBlock] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const handleCloseBlock = () => {
@@ -47,12 +48,9 @@ function Contact() {
                 </Stack>
             </Box>
             <Scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <Avatar src={avatar} alt="avt" sx={{ width: 52, height: 52 }} />
-                    <Stack spacing={0}>
-                        <Typography variant="body2">Quan Phat</Typography>
-                        <Typography variant="caption">0383642670</Typography>
-                    </Stack>
+                <Stack direction="column" alignItems="center" justifyContent="center" spacing={1}>
+                    <Avatar src={contacts[currentContact].avatar} alt="avt" sx={{ width: 62, height: 62 }} />
+                    <Typography variant="subtitle1">{contacts[currentContact].displayName}</Typography>
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-evenly">
                     <Stack direction="column" alignItems="center">
@@ -67,6 +65,15 @@ function Contact() {
                         </IconButton>
                         <Typography variant="body1">Video</Typography>
                     </Stack>
+                </Stack>
+                <Divider />
+                <Stack>
+                    <Typography variant="subtitle2" mb={1}>
+                        About
+                    </Typography>
+                    <Typography variant="body1" fontSize={15}>
+                        {contacts[currentContact].about}
+                    </Typography>
                 </Stack>
                 <Divider />
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
