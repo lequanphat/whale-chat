@@ -55,11 +55,7 @@ Content-Type: application/json
 
 
 
-###
 
-GET http://localhost:2411/api/user/all-users/657eaa2600c3a388fb6c5b91
-Content-Type: application/json
-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2VhYTI2MDBjM2EzODhmYjZjNWI5MSIsImlhdCI6MTcwMjgyMzk1MywiZXhwIjoxNzAyODI0MjUzfQ.hUq8xGAUwt0PWzL9TZnuLixYqE9UR-JPwLj-dyaHJrk
 
 ###
 GET http://localhost:2411/api/auth/refresh-token
@@ -90,3 +86,21 @@ Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZG
 POST http://localhost:2411/api/user/set-avatar/:id
 Content-Type: application/json
 Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZGEzNTc5ZTNjNTZjOTg2ZSIsImlhdCI6MTcwMjk5OTI4NCwiZXhwIjoxNzAzMDAyODg0fQ.mZP1_F5TsABfjTE_K-iBE4vwIpB_MxQZRh4Tia3znmo
+
+###
+
+POST http://localhost:2411/api/user/edit-profile/657eaa2600c3a388fb6c5b91
+Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2YwOGZkZGEzNTc5ZTNjNTZjOTg2ZSIsImlhdCI6MTcwMzA4MDE4MywiZXhwIjoxNzAzMDgzNzgzfQ.n9od2YyihcWsDn-XIO2FX5LqNC9ZdPsgBBppQiNkm8c
+
+{
+    "displayName": "Quan Phát",
+    "about":"happy guy kkk"
+}
+
+
+###
+
+GET http://localhost:2411/api/user/all-users/65808c2c8d9bc1afdf6de981
+Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N2VhYTI2MDBjM2EzODhmYjZjNWI5MSIsImlhdCI6MTcwMjgyMzk1MywiZXhwIjoxNzAyODI0MjUzfQ.hUq8xGAUwt0PWzL9TZnuLixYqE9UR-JPwLj-dyaHJrk

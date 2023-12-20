@@ -13,7 +13,7 @@ const authController = {
         try {
             const { displayName, email, password } = req.body;
             // vallidate
-            const { value, error } = registerSchema.validate({ email, password, displayName });
+            const { error } = registerSchema.validate({ email, password, displayName });
             if (error) {
                 return res.status(200).json({ msg: error.message, status: false });
             }
@@ -47,6 +47,7 @@ const authController = {
                     displayName,
                     email,
                     password: hashedPassword,
+                    about: `Hello, My name is ${displayName}`,
                     verified: false,
                     verifyCode: verifyCode,
                     verifyCodeExpiredTime: verifyCodeExpiredTime,
@@ -121,10 +122,10 @@ const authController = {
             saveCookie(res, 'access_token', accessToken);
             saveCookie(res, 'refresh_token', refreshToken);
             // filter data
-            const { _id: id, displayName, email: em, avatar } = user._doc;
+            const { _id: id, displayName, email: em, avatar, about } = user._doc;
             return res
                 .status(200)
-                .json({ user: { id, displayName, email: em, avatar, token: accessToken }, status: true });
+                .json({ user: { id, displayName, email: em, avatar, about, token: accessToken }, status: true });
         } catch (error) {
             return res.status(200).json({ msg: error.message, status: false });
         }

@@ -6,6 +6,9 @@ const router = express.Router();
 router.get('/get-user', userController.getUser);
 router.get('/all-users/:id', userController.getAllUsers);
 
+// edit profile
+router.post('/edit-profile/:id', userController.editProfile);
+
 const avatarStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'storage/uploads/avatars');

@@ -33,9 +33,17 @@ export const displayNameSchema = Joi.string()
         }
         return value;
     }, 'no-consecutive-spaces');
-
+export const aboutSchema = Joi.string()
+    .max(100)
+    .allow('')
+    .message('About can only contains a maximum of 100 characters');
 export const registerSchema = Joi.object({
     displayName: displayNameSchema,
     email: Joi.string().email().message('Invalid email'),
     password: passwordSchema,
+});
+
+export const profileSchema = Joi.object({
+    displayName: displayNameSchema,
+    about: aboutSchema,
 });

@@ -7,6 +7,7 @@ const initialState: authType = {
     email: '',
     displayName: '',
     avatar: '',
+    about: '',
     auth: false,
     token: '',
     isLoading: false,
@@ -17,11 +18,12 @@ export const userSlice = createSlice({
     initialState: initialState,
     reducers: {
         setUser: (state, action) => {
-            const { id, email, displayName, auth, avatar, token } = action.payload;
+            const { id, email, displayName, auth, avatar, about, token } = action.payload;
             state.id = id;
             state.email = email;
             state.displayName = displayName;
             state.avatar = avatar;
+            state.about = about;
             state.auth = auth;
             state.token = token;
         },
@@ -29,6 +31,7 @@ export const userSlice = createSlice({
             state.id = '';
             state.email = '';
             state.displayName = '';
+            state.about = '';
             state.auth = false;
             state.avatar = '';
             state.token = '';
@@ -41,6 +44,7 @@ export const userSlice = createSlice({
                 state.id = action.payload.id;
                 state.email = action.payload.email;
                 state.displayName = action.payload.displayName;
+                state.about = action.payload.about;
                 state.avatar = action.payload.avatar;
                 state.token = action.payload.token;
                 state.auth = true;
@@ -51,6 +55,7 @@ export const userSlice = createSlice({
                 state.id = '';
                 state.email = '';
                 state.displayName = '';
+                state.about = '';
                 state.auth = false;
                 state.avatar = '';
                 state.token = '';
@@ -69,6 +74,7 @@ export const userSlice = createSlice({
                 state.id = action.payload.id;
                 state.email = action.payload.email;
                 state.displayName = action.payload.displayName;
+                state.about = action.payload.about;
                 state.avatar = action.payload.avatar;
                 state.token = action.payload.token;
                 state.auth = true;
@@ -85,6 +91,17 @@ export const userSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(setAvatar.rejected, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(editProfile.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(editProfile.fulfilled, (state, action) => {
+                state.displayName = action.payload.displayName;
+                state.about = action.payload.about;
+                state.isLoading = false;
+            })
+            .addCase(editProfile.rejected, (state) => {
                 state.isLoading = false;
             });
     },
@@ -185,6 +202,26 @@ export const setAvatar = createAsyncThunk(
             }
 
             return response.data.avatar;
+        } catch (error) {
+            return rejectWithValue({ error });
+        }
+    },
+);
+export const editProfile = createAsyncThunk(
+    'user/editProfile',
+    async ({ displayName, about, id }: { displayName: string; about: string; id: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post(`/user/edit-profile/${id}`, {
+                displayName,
+                about,
+            });
+
+            if (response.data.status === false) {
+                return rejectWithValue({ error: response.data.msg });
+            }
+            console.log(response);
+            
+            return response.data;
         } catch (error) {
             return rejectWithValue({ error });
         }

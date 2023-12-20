@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { appType } from '../interface';
 
+const SERVERITY = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+};
+
 const initialState: appType = {
     sidebar: {
         open: false,
@@ -9,7 +14,7 @@ const initialState: appType = {
     snackbar: {
         open: false,
         message: '',
-        serverity: 'success',
+        serverity: SERVERITY.SUCCESS,
     },
 };
 
@@ -28,6 +33,16 @@ const slice = createSlice({
             state.snackbar.message = action.payload.message;
             state.snackbar.serverity = action.payload.serverity;
         },
+        openSuccessSnackbar(state, action) {
+            state.snackbar.open = true;
+            state.snackbar.message = action.payload;
+            state.snackbar.serverity = SERVERITY.SUCCESS;
+        },
+        openErrorSnackbar(state, action) {
+            state.snackbar.open = true;
+            state.snackbar.message = action.payload;
+            state.snackbar.serverity = SERVERITY.ERROR;
+        },
         closeSnackbar(state) {
             state.snackbar.open = false;
             state.snackbar.message = '';
@@ -37,4 +52,5 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { toggleSidebar, updateSidebarType, closeSnackbar, openSnackbar } = slice.actions;
+export const { toggleSidebar, updateSidebarType, closeSnackbar, openSnackbar, openSuccessSnackbar, openErrorSnackbar } =
+    slice.actions;

@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema(
             required: true,
             min: 6,
         },
+        about: {
+            type: String,
+            required: true,
+        },
         avatar: {
             type: String,
             default: '',

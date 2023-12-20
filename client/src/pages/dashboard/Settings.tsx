@@ -10,9 +10,10 @@ import {
     IoAccessibilityOutline,
 } from 'react-icons/io5';
 import { CiKeyboard } from 'react-icons/ci';
-import { faker } from '@faker-js/faker';
 import React, { useMemo, useState } from 'react';
 import ShortCuts from '../../components/dialog/ShortCuts';
+import { useSelector } from 'react-redux';
+import { stateType } from '../../store/interface';
 interface SettingsType {
     key: number;
     icon: React.ReactElement;
@@ -22,6 +23,7 @@ interface SettingsType {
 
 export default function Settings() {
     const theme = useTheme();
+    const { avatar, displayName, email } = useSelector((state: stateType) => state.auth);
     const [openShortcuts, setOpenShortcuts] = useState(false);
     const handleOpenShortcuts = () => {
         setOpenShortcuts(true);
@@ -104,14 +106,21 @@ export default function Settings() {
                     <Stack p={3.2} spacing={5}>
                         {/* Settings  */}
                         <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar
-                                sx={{ width: 54, height: 54 }}
-                                src={faker.image.url()}
-                                alt={faker.person.fullName()}
-                            />
-                            <Stack spacing={0.2}>
-                                <Typography variant="body2">{faker.person.fullName()}</Typography>
-                                <Typography variant="subtitle2">{faker.word.adverb()}</Typography>
+                            <Avatar sx={{ width: 54, height: 54 }} src={avatar} alt="avatar" />
+                            <Stack spacing={0.2} flex={1}>
+                                <Typography variant="subtitle1">{displayName}</Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize={14}
+                                    sx={{
+                                        maxWidth: '200px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    {email}
+                                </Typography>
                             </Stack>
                         </Stack>
                         <Stack spacing={4}>

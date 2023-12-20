@@ -1,28 +1,33 @@
 import { Avatar as MUIAvatar, Badge, Button, IconButton, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { GoChevronLeft } from 'react-icons/go';
 import { IoCameraOutline } from 'react-icons/io5';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { stateType } from '../../store/interface';
 import { useState } from 'react';
 import { EditAvatarDialog } from '../../components/dialog/EditAvatarDialog';
 import { useFormik } from 'formik';
 import { editProfileSchema } from '../../schemas/Scheme';
+import { editProfile } from '../../store/slices/authSlice';
+import { openErrorSnackbar, openSuccessSnackbar } from '../../store/slices/appSlice';
 const initialErrors = {
     displayName: '',
     about: '',
 };
 export default function Profile() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch = useDispatch<any>();
     const navigate = useNavigate();
+    const { id } = useSelector((state: stateType) => state.auth);
     const theme = useTheme();
-    const { displayName, avatar } = useSelector((state: stateType) => state.auth);
+    const { displayName, avatar, about } = useSelector((state: stateType) => state.auth);
     //
     const [openEditAvatar, setOpenEditAvatar] = useState(false);
     // validate formik
     const { values, errors, handleBlur, handleChange } = useFormik({
         initialValues: {
             displayName: displayName,
-            about: '',
+            about: about,
         },
         initialErrors: initialErrors,
         validationSchema: editProfileSchema,
@@ -31,12 +36,18 @@ export default function Profile() {
     const [displayNameError, setDisplayNameError] = useState('');
     // handle edit profile
 
-    const handleEditProfile = () => {
+    const handleEditProfile = async () => {
         if (errors.displayName) {
             setDisplayNameError(errors.displayName);
             return;
         }
-        alert('hello');
+        // call api
+        const response = await dispatch(editProfile({ displayName: values.displayName, about: values.about, id }));
+        if (response.error) {
+            dispatch(openErrorSnackbar('Update profile error!'));
+            return;
+        }
+        dispatch(openSuccessSnackbar('Profile updated successfully!'));
     };
     const handleBlurCustom = (e: React.FocusEvent<HTMLInputElement>) => {
         setDisplayNameError(errors.displayName);
@@ -106,9 +117,10 @@ export default function Profile() {
                     </Stack>
                     <TextField
                         fullWidth
+                        name="displayName"
                         label="Name"
-                        id="fullWidth"
-                        defaultValue={values.displayName}
+                        id="displayName"
+                        value={values.displayName}
                         onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                             handleBlurCustom(e);
                         }}
@@ -119,13 +131,22 @@ export default function Profile() {
 
                     <Typography
                         variant="body1"
-                        fontSize={15}
+                        fontSize={14}
                         color={displayNameError ? '#eb1e1e' : '#333'}
                         sx={{ m: '15px 0 0 0!important' }}
                     >
-                        {displayNameError ? displayNameError : 'This name is visible to your contacts'}
+                        {displayNameError ? `*${displayNameError}` : 'This name is visible to your contacts'}
                     </Typography>
-                    <TextField fullWidth label="About" id="fullWidth" defaultValue={values.about} multiline rows={4} />
+                    <TextField
+                        fullWidth
+                        name="about"
+                        label="About"
+                        id="about"
+                        value={values.about}
+                        multiline
+                        rows={4}
+                        onChange={handleChange}
+                    />
                     <Stack direction="row" justifyContent="end" width="100%">
                         <Button variant="outlined" sx={{ width: '40%' }} onClick={handleEditProfile}>
                             Save
