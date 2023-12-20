@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { registerSchema } from './Scheme';
+import { registerSchema } from '../../schemas/Scheme';
 import Button from '@mui/material/Button';
 import { Stack, Typography } from '@mui/material';
 import AuthInput from '../../components/input/AuthInput';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { loginSchema } from './Scheme';
+import { loginSchema } from '../../schemas/Scheme';
 import { Typography, Button, Stack } from '@mui/material';
 import AuthSocial from './AuthSocial';
 import AuthInput from '../../components/input/AuthInput';
@@ -60,9 +60,7 @@ const Login = () => {
         dispatch(openSnackbar({ message: 'Login successfully!', serverity: 'success' }));
     };
 
-    // const googleLogin = async () => {
-    //     window.open('http://localhost:2411/api/auth/login/google', '_self');
-    // };
+
     const handleBlurCustom = (
         event: React.FocusEvent<HTMLInputElement>,
         setError: (error: string) => void,

@@ -5,15 +5,15 @@ import { stateType } from '../../store/interface';
 import React, { useEffect, useRef } from 'react';
 
 const Message = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
     const { id } = useSelector((state: stateType) => state.auth);
     const { messages } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
+
     useEffect(() => {
         console.log('scroll into view');
+        console.log(scrollRef.current);
         scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [messages]);
+    }, [messages, scrollRef]);
     console.log('message render....');
 
     return (

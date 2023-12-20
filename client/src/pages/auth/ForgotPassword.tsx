@@ -4,7 +4,7 @@ import AuthContainer from './AuthContainer';
 import AuthInput from '../../components/input/AuthInput';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { forgotPasswordSchema } from './Scheme';
+import { forgotPasswordSchema } from '../../schemas/Scheme';
 import { useNavigate } from 'react-router-dom';
 import { userForgotPassword } from '../../store/slices/authSlice';
 import { useDispatch } from 'react-redux';
@@ -49,7 +49,7 @@ export default function ForgotPassword() {
             setForgotPasswordError(response.payload.error);
             return;
         }
-        navigate('/auth/verify-forgot-password')
+        navigate('/auth/verify-forgot-password');
     };
     return (
         <AuthContainer title="FORGOT PASSWORD">

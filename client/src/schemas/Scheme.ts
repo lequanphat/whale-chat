@@ -39,3 +39,8 @@ export const resetPasswordSchema = yup.object({
     password: passwordValidation,
     confirmPassword: confirmPasswordValidation,
 });
+
+export const editProfileSchema = yup.object({
+    displayName: displayNameValidation,
+    about: yup.string().max(100, 'About can only contain a maximum of 100 characters'),
+});

@@ -4,19 +4,49 @@ import { IoCameraOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { stateType } from '../../store/interface';
-
 import { useState } from 'react';
 import { EditAvatarDialog } from '../../components/dialog/EditAvatarDialog';
-
+import { useFormik } from 'formik';
+import { editProfileSchema } from '../../schemas/Scheme';
+const initialErrors = {
+    displayName: '',
+    about: '',
+};
 export default function Profile() {
     const navigate = useNavigate();
     const theme = useTheme();
     const { displayName, avatar } = useSelector((state: stateType) => state.auth);
-
     //
     const [openEditAvatar, setOpenEditAvatar] = useState(false);
+    // validate formik
+    const { values, errors, handleBlur, handleChange } = useFormik({
+        initialValues: {
+            displayName: displayName,
+            about: '',
+        },
+        initialErrors: initialErrors,
+        validationSchema: editProfileSchema,
+        onSubmit: undefined,
+    });
+    const [displayNameError, setDisplayNameError] = useState('');
+    // handle edit profile
 
-    //
+    const handleEditProfile = () => {
+        if (errors.displayName) {
+            setDisplayNameError(errors.displayName);
+            return;
+        }
+        alert('hello');
+    };
+    const handleBlurCustom = (e: React.FocusEvent<HTMLInputElement>) => {
+        setDisplayNameError(errors.displayName);
+        handleBlur(e);
+    };
+    const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDisplayNameError('');
+        handleChange(e);
+    };
+    // handle edit avatar
     const handleCloseEditAvatar = () => {
         setOpenEditAvatar(false);
     };
@@ -74,13 +104,30 @@ export default function Profile() {
                             <MUIAvatar alt="Travis Howard" src={avatar} sx={{ width: 84, height: 84 }} />
                         </Badge>
                     </Stack>
-                    <TextField fullWidth label="Name" id="fullWidth" defaultValue={displayName} />
-                    <Typography variant="body1" fontSize={15} color="#333" sx={{ m: '15px 0 0 0!important' }}>
-                        This name is visible to your contacts
+                    <TextField
+                        fullWidth
+                        label="Name"
+                        id="fullWidth"
+                        defaultValue={values.displayName}
+                        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                            handleBlurCustom(e);
+                        }}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            handleChangeCustom(e);
+                        }}
+                    />
+
+                    <Typography
+                        variant="body1"
+                        fontSize={15}
+                        color={displayNameError ? '#eb1e1e' : '#333'}
+                        sx={{ m: '15px 0 0 0!important' }}
+                    >
+                        {displayNameError ? displayNameError : 'This name is visible to your contacts'}
                     </Typography>
-                    <TextField fullWidth label="About" id="fullWidth" defaultValue={displayName} multiline rows={4} />
+                    <TextField fullWidth label="About" id="fullWidth" defaultValue={values.about} multiline rows={4} />
                     <Stack direction="row" justifyContent="end" width="100%">
-                        <Button variant="outlined" sx={{ width: '40%' }}>
+                        <Button variant="outlined" sx={{ width: '40%' }} onClick={handleEditProfile}>
                             Save
                         </Button>
                     </Stack>

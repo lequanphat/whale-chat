@@ -3,7 +3,7 @@ import AuthContainer from './AuthContainer';
 import AuthInput from '../../components/input/AuthInput';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { resetPasswordSchema } from './Scheme';
+import { resetPasswordSchema } from '../../schemas/Scheme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GoChevronLeft } from 'react-icons/go';
 import { userChangePassword } from '../../store/slices/authSlice';
