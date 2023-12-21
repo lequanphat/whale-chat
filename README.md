@@ -1,5 +1,9 @@
 # [chat-app] Coming Soon
 
+## DEMO
+
+![Demo](demo/demo-chat-app.gif)
+
 ## Task List
 
 ### Before

@@ -51,7 +51,7 @@ const authController = {
                     verified: false,
                     verifyCode: verifyCode,
                     verifyCodeExpiredTime: verifyCodeExpiredTime,
-                    avatar: `${BACKEND_SERVER_PATH}/storage/default_avatar.jpeg`,
+                    avatar: `${BACKEND_SERVER_PATH}/storage/default/default_avatar.jpeg`,
                 });
             }
             // send mail

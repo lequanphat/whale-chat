@@ -26,7 +26,9 @@ const chatSlice = createSlice({
         },
         addMessageToCurrentMessages(state, action) {
             if (action.payload.from === state.contacts[state.currentContact]._id) {
-                if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
+                if (state.messages.length === 0) {
+                    action.payload.avatar = state.contacts[state.currentContact].avatar;
+                } else if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
                     action.payload.avatar = state.contacts[state.currentContact].avatar;
                 }
                 state.messages.push(action.payload);
