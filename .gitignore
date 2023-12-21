@@ -10,3 +10,5 @@
 /client/src/routes/index.tsx
 /client/src/store/index.ts
 
+/client/src/hooks/useChatSocket.ts
+
