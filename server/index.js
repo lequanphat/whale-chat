@@ -8,7 +8,7 @@ import { authenticateToken } from './middlewares/auth.js';
 import errorHandler from './middlewares/errors.js';
 import { CLIENT_URL, MONGO_URL, PORT } from './config/index.js';
 import socketServer from './socket/socketServer.js';
-
+import client from './utils/RedisService.js';
 const app = express();
 const corsOptions = {
     credentials: true,
