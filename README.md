@@ -1,4 +1,6 @@
-# [chat-app] Coming Soon
+# [WHALE CHAT] Coming Soon
+
+## The software is under development. It will be completed soon.
 
 ## DEMO
 
@@ -19,3 +21,5 @@
 ### December 21th
 
 -   [x] Built send voice message feature.
+
+## Thanks for coming
