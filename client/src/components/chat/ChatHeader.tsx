@@ -5,12 +5,17 @@ import { PiPhoneLight } from 'react-icons/pi';
 import { toggleSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
+import { useState } from 'react';
+import VideoCalls from '../calls/VideoCalls';
 const ChatHeader = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+    const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
     console.log('chat header render...');
-
+    const handleCloseVideoCall = () => {
+        setIsVideoCall(false);
+    };
     return (
         <Box
             sx={{
@@ -23,7 +28,7 @@ const ChatHeader = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%" height="100%">
                 <Stack direction="row" spacing={2}>
                     <Box>
-                        {contacts[currentContact].status==='online' ? (
+                        {contacts[currentContact].status === 'online' ? (
                             <StyledBadge
                                 overlap="circular"
                                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -43,7 +48,11 @@ const ChatHeader = () => {
                     </Stack>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <IconButton>
+                    <IconButton
+                        onClick={() => {
+                            setIsVideoCall(true);
+                        }}
+                    >
                         <IoVideocamOutline size={22} />
                     </IconButton>
                     <IconButton>
@@ -62,6 +71,7 @@ const ChatHeader = () => {
                     </IconButton>
                 </Stack>
             </Stack>
+            {isVideoCall && <VideoCalls open={isVideoCall} handleClose={handleCloseVideoCall} />}
         </Box>
     );
 };
