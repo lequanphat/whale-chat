@@ -4,19 +4,19 @@ import SharedMessages from '../../components/contacts/SharedMessages';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import ChatHeader from '../../components/chat/ChatHeader';
-import { Scrollbar } from '../../components/scrollbar/Scrollbar';
 import Message from '../../components/chat/Message';
 import ChatFooter from '../../components/chat/ChatFooter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { setCurrentContact } from '../../store/slices/chatSlice';
+import { getMessages, setCurrentContact } from '../../store/slices/chatSlice';
 
 export const Chat = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
     const { sidebar } = useSelector((state: stateType) => state.app);
-    const { contacts } = useSelector((state: stateType) => state.chat);
+    const { contacts, chats } = useSelector((state: stateType) => state.chat);
+    const { id } = useSelector((state: stateType) => state.auth);
     const { chatId } = useParams();
     const theme = useTheme();
 
@@ -27,8 +27,13 @@ export const Chat = () => {
             navigate('/app/chat');
         } else {
             dispatch(setCurrentContact(result));
+            const chat = chats.findIndex((item) => item.id === chatId);
+            if (chat === -1) {
+                dispatch(getMessages({ userId: id, contactId: chatId }));
+            }
         }
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatId, contacts]);
 
     return (
         <>
@@ -42,15 +47,8 @@ export const Chat = () => {
                 <Stack height="100%" maxHeight="100vh" width="100%">
                     <ChatHeader />
                     {/* chat messages */}
-                    <Scrollbar
-                        sx={{
-                            flexGrow: 1,
-                            width: '100%',
-                            boxShadow: '0px 0px 2px rgba(0,0,0, .25)',
-                        }}
-                    >
-                        <Message />
-                    </Scrollbar>
+
+                    <Message />
                     <ChatFooter />
                 </Stack>
             </Box>

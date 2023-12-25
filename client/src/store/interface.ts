@@ -1,9 +1,8 @@
-
 export interface authType {
     id: string;
     email: string;
     displayName: string;
-    about:string;
+    about: string;
     avatar: string;
     auth: boolean;
     token: string;
@@ -25,7 +24,7 @@ export interface Contacts {
     displayName: string;
     email: string;
     avatar: string;
-    about:string;
+    about: string;
     status: string;
 }
 
@@ -34,13 +33,16 @@ export interface chatType {
     currentContact: number;
     isLoading: boolean;
     isMessagesLoading: boolean;
-    messages: {
-        _id: string;
-        type: string;
-        text: string;
-        from: string;
-        to: string;
-        image?: string;
+    chats: {
+        id: string;
+        messages: {
+            _id: string;
+            type: string;
+            text: string;
+            from: string;
+            to: string;
+            image?: string;
+        }[];
     }[];
     recieveMessage: string;
 }

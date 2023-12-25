@@ -3,7 +3,7 @@ import api from '../../api/internal';
 
 const initialState = {
     recieveMessage: '',
-    messages: [],
+    chats: [],
     contacts: [],
     currentContact: undefined,
     isLoading: false,
@@ -25,18 +25,18 @@ const chatSlice = createSlice({
             state.recieveMessage = action.payload;
         },
         addMessageToCurrentMessages(state, action) {
-            if (action.payload.from === state.contacts[state.currentContact]._id) {
-                if (state.messages.length === 0) {
-                    action.payload.avatar = state.contacts[state.currentContact].avatar;
-                } else if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
-                    action.payload.avatar = state.contacts[state.currentContact].avatar;
-                }
-                state.messages.push(action.payload);
-            }
+            // if (action.payload.from === state.contacts[state.currentContact]._id) {
+            //     if (state.messages.length === 0) {
+            //         action.payload.avatar = state.contacts[state.currentContact].avatar;
+            //     } else if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
+            //         action.payload.avatar = state.contacts[state.currentContact].avatar;
+            //     }
+            //     state.messages.push(action.payload);
+            // }
         },
 
         clearMessages(state) {
-            state.messages = [];
+            state.chats = [];
         },
     },
     extraReducers: (builder) => {
@@ -55,44 +55,48 @@ const chatSlice = createSlice({
                 state.isMessagesLoading = true;
             })
             .addCase(getMessages.fulfilled, (state, action) => {
-                state.messages = [...action.payload];
+                state.chats.push(action.payload);
                 state.isMessagesLoading = false;
             })
             .addCase(getMessages.rejected, (state) => {
                 state.isMessagesLoading = false;
             })
-            .addCase(addMessage.pending, () => {})
-            .addCase(addMessage.fulfilled, (state, action) => {
-                state.messages.push(action.payload);
+            .addCase(addTextMessage.pending, () => {})
+            .addCase(addTextMessage.fulfilled, (state, action) => {
+                state.chats.forEach((item) => {
+                    if (item.id === action.payload.id) {
+                        item.messages.push(action.payload.message);
+                    }
+                });
             })
-            .addCase(addMessage.rejected, () => {})
-            .addCase(addImageMessage.pending, () => {})
-            .addCase(addImageMessage.fulfilled, (state, action) => {
-                if (action.payload.messages) {
-                    // image message and text message
-                    state.messages.push(...action.payload.messages);
-                } else {
-                    // only image message
-                    state.messages.push(action.payload.message);
-                }
-            })
-            .addCase(addImageMessage.rejected, () => {})
-            .addCase(addDocMessage.pending, () => {})
-            .addCase(addDocMessage.fulfilled, (state, action) => {
-                if (action.payload.messages) {
-                    // doc message and text message
-                    state.messages.push(...action.payload.messages);
-                } else {
-                    // only doc message
-                    state.messages.push(action.payload.message);
-                }
-            })
-            .addCase(addDocMessage.rejected, () => {})
-            .addCase(addVoiceMessage.pending, () => {})
-            .addCase(addVoiceMessage.fulfilled, (state, action) => {
-                state.messages.push(action.payload.message);
-            })
-            .addCase(addVoiceMessage.rejected, () => {});
+            // .addCase(addTextMessage.rejected, () => {})
+            // .addCase(addImageMessage.pending, () => {})
+            // .addCase(addImageMessage.fulfilled, (state, action) => {
+            //     if (action.payload.messages) {
+            //         // image message and text message
+            //         state.messages.push(...action.payload.messages);
+            //     } else {
+            //         // only image message
+            //         state.messages.push(action.payload.message);
+            //     }
+            // })
+            // .addCase(addImageMessage.rejected, () => {})
+            // .addCase(addDocMessage.pending, () => {})
+            // .addCase(addDocMessage.fulfilled, (state, action) => {
+            //     if (action.payload.messages) {
+            //         // doc message and text message
+            //         state.messages.push(...action.payload.messages);
+            //     } else {
+            //         // only doc message
+            //         state.messages.push(action.payload.message);
+            //     }
+            // })
+            // .addCase(addDocMessage.rejected, () => {})
+            // .addCase(addVoiceMessage.pending, () => {})
+            // .addCase(addVoiceMessage.fulfilled, (state, action) => {
+            //     state.messages.push(action.payload.message);
+            // })
+            // .addCase(addVoiceMessage.rejected, () => {});
     },
 });
 export const getAllContacts = createAsyncThunk(
@@ -117,13 +121,13 @@ export const getMessages = createAsyncThunk(
             if (response.data.status === false) {
                 return rejectWithValue({ error: response.data.msg });
             }
-            return response.data.messages;
+            return { messages: response.data.messages, id: data.contactId };
         } catch (error) {
             return rejectWithValue({ error });
         }
     },
 );
-export const addMessage = createAsyncThunk(
+export const addTextMessage = createAsyncThunk(
     'chat/addMessage',
     async (data: { from: string; to: string; text: string }, { rejectWithValue }) => {
         try {
@@ -131,7 +135,10 @@ export const addMessage = createAsyncThunk(
             if (response.data.status === false) {
                 return rejectWithValue({ error: response.data.msg });
             }
-            return response.data.message;
+            return {
+                id: data.to,
+                message: response.data.message,
+            };
         } catch (error) {
             return rejectWithValue({ error });
         }

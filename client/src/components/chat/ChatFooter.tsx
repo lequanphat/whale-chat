@@ -4,7 +4,7 @@ import ChatInput from './ChatInput';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { addDocMessage, addImageMessage, addMessage, addVoiceMessage } from '../../store/slices/chatSlice';
+import { addDocMessage, addImageMessage, addTextMessage, addVoiceMessage } from '../../store/slices/chatSlice';
 import { FormEvent, useState } from 'react';
 import { openSnackbar } from '../../store/slices/appSlice';
 import VoicePreview from './VoiceInput';
@@ -127,7 +127,7 @@ const ChatFooter = () => {
         }
         emitMessage({ type: 'text', text, from: id, to: contacts[currentContact]._id });
         setText('');
-        dispatch(addMessage({ from: id, to: contacts[currentContact]._id, text }));
+        dispatch(addTextMessage({ from: id, to: contacts[currentContact]._id, text }));
     };
     return (
         <Box

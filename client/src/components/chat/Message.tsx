@@ -2,41 +2,63 @@ import { Stack } from '@mui/material';
 import { DocMessage, MediaMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Scrollbar } from '../scrollbar/Scrollbar';
 
 const Message = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { chatId } = useParams();
     const { id } = useSelector((state: stateType) => state.auth);
-    const { messages } = useSelector((state: stateType) => state.chat);
+
+    const { chats } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
+    const [currentMessages, setCurrentMessages] = useState<object[]>([]);
 
     useEffect(() => {
-        console.log('scroll into view');
-        console.log(scrollRef.current);
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [messages, scrollRef]);
+        const chat = chats.find((value) => value.id === chatId);
+        if (chat) {
+            setCurrentMessages(chat.messages);
+        }
+    }, [chatId, chats]);
+
+    useEffect(() => {
+        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    }, [scrollRef, currentMessages]);
+
+    console.log('view render');
 
     return (
-        <Stack spacing={3}>
-            {messages.map(
-                (
-                    msg: { _id: string; type: string; text: string; from: string; to: string; image?: string },
-                    index: number,
-                ) => {
-                    switch (msg.type) {
-                        case 'text':
-                            return <TextMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
-                        case 'image':
-                            return <MediaMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
-                        case 'doc':
-                            return <DocMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
-                        case 'voice':
-                            return <VoiceMessage ref={scrollRef} key={index} msg={msg} fromSelf={msg.from === id} />;
-                        default:
-                            return '123';
-                    }
-                },
-            )}
-        </Stack>
+        <Scrollbar
+            sx={{
+                flexGrow: 1,
+                width: '100%',
+                boxShadow: '0px 0px 2px rgba(0,0,0, .25)',
+            }}
+            ref={scrollRef}
+        >
+            <Stack spacing={3} p={2}>
+                {currentMessages.map(
+                    (
+                        msg: { _id: string; type: string; text: string; from: string; to: string; image?: string },
+                        index: number,
+                    ) => {
+                        switch (msg.type) {
+                            case 'text':
+                                return <TextMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+                            case 'image':
+                                return <MediaMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+                            case 'doc':
+                                return <DocMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+                            case 'voice':
+                                return <VoiceMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+                            default:
+                                return '123';
+                        }
+                    },
+                )}
+            </Stack>
+        </Scrollbar>
     );
 };
 
