@@ -18,7 +18,7 @@ const ChatFooter = () => {
     const [imageFile, setImageFile] = useState(null);
     const [voiceFile, setVoiceFile] = useState(null);
     const [openVoice, setOpenVoice] = useState<boolean>(false);
-    const [text, setText] = useState('');
+    const [text, setText] = useState<string>('');
     const { emitMessage } = useChatSocket();
     const theme = useTheme();
 

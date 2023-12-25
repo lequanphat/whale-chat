@@ -15,7 +15,7 @@ const ChatHeader = () => {
     const handleCloseVideoCall = () => {
         setIsVideoCall(false);
     };
-    if(currentContact === null || currentContact === undefined){
+    if (currentContact === null || currentContact === undefined) {
         return <></>;
     }
     return (

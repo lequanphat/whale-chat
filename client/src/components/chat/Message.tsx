@@ -2,7 +2,7 @@ import { Stack } from '@mui/material';
 import { DocMessage, MediaMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 
@@ -25,8 +25,6 @@ const Message = () => {
     useEffect(() => {
         scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }, [scrollRef, currentMessages, chats]);
-
-    console.log('view render');
 
     return (
         <Scrollbar
@@ -64,4 +62,4 @@ const Message = () => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default React.memo(Message);
+export default Message;

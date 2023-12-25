@@ -6,6 +6,7 @@ import download from 'downloadjs';
 import default_img from '../../assets/default-img.jpg';
 import getFileImage from '../../utils/getFileImage';
 import api from '../../api/internal';
+import { Message } from './interface';
 
 const Message_Option = [
     {
@@ -65,25 +66,23 @@ export const MessagesOption = () => {
         </>
     );
 };
-export const MessageWrapper = React.forwardRef(
-    ({ fromSelf, avatar, children }: { fromSelf: boolean; avatar: string; children: ReactElement }, ref) => {
+export const MessageWrapper = React.memo(
+    ({ fromSelf, avatar, children }: { fromSelf: boolean; avatar: string; children: ReactElement }) => {
         return (
             <Stack direction="row" justifyContent={fromSelf === true ? 'end' : 'start'} width="100%">
-                <Box ref={ref} width={'52px'}>
-                    {!fromSelf && avatar && <Avatar src={avatar} />}
-                </Box>
+                <Box width={'52px'}>{!fromSelf && avatar && <Avatar src={avatar} />}</Box>
                 {children}
             </Stack>
         );
     },
 );
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TextMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
+const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const theme = useTheme();
+    console.log('text message render');
+
     return (
-        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar} ref={ref}>
+        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <Box
-                ref={ref}
                 sx={{
                     backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
                     borderRadius: 1.8,
@@ -99,9 +98,9 @@ const TextMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: b
     );
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DocMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
+const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const theme = useTheme();
+    console.log('doc message render');
     const handleDownloadFile = async (filePath: string) => {
         let fileName: string | string[] = filePath.split('/');
         fileName = fileName[fileName.length - 1];
@@ -112,7 +111,7 @@ const DocMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: bo
         console.log('doc message render...');
     };
     return (
-        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar} ref={ref}>
+        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <Box
                 p={1.2}
                 sx={{
@@ -139,11 +138,11 @@ const DocMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: bo
     );
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MediaMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
+const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const [imageLink, setImageLink] = useState(msg.image);
+    console.log('media message render');
     return (
-        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar} ref={ref}>
+        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <Box
                 sx={{
                     width: 300,
@@ -165,10 +164,10 @@ const MediaMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: 
         </MessageWrapper>
     );
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const VoiceMessage = React.forwardRef(({ msg, fromSelf }: { msg: any; fromSelf: boolean }, ref) => {
+const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+    console.log('media message render');
     return (
-        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar} ref={ref}>
+        <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <audio controls src={msg.voice} />
         </MessageWrapper>
     );
