@@ -13,3 +13,6 @@
 /client/src/hooks/useChatSocket.ts
 
 /client/src/schemas/Scheme.ts
+
+
+/server/storage/uploads

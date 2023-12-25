@@ -33,6 +33,18 @@ const chatSlice = createSlice({
             //     }
             //     state.messages.push(action.payload);
             // }
+            state.chats.forEach((item) => {
+                if (item.id === action.payload.from) {
+                    if (item.messages.length === 0) {
+                        action.payload.avatar = state.contacts[state.currentContact].avatar;
+                    } else if (
+                        item.messages[item.messages.length - 1].to === state.contacts[state.currentContact]._id
+                    ) {
+                        action.payload.avatar = state.contacts[state.currentContact].avatar;
+                    }
+                    item.messages.push(action.payload);
+                }
+            });
         },
 
         clearMessages(state) {
@@ -69,34 +81,46 @@ const chatSlice = createSlice({
                     }
                 });
             })
-            // .addCase(addTextMessage.rejected, () => {})
-            // .addCase(addImageMessage.pending, () => {})
-            // .addCase(addImageMessage.fulfilled, (state, action) => {
-            //     if (action.payload.messages) {
-            //         // image message and text message
-            //         state.messages.push(...action.payload.messages);
-            //     } else {
-            //         // only image message
-            //         state.messages.push(action.payload.message);
-            //     }
-            // })
-            // .addCase(addImageMessage.rejected, () => {})
-            // .addCase(addDocMessage.pending, () => {})
-            // .addCase(addDocMessage.fulfilled, (state, action) => {
-            //     if (action.payload.messages) {
-            //         // doc message and text message
-            //         state.messages.push(...action.payload.messages);
-            //     } else {
-            //         // only doc message
-            //         state.messages.push(action.payload.message);
-            //     }
-            // })
-            // .addCase(addDocMessage.rejected, () => {})
-            // .addCase(addVoiceMessage.pending, () => {})
-            // .addCase(addVoiceMessage.fulfilled, (state, action) => {
-            //     state.messages.push(action.payload.message);
-            // })
-            // .addCase(addVoiceMessage.rejected, () => {});
+            .addCase(addTextMessage.rejected, () => {})
+            .addCase(addImageMessage.pending, () => {})
+            .addCase(addImageMessage.fulfilled, (state, action) => {
+                state.chats.forEach((item) => {
+                    if (item.id === action.payload.id) {
+                        if (action.payload.data.messages) {
+                            // image message and text message
+                            item.messages.push(...action.payload.data.messages);
+                        } else {
+                            // only image message
+                            item.messages.push(action.payload.data.message);
+                        }
+                    }
+                });
+            })
+            .addCase(addImageMessage.rejected, () => {})
+            .addCase(addDocMessage.pending, () => {})
+            .addCase(addDocMessage.fulfilled, (state, action) => {
+                state.chats.forEach((item) => {
+                    if (item.id === action.payload.id) {
+                        if (action.payload.data.messages) {
+                            // image message and text message
+                            item.messages.push(...action.payload.data.messages);
+                        } else {
+                            // only image message
+                            item.messages.push(action.payload.data.message);
+                        }
+                    }
+                });
+            })
+            .addCase(addDocMessage.rejected, () => {})
+            .addCase(addVoiceMessage.pending, () => {})
+            .addCase(addVoiceMessage.fulfilled, (state, action) => {
+                state.chats.forEach((item) => {
+                    if (item.id === action.payload.id) {
+                        item.messages.push(action.payload.data.message);
+                    }
+                });
+            })
+            .addCase(addVoiceMessage.rejected, () => {});
     },
 });
 export const getAllContacts = createAsyncThunk(
@@ -155,7 +179,10 @@ export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (d
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
-        return response.data;
+        return {
+            id: data.get('to'),
+            data: response.data,
+        };
     } catch (error) {
         return rejectWithValue({ error });
     }
@@ -171,7 +198,10 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
         if (response.data.status === false) {
             return rejectWithValue({ error: response.data.msg });
         }
-        return response.data;
+        return {
+            id: data.get('to'),
+            data: response.data,
+        };
     } catch (error) {
         return rejectWithValue({ error });
     }
@@ -189,7 +219,10 @@ export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (d
         }
         console.log(response);
 
-        return response.data;
+        return {
+            id: data.get('to'),
+            data: response.data,
+        };
     } catch (error) {
         return rejectWithValue({ error });
     }

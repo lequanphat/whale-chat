@@ -24,7 +24,7 @@ const Message = () => {
 
     useEffect(() => {
         scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-    }, [scrollRef, currentMessages]);
+    }, [scrollRef, currentMessages, chats]);
 
     console.log('view render');
 
@@ -36,8 +36,9 @@ const Message = () => {
                 boxShadow: '0px 0px 2px rgba(0,0,0, .25)',
             }}
             ref={scrollRef}
+            p={2}
         >
-            <Stack spacing={3} p={2}>
+            <Stack spacing={1.5}>
                 {currentMessages.map(
                     (
                         msg: { _id: string; type: string; text: string; from: string; to: string; image?: string },

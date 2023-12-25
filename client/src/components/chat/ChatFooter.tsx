@@ -36,9 +36,9 @@ const ChatFooter = () => {
             // emit
             emitMessage({
                 type: 'voice',
-                voice: response.payload.message.voice,
-                from: response.payload.message.from,
-                to: response.payload.message.to,
+                voice: response.payload.data.message.voice,
+                from: response.payload.data.message.from,
+                to: response.payload.data.message.to,
             });
             // reset voice file
             setVoiceFile(null);
@@ -53,7 +53,7 @@ const ChatFooter = () => {
             formData.append('text', text);
             const response = await dispatch(addImageMessage(formData));
             console.log(response);
-            const result = response.payload.messages;
+            const result = response.payload.data.messages;
             if (result) {
                 emitMessage({
                     type: 'image',
@@ -70,9 +70,9 @@ const ChatFooter = () => {
             } else {
                 emitMessage({
                     type: 'image',
-                    image: response.payload.message.image,
-                    from: response.payload.message.from,
-                    to: response.payload.message.to,
+                    image: response.payload.data.message.image,
+                    from: response.payload.data.message.from,
+                    to: response.payload.data.message.to,
                 });
             }
 
@@ -94,7 +94,7 @@ const ChatFooter = () => {
                 return;
             }
 
-            const result = response.payload.messages;
+            const result = response.payload.data.messages;
             if (result) {
                 emitMessage({
                     type: 'doc',
@@ -112,10 +112,10 @@ const ChatFooter = () => {
             } else {
                 emitMessage({
                     type: 'doc',
-                    text: response.payload.message.text,
-                    doc: response.payload.message.doc,
-                    from: response.payload.message.from,
-                    to: response.payload.message.to,
+                    text: response.payload.data.message.text,
+                    doc: response.payload.data.message.doc,
+                    from: response.payload.data.message.from,
+                    to: response.payload.data.message.to,
                 });
             }
             setDocFile(null);
