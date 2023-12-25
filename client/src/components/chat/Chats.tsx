@@ -8,13 +8,15 @@ import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { stateType } from '../../store/interface';
-import { getAllContacts, getMessages, setCurrentContact } from '../../store/slices/chatSlice';
+import { getAllContacts, setCurrentContact } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
+import { useNavigate } from 'react-router-dom';
 
 const Chats = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch = useDispatch<any>();
     const theme = useTheme();
+    const navigate = useNavigate();
     const { id } = useSelector((state: stateType) => state.auth);
     const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
 
@@ -23,9 +25,9 @@ const Chats = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSetCurrentChat = async (index: number) => {
-        await dispatch(setCurrentContact({ index }));
-        await dispatch(getMessages({ userId: id, contactId: contacts[index]._id }));
+    const handlePickContact = async (index: number) => {
+        await dispatch(setCurrentContact(index));
+        navigate(`/app/chat/${contacts[index]._id}`);
     };
 
     return (
@@ -74,9 +76,9 @@ const Chats = () => {
                                             key={item._id}
                                             {...item}
                                             selected={currentContact === index}
-                                            online={item.status==='online'}
+                                            online={item.status === 'online'}
                                             onClick={() => {
-                                                handleSetCurrentChat(index);
+                                                handlePickContact(index);
                                             }}
                                         />
                                     );

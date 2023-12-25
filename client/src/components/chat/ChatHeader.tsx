@@ -12,7 +12,6 @@ const ChatHeader = () => {
     const dispatch = useDispatch();
     const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
     const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
-    console.log('chat header render...');
     const handleCloseVideoCall = () => {
         setIsVideoCall(false);
     };

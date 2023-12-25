@@ -14,7 +14,7 @@ const chatSlice = createSlice({
     initialState,
     reducers: {
         setCurrentContact(state, action) {
-            state.currentContact = action.payload.index;
+            state.currentContact = action.payload;
         },
         resetContacts(state) {
             state.currentContact = undefined;
