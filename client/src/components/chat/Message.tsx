@@ -5,13 +5,14 @@ import { stateType } from '../../store/interface';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Scrollbar } from '../scrollbar/Scrollbar';
+import Loading from '../loading/Loading';
 
 const Message = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { chatId } = useParams();
     const { id } = useSelector((state: stateType) => state.auth);
 
-    const { chats } = useSelector((state: stateType) => state.chat);
+    const { chats, isMessagesLoading } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
     const [currentMessages, setCurrentMessages] = useState<object[]>([]);
 
@@ -26,7 +27,9 @@ const Message = () => {
         scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }, [scrollRef, currentMessages, chats]);
 
-    return (
+    return isMessagesLoading ? (
+        <Loading />
+    ) : (
         <Scrollbar
             sx={{
                 flexGrow: 1,
