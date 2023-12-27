@@ -2,30 +2,19 @@ import { Stack } from '@mui/material';
 import { DocMessage, MediaMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import Loading from '../loading/Loading';
 
-const Message = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { chatId } = useParams();
+const Message = ({ currentMessages }) => {
     const { id } = useSelector((state: stateType) => state.auth);
 
-    const { chats, isMessagesLoading } = useSelector((state: stateType) => state.chat);
+    const { isMessagesLoading } = useSelector((state: stateType) => state.chat);
     const scrollRef = useRef(null);
-    const [currentMessages, setCurrentMessages] = useState<object[]>([]);
-
-    useEffect(() => {
-        const chat = chats.find((value) => value.id === chatId);
-        if (chat) {
-            setCurrentMessages(chat.messages);
-        }
-    }, [chatId, chats]);
 
     useEffect(() => {
         scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-    }, [scrollRef, currentMessages, chats]);
+    }, [scrollRef, currentMessages]);
 
     return isMessagesLoading ? (
         <Loading />

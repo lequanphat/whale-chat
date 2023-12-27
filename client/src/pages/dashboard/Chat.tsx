@@ -7,7 +7,7 @@ import ChatHeader from '../../components/chat/ChatHeader';
 import Message from '../../components/chat/Message';
 import ChatFooter from '../../components/chat/ChatFooter';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getMessages, setCurrentContact } from '../../store/slices/chatSlice';
 
 export const Chat = () => {
@@ -19,6 +19,7 @@ export const Chat = () => {
     const { id } = useSelector((state: stateType) => state.auth);
     const { chatId } = useParams();
     const theme = useTheme();
+    const [currentMessages, setCurrentMessages] = useState<object[]>([]);
 
     useEffect(() => {
         const result = contacts.findIndex((contact) => contact._id === chatId);
@@ -35,6 +36,14 @@ export const Chat = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatId, contacts]);
 
+    // set current messages
+
+    useEffect(() => {
+        const chat = chats.find((value) => value.id === chatId);
+        if (chat) {
+            setCurrentMessages(chat.messages);
+        }
+    }, [chatId, chats]);
     return (
         <>
             <Box
@@ -48,7 +57,7 @@ export const Chat = () => {
                     <ChatHeader />
                     {/* chat messages */}
 
-                    <Message />
+                    <Message currentMessages={currentMessages} />
                     <ChatFooter />
                 </Stack>
             </Box>
@@ -56,11 +65,11 @@ export const Chat = () => {
                 (() => {
                     switch (sidebar.type) {
                         case 'CONTACT':
-                            return <Contact />;
+                            return <Contact currentMessages={currentMessages} />;
                         case 'STARRED':
-                            return <Contact />;
+                            return <Contact currentMessages={currentMessages} />;
                         case 'SHARED':
-                            return <SharedMessages />;
+                            return <SharedMessages currentMessages={currentMessages} />;
                         default:
                             return <></>;
                     }

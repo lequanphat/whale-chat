@@ -3,12 +3,10 @@ import { Grid, IconButton, Stack, Tab, Tabs, ThemeOptions, Typography } from '@m
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
 import { updateSidebarType } from '../../store/slices/appSlice';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
-import { faker } from '@faker-js/faker';
-import { SHARED_DOCS, SHARED_LINKS } from '../../data';
 
-export default function SharedMessages() {
+const SharedMessages = ({ currentMessages }) => {
     const dispatch = useDispatch();
     const theme: ThemeOptions = useTheme();
     const [value, setValue] = useState(0);
@@ -56,29 +54,28 @@ export default function SharedMessages() {
                             // Media
                             return (
                                 <Grid container spacing={1.2}>
-                                    {[0, 1, 2, 3, 4, 5, 6].map((value, index) => {
-                                        return (
-                                            <Grid key={index} item xs={4} p={0}>
-                                                <img
-                                                    src={faker.image.url()}
-                                                    alt={faker.person.fullName()}
-                                                    style={{ objectFit: 'cover' }}
-                                                />
-                                            </Grid>
-                                        );
-                                    })}
+                                    {currentMessages
+                                        .filter((message) => message.type === 'image')
+                                        .reverse()
+                                        .map((item, index) => {
+                                            return (
+                                                <Grid key={index} item xs={4} p={0}>
+                                                    <img
+                                                        src={item.image}
+                                                        alt={item.from}
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
+                                                </Grid>
+                                            );
+                                        })}
                                 </Grid>
                             );
                         case 1:
                             // Links
-                            return SHARED_LINKS.map((item, index) => {
-                                return <>123</>;
-                            });
+                            return <>Links</>;
                         case 2:
                             // Docs
-                            return SHARED_DOCS.map((item, index) => {
-                                return <>123</>;
-                            });
+                            return <>Docs</>;
                         default:
                             return <></>;
                     }
@@ -86,4 +83,5 @@ export default function SharedMessages() {
             </Scrollbar>
         </Stack>
     );
-}
+};
+export default React.memo(SharedMessages);

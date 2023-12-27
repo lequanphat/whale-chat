@@ -5,7 +5,6 @@ import getFileImage from '../../utils/getFileImage';
 export default function MediaPreview({ imageFile, docFile, handleReset }) {
     const theme = useTheme();
     console.log('mediapreview render..');
-
     return (
         <Stack
             direction="row"

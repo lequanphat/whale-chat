@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Divider, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Divider, Grid, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
 import { IoCloseOutline } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
@@ -14,8 +14,9 @@ import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useState } from 'react';
 import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
 import { stateType } from '../../store/interface';
+import React from 'react';
 
-function Contact() {
+const Contact = ({ currentMessages }): JSX.Element => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
@@ -86,15 +87,23 @@ function Contact() {
                         <RxCaretRight size={26} />
                     </IconButton>
                 </Stack>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    {[1, 2, 3].map((item) => {
-                        return (
-                            <Box key={item}>
-                                <img src={faker.image.url()} alt={faker.person.fullName()} />
-                            </Box>
-                        );
-                    })}
-                </Stack>
+                <Grid container >
+                    {currentMessages.filter((message) => message.type === 'image').length ? (
+                        currentMessages
+                            .filter((message) => message.type === 'image')
+                            .reverse()
+                            .slice(0, 3)
+                            .map((item, index) => {
+                                return (
+                                    <Grid key={index} item xs={4} p={0.6}>
+                                        <img src={item.image} alt={item.from} style={{ objectFit: 'cover' }} />
+                                    </Grid>
+                                );
+                            })
+                    ) : (
+                        <Typography fontSize={14}>No image</Typography>
+                    )}
+                </Grid>
                 <Divider />
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -156,6 +165,6 @@ function Contact() {
             {openDelete && <DeleteDialog open={openDelete} handleClose={handleCloseDelete} />}
         </Stack>
     );
-}
+};
 
-export default Contact;
+export default React.memo(Contact);

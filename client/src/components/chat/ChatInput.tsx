@@ -161,6 +161,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
                             )}
                             <InputAdornment position="end">
                                 <IconButton
+                                    sx={{ color: '#3498db' }}
                                     onClick={() => {
                                         setOpenActions(!openActions);
                                     }}
@@ -173,6 +174,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
                     endAdornment: (
                         <InputAdornment position="end">
                             <IconButton
+                                sx={{ color: '#3498db' }}
                                 onClick={() => {
                                     setOpenPicker(!openPicker);
                                 }}
