@@ -11,6 +11,7 @@ const ChatHeader = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+    const { sidebar } = useSelector((state: stateType) => state.app);
     const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
     const handleCloseVideoCall = () => {
         setIsVideoCall(false);
@@ -44,7 +45,7 @@ const ChatHeader = () => {
                     </Box>
                     <Stack spacing={0}>
                         <Typography variant="subtitle2">{contacts[currentContact].displayName}</Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }} textTransform="capitalize">
+                        <Typography variant="body1" fontSize={13} sx={{ color: '#7f8c8d' }} textTransform="capitalize">
                             {contacts[currentContact].status}
                         </Typography>
                     </Stack>
@@ -63,14 +64,18 @@ const ChatHeader = () => {
                     <IconButton>
                         <IoSearchOutline size={22} />
                     </IconButton>
-                    <Divider orientation="vertical" flexItem />
-                    <IconButton
-                        onClick={() => {
-                            dispatch(toggleSidebar());
-                        }}
-                    >
-                        <IoInformationCircleOutline />
-                    </IconButton>
+                    {!sidebar.open && (
+                        <>
+                            <Divider orientation="vertical" flexItem />
+                            <IconButton
+                                onClick={() => {
+                                    dispatch(toggleSidebar());
+                                }}
+                            >
+                                <IoInformationCircleOutline />
+                            </IconButton>
+                        </>
+                    )}
                 </Stack>
             </Stack>
             {isVideoCall && <VideoCalls open={isVideoCall} handleClose={handleCloseVideoCall} />}

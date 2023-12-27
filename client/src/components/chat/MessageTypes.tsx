@@ -78,7 +78,6 @@ export const MessageWrapper = React.memo(
 );
 const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const theme = useTheme();
-    console.log('text message render');
 
     return (
         <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
@@ -100,7 +99,6 @@ const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boo
 
 const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const theme = useTheme();
-    console.log('doc message render');
     const handleDownloadFile = async (filePath: string) => {
         let fileName: string | string[] = filePath.split('/');
         fileName = fileName[fileName.length - 1];
@@ -140,7 +138,6 @@ const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bool
 
 const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
     const [imageLink, setImageLink] = useState(msg.image);
-    console.log('media message render');
     return (
         <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <Box
@@ -165,7 +162,6 @@ const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
     );
 });
 const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
-    console.log('media message render');
     return (
         <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
             <audio controls src={msg.voice} />
