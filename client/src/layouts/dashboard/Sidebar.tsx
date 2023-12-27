@@ -56,6 +56,25 @@ const Sidebar = () => {
         }
         setAnchorEl(null);
     };
+    const handleSidebarAction = (index) => {
+        setSelected(index);
+        switch (index) {
+            case 0:
+                navigate('/app/chat');
+                break;
+            case 1:
+                navigate('/friends');
+                break;
+            case 2:
+                navigate('/robot');
+                break;
+            case 3:
+                navigate('/settings');
+                break;
+            default:
+                break;
+        }
+    }
     return (
         <Box
             p={2}
@@ -107,7 +126,7 @@ const Sidebar = () => {
                                         color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
                                     }}
                                     onClick={() => {
-                                        setSelected(item.index);
+                                        handleSidebarAction(item.index);
                                     }}
                                 >
                                     {item.icon}
@@ -130,7 +149,7 @@ const Sidebar = () => {
                         ) : (
                             <IconButton
                                 onClick={() => {
-                                    setSelected(3);
+                                    handleSidebarAction(3);
                                 }}
                                 sx={{
                                     width: 'max-content',

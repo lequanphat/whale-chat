@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 
 const EmptyChat = ({ ...other }) => {
     const theme = useTheme();
     const PRIMARY_MAIN = theme.palette.primary.main;
     return (
-        <Box {...other}>
+        <Stack flexGrow={1} {...other} alignItems="center" justifyContent="center">
             <svg width="360" height="360" viewBox="0 0 750 750" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     fill-rule="evenodd"
@@ -312,7 +312,7 @@ const EmptyChat = ({ ...other }) => {
                     fill="#E7EAEE"
                 />
             </svg>
-        </Box>
+        </Stack>
     );
 };
 
