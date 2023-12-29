@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { UserRegiserDTO } from '../dtos/register-user.dto';
 import { plainToClass } from 'class-transformer';
@@ -12,5 +12,9 @@ export class UsersController {
       excludeExtraneousValues: true,
     });
     return this.usersService.register(userRegister);
+  }
+  @Get(':id')
+  getUser(@Param('id') id: string) {
+    return this.usersService.getUser(id);
   }
 }
