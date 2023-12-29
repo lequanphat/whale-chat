@@ -8,6 +8,7 @@ import { OtpService } from 'src/common/services/otp.service';
 import { SERVER_URL } from 'src/config';
 import { EmailService } from 'src/common/services/mail.service';
 import { emailFormat } from 'src/common/utils/email.format';
+import { VerifyParam } from '../types';
 @Injectable()
 export class AuthService {
   constructor(
@@ -27,10 +28,7 @@ export class AuthService {
     let user = null;
     if (userExists) {
       if (userExists.verified) {
-        throw new HttpException(
-          'Email is already used',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('Email is already used', HttpStatus.BAD_REQUEST);
       }
       user = await this.userModel.findOneAndUpdate(
         { email: registerUser.email },
@@ -59,7 +57,7 @@ export class AuthService {
       html: emailFormat(
         'Verify your account!',
         'this is content',
-        `${SERVER_URL}/api/auth/verify-account/${user.id}/${verifyCode}`,
+        `${SERVER_URL}/auth/verify-account/${user._id}/${verifyCode}`,
       ),
     });
     if (error) {
@@ -67,5 +65,30 @@ export class AuthService {
     }
     // response
     return { message: 'Send OTP successfully', statusCode: 200 };
+  }
+  async verifyAccount(param: VerifyParam) {
+    try {
+      const user = await this.userModel.findOne({
+        _id: param.id,
+        verifyCode: param.code,
+        verifyCodeExpiredTime: { $gt: Date.now() },
+      });
+      console.log(user);
+      if (!user) {
+        console.log('here ..... -> ');
+        throw new HttpException('VerifyCode has expired!', HttpStatus.BAD_REQUEST);
+      }
+      // verify account
+      const newUser = await this.userModel.findOneAndUpdate(
+        { _id: param.id },
+        { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
+        { new: true },
+      );
+      console.log(newUser);
+
+      return { user: newUser };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

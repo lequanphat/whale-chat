@@ -27,7 +27,7 @@ export class User extends Document {
   @Prop({ default: '' })
   verifyCode: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: 0 })
   verifyCodeExpiredTime: number;
 }
 
