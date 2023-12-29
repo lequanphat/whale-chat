@@ -3,7 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/users.chema';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
-
+import { OtpService } from '../common/services/otp.service';
+import { EmailService } from 'src/common/services/mail.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -13,7 +14,7 @@ import { AuthService } from './services/auth.service';
       },
     ]),
   ],
-  providers: [AuthService],
+  providers: [AuthService, OtpService, EmailService],
   controllers: [AuthController],
 })
 export class AuthModule {}

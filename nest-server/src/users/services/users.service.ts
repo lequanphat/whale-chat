@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User } from 'src/schemas/users.chema';
-import { UserRegiserDTO } from '../dtos/register-user.dto';
+import { UserRegiserDTO } from '../../auth/types/register-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -26,5 +26,16 @@ export class UsersService {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
     return user;
+  }
+  async getAllUsers() {
+    const users = await this.userModel.find().exec();
+    return users.map((user) => {
+      return {
+        _id: user._id,
+        email: user.email,
+        displayName: user.displayName,
+        avatar: user.avatar,
+      };
+    });
   }
 }

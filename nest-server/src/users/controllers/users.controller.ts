@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
-import { UserRegiserDTO } from '../dtos/register-user.dto';
+import { UserRegiserDTO } from '../../auth/types/register-user.dto';
 import { plainToClass } from 'class-transformer';
 
 @Controller('users')
@@ -16,5 +16,9 @@ export class UsersController {
   @Get(':id')
   getUser(@Param('id') id: string) {
     return this.usersService.getUser(id);
+  }
+  @Get()
+  getAllUsers() {
+    return this.usersService.getAllUsers();
   }
 }
