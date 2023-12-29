@@ -16,3 +16,6 @@
 
 
 /server/storage/uploads
+
+/nest-server/node_modules
+/nest-server/dist
