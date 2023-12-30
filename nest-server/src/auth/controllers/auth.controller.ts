@@ -56,4 +56,13 @@ export class AuthController {
     res.clearCookie('refreshToken');
     return res.status(200).json({ msg: 'logout successfully' });
   }
+  @Get('refresh-token')
+  async refreshToken(@Req() req: any, @Res() res: Response) {
+    const id = req.user.id;
+    const accessToken = this.jwtService.signAccessToken({ id });
+    const refreshToken = this.jwtService.signRefreshToken({ id });
+    this.cookieService.saveCookie(res, 'accessToken', accessToken);
+    this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
+    return res.status(200).json({ msg: 'refresh-token successfully' });
+  }
 }
