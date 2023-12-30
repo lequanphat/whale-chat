@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
 import { JwtService } from './common/services/jwt.service';
-import { CheckRefreshTokenMiddleware } from './common/middlewares/checkRefershToken.middleware';
+import { CheckRefreshTokenMiddleware } from './auth/middlewares/checkRefershToken.middleware';
 
 @Module({
   imports: [MongooseModule.forRoot(MONGO_URL), UsersModule, AuthModule],

@@ -8,8 +8,9 @@ import { OtpService } from 'src/common/services/otp.service';
 import { SERVER_URL } from 'src/config';
 import { EmailService } from 'src/common/services/mail.service';
 import { emailFormat } from 'src/common/utils/email.format';
-import { VerifyParam } from '../types';
 import { UserLoginDTO } from '../types/login-user.dto';
+import { ChangePasswordDTO, VerifyParamDTO } from '../types';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -67,7 +68,7 @@ export class AuthService {
     // response
     return { message: 'Send OTP successfully', statusCode: 200 };
   }
-  async verifyAccount(param: VerifyParam) {
+  async verifyAccount(param: VerifyParamDTO) {
     try {
       const validId = mongoose.Types.ObjectId.isValid(param.id);
       if (!validId) {
@@ -121,10 +122,101 @@ export class AuthService {
   }
   async logout(id: string) {
     try {
+      console.log('logout');
       const user = await this.userModel.findByIdAndUpdate({ _id: id }, { status: 'offline' });
       return { user };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async forgotPassword(email: string) {
+    try {
+      const { verifyCode, verifyCodeExpiredTime } = this.otpService.generateOTP();
+      // check user exist and assign verify-code
+      const user = await this.userModel.findOneAndUpdate(
+        { email },
+        { $set: { verifyCode, verifyCodeExpiredTime } },
+        { new: true },
+      );
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      }
+      // send mail
+      const { error } = await this.emailService.sendMail({
+        email,
+        subject: 'Verify change password',
+        html: emailFormat(
+          'Verify change password!',
+          'this is content',
+          `${SERVER_URL}/auth/change-password/${user._id}/${verifyCode}`,
+        ),
+      });
+      if (error) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      }
+      // response
+      return { message: 'Send OTP successfully', statusCode: 200 };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async verifyChangePassword(data: VerifyParamDTO) {
+    const isValidId = mongoose.Types.ObjectId.isValid(data.id);
+    if (!isValidId) {
+      throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
+    }
+    // check user exists
+    const user = await this.userModel.findOneAndUpdate(
+      { _id: data.id, verifyCode: data.code, verifyCodeExpiredTime: { $gt: Date.now() } },
+      { $set: { verifyCode: '', verifyCodeExpiredTime: 0 } },
+    );
+    console.log('user', user);
+
+    if (!user) {
+      throw new HttpException('Verify-code has expired', HttpStatus.BAD_REQUEST);
+    }
+    return { id: user._id };
+  }
+  async changePassword(data: ChangePasswordDTO, id: string) {
+    // hash password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(data.password, salt);
+    const user = await this.userModel.findByIdAndUpdate({ _id: id }, { $set: { password: hashedPassword } });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    return { msg: 'Change password successfully' };
+  }
 }
+
+// changePassword: async (req, res, next) => {
+//   try {
+//     const { password, token } = req.body;
+//     // validate password
+//     const { error, value } = passwordSchema.validate(password);
+//     if (error) {
+//       res.status(200).json({ msg: error.message, status: false });
+//     }
+//     // verify token
+//     const { err, data } = verifyAccessToken(token);
+//     if (err) {
+//       return res.status(200).json({ msg: err.message, status: false });
+//     }
+//     // hash password
+//     const salt = await brcypt.genSalt();
+//     const hashedPassword = await brcypt.hash(password, salt);
+//     const user = await userModel.findOneAndUpdate(
+//       { _id: data.id },
+//       { $set: { password: hashedPassword } },
+//       { new: true },
+//     );
+//     // check user exists
+//     if (!user) {
+//       return res.status(200).json({ msg: 'Please confirm email before change your password.', status: false });
+//     }
+//     return res.status(200).json({ msg: 'Change password succesfully!', status: true });
+//   } catch (error) {
+//     return res.status(200).json({ msg: error.message, status: false });
+//   }
+// },
+// };

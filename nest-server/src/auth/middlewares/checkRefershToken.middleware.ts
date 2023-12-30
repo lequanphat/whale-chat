@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import * as cookieParser from 'cookie-parser';
-import { JwtService } from '../services/jwt.service';
+import { JwtService } from '../../common/services/jwt.service';
 @Injectable()
 export class CheckRefreshTokenMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}

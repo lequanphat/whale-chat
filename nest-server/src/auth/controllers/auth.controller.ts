@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserRegiserDTO } from '../types/register-user.dto';
 import { plainToClass } from 'class-transformer';
-import { SerializeUser, VerifyParam } from '../types';
+import { ChangePasswordDTO, EmailDTO, SerializeUser, VerifyParamDTO } from '../types';
 import { CookieService } from 'src/common/services/cookie.service';
 import { Response } from 'express';
 import { JwtService } from 'src/common/services/jwt.service';
@@ -23,7 +23,7 @@ export class AuthController {
     return this.authSevice.register(userRegister);
   }
   @Get('verify-account/:id/:code')
-  async verifyAccount(@Param() param: VerifyParam, @Res() res: Response) {
+  async verifyAccount(@Param() param: VerifyParamDTO, @Res() res: Response) {
     const { user } = await this.authSevice.verifyAccount(param);
     console.log('controller user', user);
 
@@ -64,5 +64,35 @@ export class AuthController {
     this.cookieService.saveCookie(res, 'accessToken', accessToken);
     this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
     return res.status(200).json({ msg: 'refresh-token successfully' });
+  }
+  @Post('forgot-password')
+  async forgotPassword(@Body() data: EmailDTO) {
+    return this.authSevice.forgotPassword(data.email);
+  }
+  @Get('/change-password/:id/:code')
+  async verifyChangePassword(@Param() data: VerifyParamDTO, @Res() res: Response) {
+    try {
+      await this.authSevice.verifyChangePassword(data);
+      console.log('data controller here...');
+      // // sign token
+      const resetPasswordToken = this.jwtService.signAccessToken({ id: data.id });
+      // // redirect
+      console.log(resetPasswordToken);
+
+      return res.redirect(`http://localhost:9999/auth/reset-password/${resetPasswordToken}`);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('change-password')
+  async changePassword(@Body() data: ChangePasswordDTO) {
+    try {
+      // verify token
+      const value = this.jwtService.verifyAccessToken(data.token);
+      return this.authSevice.changePassword(data, value.id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }
