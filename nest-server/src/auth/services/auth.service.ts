@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserRegiserDTO } from '../types/register-user.dto';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User } from 'src/schemas/users.chema';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +9,7 @@ import { SERVER_URL } from 'src/config';
 import { EmailService } from 'src/common/services/mail.service';
 import { emailFormat } from 'src/common/utils/email.format';
 import { VerifyParam } from '../types';
+import { UserLoginDTO } from '../types/login-user.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -68,25 +69,50 @@ export class AuthService {
   }
   async verifyAccount(param: VerifyParam) {
     try {
+      const validId = mongoose.Types.ObjectId.isValid(param.id);
+      if (!validId) {
+        throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
+      }
       const user = await this.userModel.findOne({
         _id: param.id,
         verifyCode: param.code,
         verifyCodeExpiredTime: { $gt: Date.now() },
       });
-      console.log(user);
+      console.log('user', user);
+
       if (!user) {
         console.log('here ..... -> ');
         throw new HttpException('VerifyCode has expired!', HttpStatus.BAD_REQUEST);
       }
       // verify account
+      console.log('verify account');
+
       const newUser = await this.userModel.findOneAndUpdate(
         { _id: param.id },
         { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
         { new: true },
       );
-      console.log(newUser);
-
       return { user: newUser };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async login(data: UserLoginDTO) {
+    try {
+      // Authenticate
+      const user = await this.userModel.findOneAndUpdate(
+        { email: data.email, verified: true },
+        { status: 'online' },
+        { new: true },
+      );
+      if (!user) {
+        throw new HttpException('Incorrect email!', HttpStatus.BAD_REQUEST);
+      }
+      const isPasswordValid = await bcrypt.compare(data.password, user.password);
+      if (!isPasswordValid) {
+        throw new HttpException('Incorrect password!', HttpStatus.BAD_REQUEST);
+      }
+      return { user };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
