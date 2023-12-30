@@ -36,10 +36,18 @@ export class AuthController {
     res.redirect(`http://localhost:9999/auth/verify-account`);
   }
   @Post('login')
-  async login(@Body() data: UserLoginDTO) {
+  async login(@Body() data: UserLoginDTO, @Res() res: Response) {
     const loginData = plainToClass(UserLoginDTO, data, { excludeExtraneousValues: true });
     const { user } = await this.authSevice.login(loginData);
+    // generate token
+    const accessToken = this.jwtService.signAccessToken({ id: user._id });
+    const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
+    this.cookieService.saveCookie(res, 'accessToken', accessToken);
+    this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
+    console.log(accessToken);
+
+    // serialize data
     const serializeUser = plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
-    return serializeUser;
+    return res.status(200).json({ user: serializeUser });
   }
 }

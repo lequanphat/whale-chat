@@ -1,0 +1,3 @@
+
+GET http://localhost:2411/users
+Cookie: acccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OGZhNzU3YTM0ZTI2ZmEwMzZjMjY5MyIsImlhdCI6MTcwMzkxNjc4NSwiZXhwIjoxNzAzOTIwMzg1fQ.nMvu_AoOpHNURhpQjaZSPShXGe_ppDXjCcC3xwvV5lM

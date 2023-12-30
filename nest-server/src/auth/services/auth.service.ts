@@ -100,6 +100,8 @@ export class AuthService {
   async login(data: UserLoginDTO) {
     try {
       // Authenticate
+      console.log('login here');
+
       const user = await this.userModel.findOneAndUpdate(
         { email: data.email, verified: true },
         { status: 'online' },

@@ -10,12 +10,12 @@ export class JwtService {
   }
 
   signRefreshToken(payload: any, expiryTime = '1d', secret?: string): string {
-    const refreshTokenSecret = secret || ACCESS_SECRET;
+    const refreshTokenSecret = secret || REFRESH_SECRET;
     return jwt.sign(payload, refreshTokenSecret, { expiresIn: expiryTime });
   }
 
   verifyAccessToken(token: string, secret?: string): any {
-    const accessTokenSecret = secret || REFRESH_SECRET;
+    const accessTokenSecret = secret || ACCESS_SECRET;
     return jwt.verify(token, accessTokenSecret);
   }
 
