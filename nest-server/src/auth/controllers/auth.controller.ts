@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserRegiserDTO } from '../types/register-user.dto';
 import { plainToClass } from 'class-transformer';
@@ -32,7 +32,6 @@ export class AuthController {
     this.cookieService.saveCookie(res, 'accessToken', accessToken);
     this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
     console.log('redirect');
-
     res.redirect(`http://localhost:9999/auth/verify-account`);
   }
   @Post('login')
@@ -44,10 +43,17 @@ export class AuthController {
     const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
     this.cookieService.saveCookie(res, 'accessToken', accessToken);
     this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
-    console.log(accessToken);
 
     // serialize data
     const serializeUser = plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
     return res.status(200).json({ user: serializeUser });
+  }
+  @Get('logout')
+  async logout(@Req() req: any, @Res() res: Response) {
+    const id: string = req.user.id;
+    await this.authSevice.logout(id);
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    return res.status(200).json({ msg: 'logout successfully' });
   }
 }

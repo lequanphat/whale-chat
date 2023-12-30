@@ -8,8 +8,6 @@ export class AuthMiddleware implements NestMiddleware {
   use(req: any, res: Response, next: NextFunction) {
     console.log('auth middleware here ...');
     cookieParser()(req, res, () => {
-      console.log(req);
-
       const token = req.cookies?.accessToken;
       if (!token) {
         throw new HttpException('Un-Authorized', HttpStatus.FORBIDDEN);

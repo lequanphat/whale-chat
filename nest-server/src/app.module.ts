@@ -13,6 +13,8 @@ import { JwtService } from './common/services/jwt.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes({ path: 'users/*', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: 'users*', method: RequestMethod.ALL }, { path: 'auth/logout', method: RequestMethod.GET });
   }
 }

@@ -119,4 +119,12 @@ export class AuthService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async logout(id: string) {
+    try {
+      const user = await this.userModel.findByIdAndUpdate({ _id: id }, { status: 'offline' });
+      return { user };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

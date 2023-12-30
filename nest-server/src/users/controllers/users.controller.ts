@@ -15,7 +15,8 @@ export class UsersController {
   }
 
   @Get()
-  getAllUsers() {
-    return this.usersService.getAllUsers();
+  getAllUsers(@Req() req: any) {
+    const id: string = req.user.id;
+    return this.usersService.getAllUsers(id);
   }
 }
