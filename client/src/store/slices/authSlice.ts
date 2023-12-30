@@ -139,12 +139,10 @@ export const userForgotPassword = createAsyncThunk(
   async (data: { email: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/forgot-password', data);
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
-      }
+      console.log('res', response);
       return response.data;
     } catch (error) {
-      return rejectWithValue({ error });
+      return rejectWithValue({ error: 'User not found' });
     }
   },
 );
@@ -153,9 +151,7 @@ export const userChangePassword = createAsyncThunk(
   async (data: { password: string; token: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/change-password', data);
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
-      }
+      console.log(response);
       return response.data;
     } catch (error) {
       return rejectWithValue({ error });
@@ -169,8 +165,8 @@ export const userRegister = createAsyncThunk(
       const response = await api.post('/auth/register', data);
       console.log(response);
 
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
+      if (response.data.error) {
+        return rejectWithValue({ error: response.data.error });
       }
       return response.data;
     } catch (error) {

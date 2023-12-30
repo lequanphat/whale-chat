@@ -155,7 +155,7 @@ export class AuthService {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
       // response
-      return { message: 'Send OTP successfully', statusCode: 200 };
+      return { message: 'Send OTP successfully', status: 200 };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -185,7 +185,7 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
-    return { msg: 'Change password successfully' };
+    return { message: 'Change password successfully' };
   }
 }
 

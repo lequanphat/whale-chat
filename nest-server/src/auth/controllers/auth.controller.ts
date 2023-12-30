@@ -16,11 +16,16 @@ export class AuthController {
     private readonly jwtService: JwtService,
   ) {}
   @Post('register')
-  register(@Body() data: UserRegiserDTO) {
+  async register(@Body() data: UserRegiserDTO, @Res() res: Response) {
     const userRegister = plainToClass(UserRegiserDTO, data, {
       excludeExtraneousValues: true,
     });
-    return this.authSevice.register(userRegister);
+    try {
+      await this.authSevice.register(userRegister);
+      return res.status(HttpStatus.OK).json({ message: 'Successfully' });
+    } catch (error) {
+      return res.status(HttpStatus.OK).json({ error: error.message });
+    }
   }
   @Get('verify-account/:id/:code')
   async verifyAccount(@Param() param: VerifyParamDTO, @Res() res: Response) {
@@ -69,8 +74,14 @@ export class AuthController {
     return res.status(200).json({ msg: 'refresh-token successfully' });
   }
   @Post('forgot-password')
-  async forgotPassword(@Body() data: EmailDTO) {
-    return this.authSevice.forgotPassword(data.email);
+  async forgotPassword(@Body() data: EmailDTO, @Res() res: Response) {
+    try {
+      const value = await this.authSevice.forgotPassword(data.email);
+      return res.status(200).json({ message: value.message });
+    } catch (error) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+    return;
   }
   @Get('/change-password/:id/:code')
   async verifyChangePassword(@Param() data: VerifyParamDTO, @Res() res: Response) {
@@ -84,7 +95,7 @@ export class AuthController {
 
       return res.redirect(`http://localhost:9999/auth/reset-password/${resetPasswordToken}`);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 

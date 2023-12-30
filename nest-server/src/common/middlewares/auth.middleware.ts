@@ -12,8 +12,6 @@ export class AuthMiddleware implements NestMiddleware {
       if (!token) {
         throw new HttpException('Un-Authorized', HttpStatus.FORBIDDEN);
       }
-      console.log('accessToken', token);
-
       try {
         const data = this.jwtService.verifyAccessToken(token);
         req.user = data;
