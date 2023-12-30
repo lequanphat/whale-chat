@@ -26,7 +26,6 @@ export class AuthController {
   async verifyAccount(@Param() param: VerifyParamDTO, @Res() res: Response) {
     const { user } = await this.authSevice.verifyAccount(param);
     console.log('controller user', user);
-
     const accessToken = this.jwtService.signAccessToken({ id: user._id });
     const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
     this.cookieService.saveCookie(res, 'accessToken', accessToken);
@@ -37,16 +36,20 @@ export class AuthController {
   @Post('login')
   async login(@Body() data: UserLoginDTO, @Res() res: Response) {
     const loginData = plainToClass(UserLoginDTO, data, { excludeExtraneousValues: true });
-    const { user } = await this.authSevice.login(loginData);
-    // generate token
-    const accessToken = this.jwtService.signAccessToken({ id: user._id });
-    const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
-    this.cookieService.saveCookie(res, 'accessToken', accessToken);
-    this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
+    try {
+      const { user } = await this.authSevice.login(loginData);
+      // generate token
+      const accessToken = this.jwtService.signAccessToken({ id: user._id });
+      const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
+      this.cookieService.saveCookie(res, 'accessToken', accessToken);
+      this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
 
-    // serialize data
-    const serializeUser = plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
-    return res.status(200).json({ user: serializeUser });
+      // serialize data
+      const serializeUser = plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
+      return res.status(200).json({ user: serializeUser });
+    } catch (error) {
+      return res.status(200).json({ error: error.message });
+    }
   }
   @Get('logout')
   async logout(@Req() req: any, @Res() res: Response) {

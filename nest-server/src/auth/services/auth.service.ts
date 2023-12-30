@@ -48,7 +48,7 @@ export class AuthService {
       registerUser.verified = false;
       registerUser.verifyCode = verifyCode;
       registerUser.verifyCodeExpiredTime = verifyCodeExpiredTime;
-      registerUser.avatar = `${SERVER_URL}/default/default_avatar.jpeg`;
+      registerUser.avatar = `${SERVER_URL}/defaults/default_avatar.jpeg`;
       user = new this.userModel(registerUser);
       await user.save();
     }
@@ -109,11 +109,11 @@ export class AuthService {
         { new: true },
       );
       if (!user) {
-        throw new HttpException('Incorrect email!', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Incorrect email!', 401);
       }
       const isPasswordValid = await bcrypt.compare(data.password, user.password);
       if (!isPasswordValid) {
-        throw new HttpException('Incorrect password!', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Incorrect password!', 401);
       }
       return { user };
     } catch (error) {
