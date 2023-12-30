@@ -7,8 +7,9 @@ import { AuthMiddleware } from './common/middlewares/auth.middleware';
 import { JwtService } from './common/services/jwt.service';
 import { CheckRefreshTokenMiddleware } from './auth/middlewares/checkRefershToken.middleware';
 import { GatewayModule } from './gateway/gateway.module';
+import { MessageModule } from './messages/messages.module';
 @Module({
-  imports: [MongooseModule.forRoot(MONGO_URL), UsersModule, AuthModule, GatewayModule],
+  imports: [MongooseModule.forRoot(MONGO_URL), UsersModule, AuthModule, GatewayModule, MessageModule],
   controllers: [],
   providers: [JwtService],
 })
@@ -16,7 +17,11 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: 'users*', method: RequestMethod.ALL }, { path: 'auth/logout', method: RequestMethod.GET })
+      .forRoutes(
+        { path: 'users*', method: RequestMethod.ALL },
+        { path: 'auth/logout', method: RequestMethod.GET },
+        { path: 'messages*', method: RequestMethod.ALL },
+      )
       .apply(CheckRefreshTokenMiddleware)
       .forRoutes({ path: 'auth/refresh-token', method: RequestMethod.GET });
   }

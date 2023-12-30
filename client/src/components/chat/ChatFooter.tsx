@@ -127,7 +127,7 @@ const ChatFooter = () => {
         }
         emitMessage({ type: 'text', text, from: id, to: contacts[currentContact]._id });
         setText('');
-        dispatch(addTextMessage({ from: id, to: contacts[currentContact]._id, text }));
+        dispatch(addTextMessage({ to: contacts[currentContact]._id, text }));
     };
     return (
         <Box

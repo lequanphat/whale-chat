@@ -134,27 +134,28 @@ export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (
     return rejectWithValue({ error: 'error in get contacts' });
   }
 });
-export const getMessages = createAsyncThunk(
-  'chat/getAllMessages',
-  async (data: { userId: string; contactId: string }, { rejectWithValue }) => {
-    try {
-      const response = await api.post('/message/get-all-messages', data);
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
-      }
-      return { messages: response.data.messages, id: data.contactId };
-    } catch (error) {
-      return rejectWithValue({ error });
+export const getMessages = createAsyncThunk('chat/getAllMessages', async (contactId: string, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/messages/${contactId}`);
+    console.log(response);
+
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
-  },
-);
+    return { messages: response.data.messages, id: contactId };
+  } catch (error) {
+    return rejectWithValue({ error });
+  }
+});
 export const addTextMessage = createAsyncThunk(
   'chat/addMessage',
-  async (data: { from: string; to: string; text: string }, { rejectWithValue }) => {
+  async (data: { to: string; text: string }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/message/add-message', data);
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
+      const response = await api.post('/messages/add-text-message', data);
+      console.log(response);
+
+      if (response.data.error) {
+        return rejectWithValue({ error: response.data.error });
       }
       return {
         id: data.to,
