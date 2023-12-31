@@ -52,6 +52,8 @@ const Login = () => {
       password: values.password,
     };
     const response = await dispatch(userLogin(data));
+    console.log(response);
+    
     if (response.payload.error) {
       setLoginError(response.payload.error);
       return;

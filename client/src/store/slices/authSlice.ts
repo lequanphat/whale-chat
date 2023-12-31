@@ -68,6 +68,16 @@ export const userSlice = createSlice({
         state.token = '';
       })
       .addCase(userLogout.rejected, () => {})
+      .addCase(userRegister.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userRegister.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(userRegister.rejected, (state) => {
+        state.isLoading = false;
+      })
+
       .addCase(userForgotPassword.pending, (state) => {
         state.isLoading = true;
       })
@@ -129,8 +139,11 @@ export const userSlice = createSlice({
 export const userLogin = createAsyncThunk('auth/login', async (data: LoginDTO, { rejectWithValue }) => {
   try {
     const response = await api.post('/auth/login', data);
+    console.log('res', response);
+
     return response.data.user;
   } catch (error) {
+    console.log('err', error);
     return rejectWithValue({ error: error.response.data.message });
   }
 });
