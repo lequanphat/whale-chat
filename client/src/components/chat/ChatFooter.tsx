@@ -28,7 +28,6 @@ const ChatFooter = () => {
       console.log(voiceFile);
       const formData = new FormData();
       formData.append('audio', voiceFile.blob, 'recording.mp3');
-      formData.append('from', id);
       formData.append('to', contacts[currentContact]._id);
       const response = await dispatch(addVoiceMessage(formData));
       console.log(response);
@@ -48,7 +47,6 @@ const ChatFooter = () => {
       console.log(imageFile);
       const formData = new FormData();
       formData.append('image', imageFile);
-      formData.append('from', id);
       formData.append('to', contacts[currentContact]._id);
       formData.append('text', text);
       const response = await dispatch(addImageMessage(formData));
@@ -83,8 +81,7 @@ const ChatFooter = () => {
     if (docFile) {
       console.log(docFile);
       const formData = new FormData();
-      formData.append('file', docFile);
-      formData.append('from', id);
+      formData.append('doc', docFile);
       formData.append('to', contacts[currentContact]._id);
       formData.append('text', text);
       const response = await dispatch(addDocMessage(formData));

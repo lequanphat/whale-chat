@@ -168,14 +168,14 @@ export const addTextMessage = createAsyncThunk(
 );
 export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (data: FormData, { rejectWithValue }) => {
   try {
-    const response = await api.post('/message/upload-image', data, {
+    const response = await api.post('/messages/add-image-message', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    if (response.data.status === false) {
-      return rejectWithValue({ error: response.data.msg });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
     return {
       id: data.get('to'),
@@ -187,14 +187,14 @@ export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (d
 });
 export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data: FormData, { rejectWithValue }) => {
   try {
-    const response = await api.post('/message/upload-file', data, {
+    const response = await api.post('/messages/add-doc-message', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    if (response.data.status === false) {
-      return rejectWithValue({ error: response.data.msg });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
     return {
       id: data.get('to'),
@@ -206,17 +206,15 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
 });
 export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (data: FormData, { rejectWithValue }) => {
   try {
-    const response = await api.post('/message/upload-audio', data, {
+    const response = await api.post('/messages/add-voice-message', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    if (response.data.status === false) {
-      return rejectWithValue({ error: response.data.msg });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
-    console.log(response);
-
     return {
       id: data.get('to'),
       data: response.data,

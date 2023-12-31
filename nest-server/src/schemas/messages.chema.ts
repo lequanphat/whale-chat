@@ -14,15 +14,12 @@ export class Messages extends Document {
 
   @Prop({ required: true })
   to: string;
-
   @Prop()
   image: string;
-
   @Prop() // online, offline, block
   doc: string;
-
   @Prop()
-  voice: boolean;
+  voice: string;
   @Prop()
   avatar: string;
 }

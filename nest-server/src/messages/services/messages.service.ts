@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { TextMessageDTO } from '../types';
+import { FileUploadDTO, TextMessageDTO } from '../types';
+import { SERVER_URL } from 'src/config';
 
 @Injectable()
 export class MessagesService {
@@ -48,6 +49,68 @@ export class MessagesService {
       if (message) {
         return { message };
       }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async addImageMessage({ file, from, to, text }: FileUploadDTO) {
+    try {
+      const imageMessage = await this.messageModel.create({
+        from,
+        to,
+        type: 'image',
+        image: `${SERVER_URL}/uploads/images/${file}`,
+      });
+      if (!imageMessage) {
+        throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
+      }
+      if (text) {
+        const textMessage = await this.messageModel.create({ from, to, text });
+        if (textMessage) {
+          return { messages: [imageMessage, textMessage], status: true };
+        }
+      }
+      return { message: imageMessage, status: true };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addDocMessage({ file, from, to, text }: FileUploadDTO, originalName: string) {
+    try {
+      const docMessage = await this.messageModel.create({
+        from,
+        to,
+        type: 'doc',
+        doc: `${SERVER_URL}/uploads/docs/${file}`,
+        text: originalName,
+      });
+      if (!docMessage) {
+        throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
+      }
+      if (text) {
+        const textMessage = await this.messageModel.create({ from, to, text });
+        if (textMessage) {
+          return { messages: [docMessage, textMessage] };
+        }
+      }
+      return { message: docMessage };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addVoiceMessage({ file, from, to }: FileUploadDTO) {
+    try {
+      const voiceMessage = await this.messageModel.create({
+        from,
+        to,
+        type: 'voice',
+        voice: `${SERVER_URL}/uploads/audios/${file}`,
+      });
+      if (!voiceMessage) {
+        throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
+      }
+      return { message: voiceMessage };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

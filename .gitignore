@@ -20,3 +20,4 @@
 /nest-server/node_modules
 /nest-server/dist
 /nest-server/.env
+/nest-server/public/uploads
