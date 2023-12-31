@@ -101,13 +101,9 @@ export class AuthService {
   async login(data: UserLoginDTO) {
     try {
       // Authenticate
-      console.log('login here');
-
-      const user = await this.userModel.findOneAndUpdate(
-        { email: data.email, verified: true },
-        { status: 'online' },
-        { new: true },
-      );
+      const user = await this.userModel
+        .findOneAndUpdate({ email: data.email, verified: true }, { status: 'online' }, { new: true })
+        .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'password']);
       if (!user) {
         throw new HttpException('Incorrect email!', 401);
       }
@@ -115,6 +111,8 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new HttpException('Incorrect password!', 401);
       }
+      console.log(user);
+
       return { user };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

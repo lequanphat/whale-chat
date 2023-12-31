@@ -21,9 +21,9 @@ export class UsersService {
     return plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
   }
   async getAllUsers(id: string) {
-    const users = await this.userModel.find({ _id: { $ne: id }, verified: true }).exec();
-    console.log('get all users');
-
-    return users.map((user) => plainToClass(SerializeUser, user, { excludeExtraneousValues: true }));
+    const users = await this.userModel
+      .find({ _id: { $ne: id }, verified: true })
+      .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
+    return users;
   }
 }

@@ -41,7 +41,7 @@ export const userSlice = createSlice({
     builder
       .addCase(userLogin.pending, () => {})
       .addCase(userLogin.fulfilled, (state, action) => {
-        state.id = action.payload.id;
+        state.id = action.payload._id;
         state.email = action.payload.email;
         state.displayName = action.payload.displayName;
         state.about = action.payload.about;
@@ -71,7 +71,7 @@ export const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.id = action.payload.id;
+        state.id = action.payload._id;
         state.email = action.payload.email;
         state.displayName = action.payload.displayName;
         state.about = action.payload.about;

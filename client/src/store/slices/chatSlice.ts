@@ -126,12 +126,12 @@ export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (
     const response = await api.get(`/users`);
     console.log(response);
 
-    if (response.status !== 200) {
-      return rejectWithValue({ error: 'get all contact error' });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
     return { contacts: response.data };
   } catch (error) {
-    return rejectWithValue({ error: 'error in get contacts' });
+    return rejectWithValue({ error: error.message });
   }
 });
 export const getMessages = createAsyncThunk('chat/getAllMessages', async (contactId: string, { rejectWithValue }) => {

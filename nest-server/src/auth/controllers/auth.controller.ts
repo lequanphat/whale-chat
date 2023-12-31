@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, Res
 import { AuthService } from '../services/auth.service';
 import { UserRegiserDTO } from '../types/register-user.dto';
 import { plainToClass } from 'class-transformer';
-import { ChangePasswordDTO, EmailDTO, SerializeUser, VerifyParamDTO } from '../types';
+import { ChangePasswordDTO, EmailDTO, VerifyParamDTO } from '../types';
 import { CookieService } from 'src/common/services/cookie.service';
 import { Response } from 'express';
 import { JwtService } from 'src/common/services/jwt.service';
@@ -48,10 +48,8 @@ export class AuthController {
       const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
       this.cookieService.saveCookie(res, 'accessToken', accessToken);
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
-
       // serialize data
-      const serializeUser = plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
-      return res.status(200).json({ user: serializeUser });
+      return res.status(200).json({ user });
     } catch (error) {
       return res.status(200).json({ error: error.message });
     }
