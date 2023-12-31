@@ -36,6 +36,9 @@ export const userSlice = createSlice({
       state.avatar = '';
       state.token = '';
     },
+    setAuth: (state, action) => {
+      state.auth = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -48,7 +51,6 @@ export const userSlice = createSlice({
         state.displayName = action.payload.displayName;
         state.about = action.payload.about;
         state.avatar = action.payload.avatar;
-        state.token = action.payload.token;
         state.auth = true;
         state.isLoading = false;
       })
@@ -127,24 +129,18 @@ export const userSlice = createSlice({
 export const userLogin = createAsyncThunk('auth/login', async (data: LoginDTO, { rejectWithValue }) => {
   try {
     const response = await api.post('/auth/login', data);
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return response.data.user;
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 
 export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get('/auth/logout');
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return response.data;
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.message });
   }
 });
 
@@ -175,14 +171,9 @@ export const userChangePassword = createAsyncThunk(
 export const userRegister = createAsyncThunk('auth/register', async (data: RegisterDTO, { rejectWithValue }) => {
   try {
     const response = await api.post('/auth/register', data);
-    console.log(response);
-
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return response.data;
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithValue }) => {
@@ -228,5 +219,5 @@ export const editProfile = createAsyncThunk('user/editProfile', async (data: Edi
   }
 });
 
-export const { setUser, resetUser } = userSlice.actions;
+export const { setUser, resetUser, setAuth } = userSlice.actions;
 export default userSlice.reducer;

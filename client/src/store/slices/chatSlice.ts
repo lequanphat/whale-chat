@@ -124,27 +124,18 @@ const chatSlice = createSlice({
 export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get(`/users`);
-    console.log(response);
-
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return { contacts: response.data };
   } catch (error) {
-    return rejectWithValue({ error: error.message });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export const getMessages = createAsyncThunk('chat/getAllMessages', async (contactId: string, { rejectWithValue }) => {
   try {
     const response = await api.get(`/messages/${contactId}`);
-    console.log(response);
 
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return { messages: response.data.messages, id: contactId };
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export const addTextMessage = createAsyncThunk(
@@ -152,17 +143,13 @@ export const addTextMessage = createAsyncThunk(
   async (data: { to: string; text: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/messages/add-text-message', data);
-      console.log(response);
 
-      if (response.data.error) {
-        return rejectWithValue({ error: response.data.error });
-      }
       return {
         id: data.to,
         message: response.data.message,
       };
     } catch (error) {
-      return rejectWithValue({ error });
+      return rejectWithValue({ error: error.response.data.message });
     }
   },
 );
@@ -174,15 +161,12 @@ export const addImageMessage = createAsyncThunk('chat/addImageMessage', async (d
       },
     });
 
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return {
       id: data.get('to'),
       data: response.data,
     };
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data: FormData, { rejectWithValue }) => {
@@ -193,15 +177,12 @@ export const addDocMessage = createAsyncThunk('chat/addDocMessage', async (data:
       },
     });
 
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return {
       id: data.get('to'),
       data: response.data,
     };
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (data: FormData, { rejectWithValue }) => {
@@ -211,16 +192,12 @@ export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (d
         'Content-Type': 'multipart/form-data',
       },
     });
-
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return {
       id: data.get('to'),
       data: response.data,
     };
   } catch (error) {
-    return rejectWithValue({ error });
+    return rejectWithValue({ error: error.response.data.message });
   }
 });
 export default chatSlice.reducer;

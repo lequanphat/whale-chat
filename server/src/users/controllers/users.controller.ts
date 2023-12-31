@@ -41,7 +41,7 @@ export class UsersController {
       const data = await this.usersService.setAvatar({ file: req.fileName, id: req.user.id });
       return res.status(HttpStatus.OK).json(data);
     } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+      throw error;
     }
   }
   @Post('edit-profile')
@@ -50,7 +50,7 @@ export class UsersController {
       const value = await this.usersService.editProfile(data, req.user.id);
       return res.status(HttpStatus.OK).json(value);
     } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+      throw error;
     }
   }
 }

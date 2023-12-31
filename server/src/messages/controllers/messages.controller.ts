@@ -14,7 +14,7 @@ export class MessagesController {
       const { messages } = await this.messageService.getAllMessages(req.user.id, contactId);
       return res.status(HttpStatus.OK).json({ messages });
     } catch (error) {
-      return res.status(HttpStatus.OK).json({ error: error.message });
+      throw error;
     }
   }
   @Post('add-text-message')
@@ -24,7 +24,7 @@ export class MessagesController {
       const { message } = await this.messageService.addTextMessage(data);
       return res.status(HttpStatus.OK).json({ message });
     } catch (error) {
-      return res.status(HttpStatus.OK).json({ error: error.message });
+      throw error;
     }
   }
 
@@ -47,9 +47,13 @@ export class MessagesController {
     if (!req.fileName) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'File not found!' });
     }
-    const data = await this.messageService.addImageMessage({ file: req.fileName, from: req.user.id, to, text });
+    try {
+      const data = await this.messageService.addImageMessage({ file: req.fileName, from: req.user.id, to, text });
 
-    return res.status(HttpStatus.OK).json(data);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      throw error;
+    }
   }
   @Post('add-doc-message')
   @UseInterceptors(
@@ -71,11 +75,15 @@ export class MessagesController {
     if (!req.fileName || !req.originalName) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'File not found!' });
     }
-    const data = await this.messageService.addDocMessage(
-      { file: req.fileName, from: req.user.id, to, text },
-      req.originalName,
-    );
-    return res.status(HttpStatus.OK).json(data);
+    try {
+      const data = await this.messageService.addDocMessage(
+        { file: req.fileName, from: req.user.id, to, text },
+        req.originalName,
+      );
+      return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      throw error;
+    }
   }
   @Post('add-voice-message')
   @UseInterceptors(
@@ -96,7 +104,11 @@ export class MessagesController {
     if (!req.fileName) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'File not found!' });
     }
-    const data = await this.messageService.addVoiceMessage({ file: req.fileName, from: req.user.id, to, text: '' });
-    return res.status(HttpStatus.OK).json(data);
+    try {
+      const data = await this.messageService.addVoiceMessage({ file: req.fileName, from: req.user.id, to, text: '' });
+      return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      throw error;
+    }
   }
 }

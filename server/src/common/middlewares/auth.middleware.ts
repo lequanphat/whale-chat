@@ -6,7 +6,6 @@ import { JwtService } from '../services/jwt.service';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
   use(req: any, res: Response, next: NextFunction) {
-    console.log('auth middleware here ...');
     cookieParser()(req, res, () => {
       const token = req.cookies?.accessToken;
       if (!token) {
@@ -17,7 +16,8 @@ export class AuthMiddleware implements NestMiddleware {
         req.user = data;
         next();
       } catch (error) {
-        throw new HttpException('Token has expired', HttpStatus.FORBIDDEN);
+        console.log('Token has expired');
+        throw new HttpException('RFTK', HttpStatus.FORBIDDEN);
       }
     });
   }

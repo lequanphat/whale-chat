@@ -8,7 +8,7 @@ import AuthInput from '../../components/input/AuthInput';
 import AuthContainer from './AuthContainer';
 import { userLogin } from '../../store/slices/authSlice';
 import { useDispatch } from 'react-redux';
-import { openSnackbar } from '../../store/slices/appSlice';
+import { openSuccessSnackbar } from '../../store/slices/appSlice';
 interface FormValues {
   email: string;
   password: string;
@@ -36,8 +36,7 @@ const Login = () => {
     onSubmit: undefined,
   });
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     // validate
     if (errors.password || errors.email) {
       if (errors.password) {
@@ -53,12 +52,11 @@ const Login = () => {
       password: values.password,
     };
     const response = await dispatch(userLogin(data));
-
-    if (response.error) {
+    if (response.payload.error) {
       setLoginError(response.payload.error);
       return;
     }
-    dispatch(openSnackbar({ message: 'Login successfully!', serverity: 'success' }));
+    dispatch(openSuccessSnackbar('Login successfully!'));
   };
 
   const handleBlurCustom = (
@@ -76,6 +74,7 @@ const Login = () => {
     handleChange(event);
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+
   return (
     <AuthContainer title="LOGIN">
       <>
@@ -111,7 +110,6 @@ const Login = () => {
           </Typography>
         )}
         <Button
-          type="submit"
           variant="contained"
           fullWidth
           sx={{

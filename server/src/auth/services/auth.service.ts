@@ -111,8 +111,6 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new HttpException('Incorrect password!', 401);
       }
-      console.log(user);
-
       return { user };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserRegiserDTO } from '../types/register-user.dto';
 import { plainToClass } from 'class-transformer';
@@ -24,19 +24,23 @@ export class AuthController {
       await this.authSevice.register(userRegister);
       return res.status(HttpStatus.OK).json({ message: 'Successfully' });
     } catch (error) {
-      return res.status(HttpStatus.OK).json({ error: error.message });
+      throw error;
     }
   }
   @Get('verify-account/:id/:code')
   async verifyAccount(@Param() param: VerifyParamDTO, @Res() res: Response) {
-    const { user } = await this.authSevice.verifyAccount(param);
-    console.log('controller user', user);
-    const accessToken = this.jwtService.signAccessToken({ id: user._id });
-    const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
-    this.cookieService.saveCookie(res, 'accessToken', accessToken);
-    this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
-    console.log('redirect');
-    res.redirect(`http://localhost:9999/auth/verify-account`);
+    try {
+      const { user } = await this.authSevice.verifyAccount(param);
+      console.log('controller user', user);
+      const accessToken = this.jwtService.signAccessToken({ id: user._id });
+      const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
+      this.cookieService.saveCookie(res, 'accessToken', accessToken);
+      this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
+      console.log('redirect');
+      res.redirect(`http://localhost:9999/auth/verify-account`);
+    } catch (error) {
+      throw error;
+    }
   }
   @Post('login')
   async login(@Body() data: UserLoginDTO, @Res() res: Response) {
@@ -51,19 +55,24 @@ export class AuthController {
       // serialize data
       return res.status(200).json({ user });
     } catch (error) {
-      return res.status(200).json({ error: error.message });
+      throw error;
     }
   }
   @Get('logout')
   async logout(@Req() req: any, @Res() res: Response) {
-    const id: string = req.user.id;
-    await this.authSevice.logout(id);
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    return res.status(200).json({ msg: 'logout successfully' });
+    try {
+      const id: string = req.user.id;
+      await this.authSevice.logout(id);
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      return res.status(200).json({ msg: 'logout successfully' });
+    } catch (error) {
+      throw error;
+    }
   }
   @Get('refresh-token')
   async refreshToken(@Req() req: any, @Res() res: Response) {
+    console.log('refresh token');
     const id = req.user.id;
     const accessToken = this.jwtService.signAccessToken({ id });
     const refreshToken = this.jwtService.signRefreshToken({ id });
@@ -77,9 +86,8 @@ export class AuthController {
       const value = await this.authSevice.forgotPassword(data.email);
       return res.status(200).json({ message: value.message });
     } catch (error) {
-      return res.status(400).json({ error: 'User not found' });
+      throw error;
     }
-    return;
   }
   @Get('/change-password/:id/:code')
   async verifyChangePassword(@Param() data: VerifyParamDTO, @Res() res: Response) {
@@ -90,10 +98,9 @@ export class AuthController {
       const resetPasswordToken = this.jwtService.signAccessToken({ id: data.id });
       // // redirect
       console.log(resetPasswordToken);
-
       return res.redirect(`http://localhost:9999/auth/reset-password/${resetPasswordToken}`);
     } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+      return error;
     }
   }
 
@@ -104,7 +111,7 @@ export class AuthController {
       const value = this.jwtService.verifyAccessToken(data.token);
       return this.authSevice.changePassword(data, value.id);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw error;
     }
   }
 }

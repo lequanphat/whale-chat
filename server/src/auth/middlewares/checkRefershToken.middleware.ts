@@ -18,7 +18,7 @@ export class CheckRefreshTokenMiddleware implements NestMiddleware {
         req.user = data;
         next();
       } catch (error) {
-        throw new HttpException('Token has expired', HttpStatus.FORBIDDEN);
+        throw new HttpException('RefreshToken has expired', HttpStatus.FORBIDDEN);
       }
     });
   }

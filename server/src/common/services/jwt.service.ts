@@ -4,12 +4,12 @@ import { ACCESS_SECRET, REFRESH_SECRET } from 'src/config';
 
 @Injectable()
 export class JwtService {
-  signAccessToken(payload: any, expiryTime = '60m', secret?: string): string {
+  signAccessToken(payload: any, expiryTime = '2h', secret?: string): string {
     const accessTokenSecret = secret || ACCESS_SECRET;
     return jwt.sign(payload, accessTokenSecret, { expiresIn: expiryTime });
   }
 
-  signRefreshToken(payload: any, expiryTime = '1d', secret?: string): string {
+  signRefreshToken(payload: any, expiryTime = '2d', secret?: string): string {
     const refreshTokenSecret = secret || REFRESH_SECRET;
     return jwt.sign(payload, refreshTokenSecret, { expiresIn: expiryTime });
   }

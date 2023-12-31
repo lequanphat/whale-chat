@@ -62,8 +62,7 @@ function Register() {
       password: values.password,
     };
     const response = await dispatch(userRegister(data));
-
-    if (response.error) {
+    if (response.payload.error) {
       setRegisterError(response.payload.error);
       return;
     }
