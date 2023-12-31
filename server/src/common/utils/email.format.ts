@@ -53,9 +53,7 @@ export const emailFormat = (title: string, content: string, link: string) => {
                 <p style="display: block; width: 100%;">
                     <a href="${link}" class="btn" style="text-transform: uppercase; display: block; width: max-content; margin: 0 auto;">Click here</a>
                 </p>
-                <p style="display: block; width: 100%;">
-                    <a href="http://localhost:2411/users" class="btn" style="text-transform: uppercase; display: block; width: max-content; margin: 0 auto;">Click here</a>
-                </p>
+               
                 <p>Best Regards,<br />Quan Phat</p>
             </div>
         </body>

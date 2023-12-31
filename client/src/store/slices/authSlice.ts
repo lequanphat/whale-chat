@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-import { authType } from '../interface';
+import { ChangePasswordDTO, EditProfileDTO, LoginDTO, RegisterDTO, authType } from '../interface';
 
 const initialState: authType = {
   id: '',
@@ -39,7 +39,9 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(userLogin.pending, () => {})
+      .addCase(userLogin.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(userLogin.fulfilled, (state, action) => {
         state.id = action.payload._id;
         state.email = action.payload.email;
@@ -48,8 +50,11 @@ export const userSlice = createSlice({
         state.avatar = action.payload.avatar;
         state.token = action.payload.token;
         state.auth = true;
+        state.isLoading = false;
       })
-      .addCase(userLogin.rejected, () => {})
+      .addCase(userLogin.rejected, (state) => {
+        state.isLoading = false;
+      })
       .addCase(userLogout.pending, () => {})
       .addCase(userLogout.fulfilled, (state) => {
         state.id = '';
@@ -61,12 +66,24 @@ export const userSlice = createSlice({
         state.token = '';
       })
       .addCase(userLogout.rejected, () => {})
-      .addCase(userForgotPassword.pending, () => {})
-      .addCase(userForgotPassword.fulfilled, () => {})
-      .addCase(userForgotPassword.rejected, () => {})
-      .addCase(userChangePassword.pending, () => {})
-      .addCase(userChangePassword.fulfilled, () => {})
-      .addCase(userChangePassword.rejected, () => {})
+      .addCase(userForgotPassword.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userForgotPassword.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(userForgotPassword.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(userChangePassword.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userChangePassword.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(userChangePassword.rejected, (state) => {
+        state.isLoading = false;
+      })
       .addCase(getUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -107,20 +124,17 @@ export const userSlice = createSlice({
   },
 });
 
-export const userLogin = createAsyncThunk(
-  'auth/login',
-  async (data: { email: string; password: string }, { rejectWithValue }) => {
-    try {
-      const response = await api.post('/auth/login', data);
-      if (response.data.error) {
-        return rejectWithValue({ error: response.data.error });
-      }
-      return response.data.user;
-    } catch (error) {
-      return rejectWithValue({ error });
+export const userLogin = createAsyncThunk('auth/login', async (data: LoginDTO, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/login', data);
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
-  },
-);
+    return response.data.user;
+  } catch (error) {
+    return rejectWithValue({ error });
+  }
+});
 
 export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
@@ -148,7 +162,7 @@ export const userForgotPassword = createAsyncThunk(
 );
 export const userChangePassword = createAsyncThunk(
   'auth/change-password',
-  async (data: { password: string; token: string }, { rejectWithValue }) => {
+  async (data: ChangePasswordDTO, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/change-password', data);
       console.log(response);
@@ -158,22 +172,19 @@ export const userChangePassword = createAsyncThunk(
     }
   },
 );
-export const userRegister = createAsyncThunk(
-  'auth/register',
-  async (data: { displayName: string; email: string; password: string }, { rejectWithValue }) => {
-    try {
-      const response = await api.post('/auth/register', data);
-      console.log(response);
+export const userRegister = createAsyncThunk('auth/register', async (data: RegisterDTO, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/register', data);
+    console.log(response);
 
-      if (response.data.error) {
-        return rejectWithValue({ error: response.data.error });
-      }
-      return response.data;
-    } catch (error) {
-      return rejectWithValue({ error });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
-  },
-);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error });
+  }
+});
 export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get('/users/user');
@@ -187,46 +198,35 @@ export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithV
     return rejectWithValue({ error });
   }
 });
-export const setAvatar = createAsyncThunk(
-  'user/setAvatar',
-  async ({ data, id }: { data: FormData; id: string }, { rejectWithValue }) => {
-    try {
-      const response = await api.post(`/user/set-avatar/${id}`, data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+export const setAvatar = createAsyncThunk('user/setAvatar', async (data: FormData, { rejectWithValue }) => {
+  try {
+    const response = await api.post(`/users/change-avatar`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
-      }
-
-      return response.data.avatar;
-    } catch (error) {
-      return rejectWithValue({ error });
+    if (response.data.error) {
+      return rejectWithValue({ error: response.data.error });
     }
-  },
-);
-export const editProfile = createAsyncThunk(
-  'user/editProfile',
-  async ({ displayName, about, id }: { displayName: string; about: string; id: string }, { rejectWithValue }) => {
-    try {
-      const response = await api.post(`/user/edit-profile/${id}`, {
-        displayName,
-        about,
-      });
 
-      if (response.data.status === false) {
-        return rejectWithValue({ error: response.data.msg });
-      }
-      console.log(response);
+    return response.data.avatar;
+  } catch (error) {
+    return rejectWithValue({ error });
+  }
+});
+export const editProfile = createAsyncThunk('user/editProfile', async (data: EditProfileDTO, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/users/edit-profile', data);
 
-      return response.data;
-    } catch (error) {
-      return rejectWithValue({ error });
+    if (response.data.status === false) {
+      return rejectWithValue({ error: response.data.msg });
     }
-  },
-);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error });
+  }
+});
 
 export const { setUser, resetUser } = userSlice.actions;
 export default userSlice.reducer;
