@@ -19,7 +19,7 @@ export const SocketContext = createContext<SocketContextType>({
 export const SocketProvider = ({ children }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
-  const { id } = useSelector((state: stateType) => state.auth);
+  const { id, token } = useSelector((state: stateType) => state.auth);
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   useEffect(() => {
@@ -27,7 +27,7 @@ export const SocketProvider = ({ children }) => {
       transportOptions: {
         polling: {
           extraHeaders: {
-            Authorization: '',
+            Authorization: `Bearer ${token}`,
           },
         },
       },

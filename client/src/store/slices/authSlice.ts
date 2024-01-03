@@ -46,11 +46,12 @@ export const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(userLogin.fulfilled, (state, action) => {
-        state.id = action.payload._id;
-        state.email = action.payload.email;
-        state.displayName = action.payload.displayName;
-        state.about = action.payload.about;
-        state.avatar = action.payload.avatar;
+        state.id = action.payload.user._id;
+        state.email = action.payload.user.email;
+        state.displayName = action.payload.user.displayName;
+        state.about = action.payload.user.about;
+        state.avatar = action.payload.user.avatar;
+        state.token = action.payload.token;
         state.auth = true;
         state.isLoading = false;
       })
@@ -100,11 +101,11 @@ export const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.id = action.payload._id;
-        state.email = action.payload.email;
-        state.displayName = action.payload.displayName;
-        state.about = action.payload.about;
-        state.avatar = action.payload.avatar;
+        state.id = action.payload.user._id;
+        state.email = action.payload.user.email;
+        state.displayName = action.payload.user.displayName;
+        state.about = action.payload.user.about;
+        state.avatar = action.payload.user.avatar;
         state.token = action.payload.token;
         state.auth = true;
         state.isLoading = false;
@@ -132,6 +133,16 @@ export const userSlice = createSlice({
       })
       .addCase(editProfile.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(refreshToken.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.isLoading = false;
+      })
+      .addCase(refreshToken.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
@@ -139,9 +150,8 @@ export const userSlice = createSlice({
 export const userLogin = createAsyncThunk('auth/login', async (data: LoginDTO, { rejectWithValue }) => {
   try {
     const response = await api.post('/auth/login', data);
-    console.log('res', response);
 
-    return response.data.user;
+    return response.data;
   } catch (error) {
     console.log('err', error);
     return rejectWithValue({ error: error.response.data.message });
@@ -156,7 +166,14 @@ export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWith
     return rejectWithValue({ error: error.response.message });
   }
 });
-
+export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/auth/refresh-token');
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error: error.response.message });
+  }
+});
 export const userForgotPassword = createAsyncThunk(
   'auth/forgot-password',
   async (data: { email: string }, { rejectWithValue }) => {
@@ -193,13 +210,11 @@ export const getUser = createAsyncThunk('user/get-user', async (_, { rejectWithV
   try {
     const response = await api.get('/users/user');
     console.log(response);
-
-    if (response.data.error) {
-      return rejectWithValue({ error: response.data.error });
-    }
     return response.data;
   } catch (error) {
-    return rejectWithValue({ error });
+    console.log(error);
+
+    return rejectWithValue({ error: error.response.message });
   }
 });
 export const setAvatar = createAsyncThunk('user/setAvatar', async (data: FormData, { rejectWithValue }) => {

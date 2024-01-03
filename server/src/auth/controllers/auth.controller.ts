@@ -32,9 +32,7 @@ export class AuthController {
     try {
       const { user } = await this.authSevice.verifyAccount(param);
       console.log('controller user', user);
-      const accessToken = this.jwtService.signAccessToken({ id: user._id });
       const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
-      this.cookieService.saveCookie(res, 'accessToken', accessToken);
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
       console.log('redirect');
       res.redirect(`http://localhost:9999/auth/verify-account`);
@@ -50,10 +48,9 @@ export class AuthController {
       // generate token
       const accessToken = this.jwtService.signAccessToken({ id: user._id });
       const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
-      this.cookieService.saveCookie(res, 'accessToken', accessToken);
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
       // serialize data
-      return res.status(200).json({ user });
+      return res.status(200).json({ user, token: accessToken });
     } catch (error) {
       throw error;
     }
@@ -76,9 +73,8 @@ export class AuthController {
     const id = req.user.id;
     const accessToken = this.jwtService.signAccessToken({ id });
     const refreshToken = this.jwtService.signRefreshToken({ id });
-    this.cookieService.saveCookie(res, 'accessToken', accessToken);
     this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
-    return res.status(200).json({ msg: 'refresh-token successfully' });
+    return res.status(200).json({ token: accessToken });
   }
   @Post('forgot-password')
   async forgotPassword(@Body() data: EmailDTO, @Res() res: Response) {

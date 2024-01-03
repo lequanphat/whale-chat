@@ -7,12 +7,12 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
   use(req: any, res: Response, next: NextFunction) {
     cookieParser()(req, res, () => {
-      const token = req.cookies?.accessToken;
+      const token = req.headers.authorization;
       if (!token) {
-        throw new HttpException('Un-Authorized', HttpStatus.FORBIDDEN);
+        throw new HttpException('RFTK', HttpStatus.FORBIDDEN);
       }
       try {
-        const data = this.jwtService.verifyAccessToken(token);
+        const data = this.jwtService.verifyAccessToken(token.split(' ')[1]);
         req.user = data;
         next();
       } catch (error) {

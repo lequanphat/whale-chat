@@ -38,17 +38,14 @@ export class SocketGateway implements NestGateway {
   private authenticate(client: Socket) {
     console.log('verify token');
     const token = client.handshake.headers.authorization;
-    console.log(token);
     if (token) {
       try {
-        this.jwtService.verifyAccessToken(token);
+        this.jwtService.verifyAccessToken(token.split(' ')[1]);
         return true;
       } catch (error) {
-        // return false;
-        return true;
+        return false;
       }
     }
-    // return false;
-    return true;
+    return false;
   }
 }

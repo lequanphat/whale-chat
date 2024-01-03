@@ -4,13 +4,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { EditProfileDTO } from '../types';
+import { JwtService } from 'src/common/services/jwt.service';
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
   @Get('user')
-  getUser(@Req() req: any) {
+  async getUser(@Req() req: any, @Res() res: Response) {
     const id: string = req.user.id;
-    return this.usersService.getUserById(id);
+    try {
+      const user = await this.usersService.getUserById(id);
+      const accessToken = this.jwtService.signAccessToken({ id });
+      return res.status(HttpStatus.OK).json({ user, token: accessToken });
+    } catch (error) {
+      return error;
+    }
   }
   @Get(':id')
   getUserByID(@Param('id') id: string) {
