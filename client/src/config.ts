@@ -64,3 +64,4 @@ export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
 // INTERNAL_API_PATH
 export const INTERNAL_API_PATH = 'http://localhost:2411';
 export const BACKEND_SERVER_PATH = 'http://localhost:2411';
+export const OPENAI_KEY = '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';

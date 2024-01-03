@@ -67,7 +67,7 @@ const Sidebar = () => {
         navigate('/friends');
         break;
       case 2:
-        navigate('/robot');
+        navigate('/gpt');
         break;
       case 3:
         navigate('/settings');
