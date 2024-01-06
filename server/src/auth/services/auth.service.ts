@@ -79,20 +79,17 @@ export class AuthService {
         verifyCode: param.code,
         verifyCodeExpiredTime: { $gt: Date.now() },
       });
-      console.log('user', user);
-
       if (!user) {
         console.log('here ..... -> ');
         throw new HttpException('VerifyCode has expired!', HttpStatus.BAD_REQUEST);
       }
       // verify account
-      console.log('verify account');
-
       const newUser = await this.userModel.findOneAndUpdate(
         { _id: param.id },
         { $set: { verified: true, verifyCode: '', verifyCodeExpiredTime: 0 } },
         { new: true },
       );
+
       return { user: newUser };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

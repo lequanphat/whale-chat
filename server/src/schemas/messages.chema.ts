@@ -4,7 +4,7 @@ import mongoose, { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Messages extends Document {
   @Prop({ required: true, default: 'text' })
-  type: string;
+  type: string; // text, image, doc, voice, system, timeline
 
   @Prop({ default: '' })
   text: string;

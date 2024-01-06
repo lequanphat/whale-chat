@@ -7,6 +7,7 @@ import { CookieService } from 'src/common/services/cookie.service';
 import { Response } from 'express';
 import { JwtService } from 'src/common/services/jwt.service';
 import { UserLoginDTO } from '../types/login-user.dto';
+import { CLIENT_URL } from 'src/config';
 
 @Controller('auth')
 export class AuthController {
@@ -34,8 +35,8 @@ export class AuthController {
       console.log('controller user', user);
       const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
-      console.log('redirect');
-      res.redirect(`http://localhost:9999/auth/verify-account`);
+      // redirect
+      res.redirect(`${CLIENT_URL}/auth/verify-account`);
     } catch (error) {
       throw error;
     }
@@ -94,7 +95,7 @@ export class AuthController {
       const resetPasswordToken = this.jwtService.signAccessToken({ id: data.id });
       // // redirect
       console.log(resetPasswordToken);
-      return res.redirect(`http://localhost:9999/auth/reset-password/${resetPasswordToken}`);
+      return res.redirect(`${CLIENT_URL}/auth/reset-password/${resetPasswordToken}`);
     } catch (error) {
       return error;
     }

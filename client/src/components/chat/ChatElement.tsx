@@ -3,11 +3,12 @@ import { Avatar } from '@mui/material';
 import StyledBadge from '../avatar/StyledBadge';
 import React from 'react';
 import { formatMongoTime } from '../../utils/formatTime';
+import { MessageType } from './types';
 interface ChatElementProps {
   displayName: string;
   avatar?: string;
   text?: string;
-  type?: string;
+  type?: MessageType;
   createdAt?: string;
   unread?: number;
   online?: boolean;
@@ -18,7 +19,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
   displayName,
   avatar,
   text = 'default message',
-  type = 'text',
+  type = MessageType.TEXT,
   createdAt = '0:00',
   unread = 0,
   online = false,
@@ -27,6 +28,18 @@ const ChatElement: React.FC<ChatElementProps> = ({
   ...props
 }) => {
   const theme = useTheme();
+  const recentMessage = (type) => {
+    switch (type) {
+      case MessageType.TEXT:
+        return text;
+      case MessageType.IMAGE:
+        return 'An image';
+      case MessageType.VOICE:
+        return 'A voice';
+      default:
+        return 'unknow';
+    }
+  };
   return (
     <Box
       onClick={onClick}
@@ -59,7 +72,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
               {displayName}
             </Typography>
             <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
-              {type === 'text' ? text : 'no'}
+              {recentMessage(type)}
             </Typography>
           </Stack>
         </Stack>

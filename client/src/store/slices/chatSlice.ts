@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-
-const initialState = {
-  recieveMessage: '',
+import { chatType } from '../interface';
+const initialState: chatType = {
   chats: [],
   contacts: [],
   currentContact: undefined,
@@ -21,16 +20,14 @@ const chatSlice = createSlice({
       state.contacts = [];
     },
 
-    setRecieveMessage(state, action) {
-      state.recieveMessage = action.payload;
-    },
+    setRecieveMessage() {},
     addMessageToCurrentMessages(state, action) {
       state.chats.forEach((item) => {
         if (item.id === action.payload.from) {
           if (item.messages.length === 0) {
-            action.payload.avatar = state.contacts[state.currentContact].avatar;
-          } else if (item.messages[item.messages.length - 1].to === state.contacts[state.currentContact]._id) {
-            action.payload.avatar = state.contacts[state.currentContact].avatar;
+            action.payload.avatar = state.contacts[state.currentContact].contact.avatar;
+          } else if (item.messages[item.messages.length - 1].to === state.contacts[state.currentContact].contact._id) {
+            action.payload.avatar = state.contacts[state.currentContact].contact.avatar;
           }
           item.messages.push(action.payload);
         }
@@ -68,6 +65,13 @@ const chatSlice = createSlice({
         state.chats.forEach((item) => {
           if (item.id === action.payload.id) {
             item.messages.push(action.payload.message);
+          }
+        });
+        state.contacts.forEach((item) => {
+          if (item.contact._id === action.payload.id) {
+            item.recentMessage.type = action.payload.message.type;
+            item.recentMessage.text = action.payload.message.text;
+            item.recentMessage.createdAt = action.payload.message.createdAt;
           }
         });
       })

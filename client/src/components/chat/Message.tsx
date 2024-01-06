@@ -1,10 +1,11 @@
 import { Stack } from '@mui/material';
-import { DocMessage, MediaMessage, TextMessage, VoiceMessage } from './MessageTypes';
+import { DocMessage, MediaMessage, SystemMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { useEffect, useRef } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import Loading from '../loading/Loading';
+import { MessageType } from './types';
 
 const Message = ({ currentMessages }) => {
   const { id } = useSelector((state: stateType) => state.auth);
@@ -35,16 +36,18 @@ const Message = ({ currentMessages }) => {
             index: number,
           ) => {
             switch (msg.type) {
-              case 'text':
+              case MessageType.TEXT:
                 return <TextMessage key={index} msg={msg} fromSelf={msg.from === id} />;
-              case 'image':
+              case MessageType.IMAGE:
                 return <MediaMessage key={index} msg={msg} fromSelf={msg.from === id} />;
-              case 'doc':
+              case MessageType.DOC:
                 return <DocMessage key={index} msg={msg} fromSelf={msg.from === id} />;
-              case 'voice':
+              case MessageType.VOICE:
                 return <VoiceMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+              case MessageType.SYSTEM:
+                return <SystemMessage key={index} msg={msg} />;
               default:
-                return '123';
+                return '';
             }
           },
         )}

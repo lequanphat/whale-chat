@@ -1,3 +1,5 @@
+import { MessageType } from '../components/chat/types';
+
 export interface authType {
   id: string;
   email: string;
@@ -29,7 +31,7 @@ export interface Contacts {
     status: string;
   };
   recentMessage: {
-    type: string;
+    type: MessageType;
     text: string;
     createdAt: string;
   };
@@ -44,7 +46,7 @@ export interface chatType {
     id: string;
     messages: {
       _id: string;
-      type: string;
+      type: MessageType;
       text: string;
       from: string;
       to: string;

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { FileUploadDTO, TextMessageDTO } from '../types';
+import { FileUploadDTO, MessageType, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 
 @Injectable()
@@ -54,13 +54,32 @@ export class MessagesService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async addSystemMessage(data: TextMessageDTO) {
+    const isValidFrom = mongoose.Types.ObjectId.isValid(data.from);
+    if (!isValidFrom) {
+      throw new HttpException('Invalid From field', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const message = await this.messageModel.create({
+        from: data.from,
+        to: data.to,
+        text: data.text,
+        type: MessageType.SYSTEM,
+      });
+      if (message) {
+        return { message };
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   async addImageMessage({ file, from, to, text }: FileUploadDTO) {
     try {
       const imageMessage = await this.messageModel.create({
         from,
         to,
-        type: 'image',
+        type: MessageType.IMAGE,
         image: `${SERVER_URL}/uploads/images/${file}`,
       });
       if (!imageMessage) {
@@ -82,7 +101,7 @@ export class MessagesService {
       const docMessage = await this.messageModel.create({
         from,
         to,
-        type: 'doc',
+        type: MessageType.DOC,
         doc: `${SERVER_URL}/uploads/docs/${file}`,
         text: originalName,
       });
@@ -105,7 +124,7 @@ export class MessagesService {
       const voiceMessage = await this.messageModel.create({
         from,
         to,
-        type: 'voice',
+        type: MessageType.VOICE,
         voice: `${SERVER_URL}/uploads/audios/${file}`,
       });
       if (!voiceMessage) {

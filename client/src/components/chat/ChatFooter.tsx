@@ -28,7 +28,7 @@ const ChatFooter = () => {
       console.log(voiceFile);
       const formData = new FormData();
       formData.append('audio', voiceFile.blob, 'recording.mp3');
-      formData.append('to', contacts[currentContact]._id);
+      formData.append('to', contacts[currentContact].contact._id);
       const response = await dispatch(addVoiceMessage(formData));
       console.log(response);
 
@@ -47,7 +47,7 @@ const ChatFooter = () => {
       console.log(imageFile);
       const formData = new FormData();
       formData.append('image', imageFile);
-      formData.append('to', contacts[currentContact]._id);
+      formData.append('to', contacts[currentContact].contact._id);
       formData.append('text', text);
       const response = await dispatch(addImageMessage(formData));
       console.log(response);
@@ -82,7 +82,7 @@ const ChatFooter = () => {
       console.log(docFile);
       const formData = new FormData();
       formData.append('doc', docFile);
-      formData.append('to', contacts[currentContact]._id);
+      formData.append('to', contacts[currentContact].contact._id);
       formData.append('text', text);
       const response = await dispatch(addDocMessage(formData));
       console.log(response);
@@ -122,9 +122,9 @@ const ChatFooter = () => {
     if (text.trim() === '') {
       return;
     }
-    emitMessage({ type: 'text', text, from: id, to: contacts[currentContact]._id });
+    emitMessage({ type: 'text', text, from: id, to: contacts[currentContact].contact._id });
     setText('');
-    dispatch(addTextMessage({ to: contacts[currentContact]._id, text }));
+    dispatch(addTextMessage({ to: contacts[currentContact].contact._id, text }));
   };
   return (
     <Box

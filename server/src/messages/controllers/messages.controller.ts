@@ -8,20 +8,22 @@ import { diskStorage } from 'multer';
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messageService: MessagesService) {}
-  @Get(':contactId')
-  async getAllMessages(@Param('contactId') contactId: string, @Req() req: any, @Res() res: Response) {
-    try {
-      const { messages } = await this.messageService.getAllMessages(req.user.id, contactId);
-      return res.status(HttpStatus.OK).json({ messages });
-    } catch (error) {
-      throw error;
-    }
-  }
+
   @Post('add-text-message')
   async addTextMessage(@Body() data: TextMessageDTO, @Req() req: any, @Res() res: Response) {
     data.from = req.user.id;
     try {
       const { message } = await this.messageService.addTextMessage(data);
+      return res.status(HttpStatus.OK).json({ message });
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Post('add-system-message')
+  async addSystemMessage(@Body() data: TextMessageDTO, @Req() req: any, @Res() res: Response) {
+    data.from = req.user.id;
+    try {
+      const { message } = await this.messageService.addSystemMessage(data);
       return res.status(HttpStatus.OK).json({ message });
     } catch (error) {
       throw error;
@@ -107,6 +109,15 @@ export class MessagesController {
     try {
       const data = await this.messageService.addVoiceMessage({ file: req.fileName, from: req.user.id, to, text: '' });
       return res.status(HttpStatus.OK).json(data);
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Get(':contactId')
+  async getAllMessages(@Param('contactId') contactId: string, @Req() req: any, @Res() res: Response) {
+    try {
+      const { messages } = await this.messageService.getAllMessages(req.user.id, contactId);
+      return res.status(HttpStatus.OK).json({ messages });
     } catch (error) {
       throw error;
     }
