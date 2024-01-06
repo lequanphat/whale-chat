@@ -19,7 +19,7 @@ import React from 'react';
 const Contact = ({ currentMessages }): JSX.Element => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+  const { currentContact } = useSelector((state: stateType) => state.chat);
   const [openBlock, setOpenBlock] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const handleCloseBlock = () => {
@@ -50,8 +50,8 @@ const Contact = ({ currentMessages }): JSX.Element => {
       </Box>
       <Scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
         <Stack direction="column" alignItems="center" justifyContent="center" spacing={1}>
-          <Avatar src={contacts[currentContact].contact.avatar} alt="avt" sx={{ width: 62, height: 62 }} />
-          <Typography variant="subtitle1">{contacts[currentContact].contact.displayName}</Typography>
+          <Avatar src={currentContact.avatar} alt="avt" sx={{ width: 62, height: 62 }} />
+          <Typography variant="subtitle1">{currentContact.displayName}</Typography>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-evenly">
           <Stack direction="column" alignItems="center">
@@ -73,7 +73,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
             About
           </Typography>
           <Typography variant="body1" fontSize={15}>
-            {contacts[currentContact].contact.about}
+            {currentContact.about}
           </Typography>
         </Stack>
         <Divider />

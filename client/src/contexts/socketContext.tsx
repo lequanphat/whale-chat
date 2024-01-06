@@ -51,6 +51,6 @@ export const SocketProvider = ({ children }) => {
       socketInstance.off('recieve-message');
       socketInstance.disconnect();
     };
-  }, [id, dispatch]);
+  }, [id, dispatch, token]);
   return <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>;
 };

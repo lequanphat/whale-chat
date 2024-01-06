@@ -8,12 +8,12 @@ import { addDocMessage, addImageMessage, addTextMessage, addVoiceMessage } from 
 import { FormEvent, useState } from 'react';
 import { openSnackbar } from '../../store/slices/appSlice';
 import VoicePreview from './VoiceInput';
+import { MessageType } from './types';
 
 const ChatFooter = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
-  const { id } = useSelector((state: stateType) => state.auth);
-  const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+  const { currentContact } = useSelector((state: stateType) => state.chat);
   const [docFile, setDocFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [voiceFile, setVoiceFile] = useState(null);
@@ -28,16 +28,16 @@ const ChatFooter = () => {
       console.log(voiceFile);
       const formData = new FormData();
       formData.append('audio', voiceFile.blob, 'recording.mp3');
-      formData.append('to', contacts[currentContact].contact._id);
+      formData.append('to', currentContact._id);
       const response = await dispatch(addVoiceMessage(formData));
-      console.log(response);
-
+      const responseMessage = response.payload.data.message;
       // emit
       emitMessage({
-        type: 'voice',
-        voice: response.payload.data.message.voice,
-        from: response.payload.data.message.from,
-        to: response.payload.data.message.to,
+        type: MessageType.VOICE,
+        voice: responseMessage.voice,
+        from: responseMessage.from,
+        to: responseMessage.to,
+        createdAt: responseMessage.createdAt,
       });
       // reset voice file
       setVoiceFile(null);
@@ -47,30 +47,33 @@ const ChatFooter = () => {
       console.log(imageFile);
       const formData = new FormData();
       formData.append('image', imageFile);
-      formData.append('to', contacts[currentContact].contact._id);
+      formData.append('to', currentContact._id);
       formData.append('text', text);
       const response = await dispatch(addImageMessage(formData));
       console.log(response);
       const result = response.payload.data.messages;
       if (result) {
         emitMessage({
-          type: 'image',
+          type: MessageType.IMAGE,
           image: result[0].image,
           from: result[0].from,
           to: result[0].to,
+          createdAt: result[0].createdAt,
         });
         emitMessage({
-          type: 'text',
+          type: MessageType.TEXT,
           text: result[1].text,
           from: result[1].from,
           to: result[1].to,
+          createdAt: result[1].createdAt,
         });
       } else {
         emitMessage({
-          type: 'image',
+          type: MessageType.IMAGE,
           image: response.payload.data.message.image,
           from: response.payload.data.message.from,
           to: response.payload.data.message.to,
+          createdAt: response.payload.data.message.createdAt,
         });
       }
 
@@ -82,9 +85,10 @@ const ChatFooter = () => {
       console.log(docFile);
       const formData = new FormData();
       formData.append('doc', docFile);
-      formData.append('to', contacts[currentContact].contact._id);
+      formData.append('to', currentContact._id);
       formData.append('text', text);
       const response = await dispatch(addDocMessage(formData));
+      const responseMessage = response.payload.data.message;
       console.log(response);
       if (response.error) {
         dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
@@ -94,25 +98,28 @@ const ChatFooter = () => {
       const result = response.payload.data.messages;
       if (result) {
         emitMessage({
-          type: 'doc',
+          type: MessageType.DOC,
           text: result[0].text,
           doc: result[0].doc,
           from: result[0].from,
           to: result[0].to,
+          createdAt: result[0].createdAt,
         });
         emitMessage({
-          type: 'text',
+          type: MessageType.TEXT,
           text: result[1].text,
           from: result[1].from,
           to: result[1].to,
+          createdAt: result[1].createdAt,
         });
       } else {
         emitMessage({
-          type: 'doc',
-          text: response.payload.data.message.text,
-          doc: response.payload.data.message.doc,
-          from: response.payload.data.message.from,
-          to: response.payload.data.message.to,
+          type: MessageType.DOC,
+          text: responseMessage.text,
+          doc: responseMessage.doc,
+          from: responseMessage.from,
+          to: responseMessage.to,
+          createdAt: responseMessage.createdAt,
         });
       }
       setDocFile(null);
@@ -122,9 +129,18 @@ const ChatFooter = () => {
     if (text.trim() === '') {
       return;
     }
-    emitMessage({ type: 'text', text, from: id, to: contacts[currentContact].contact._id });
+
+    const response = await dispatch(addTextMessage({ to: currentContact._id, text }));
+    console.log(response);
+    const responseMessage = response.payload.message;
+    emitMessage({
+      type: MessageType.TEXT,
+      text: responseMessage.text,
+      from: responseMessage.from,
+      to: responseMessage.to,
+      createdAt: responseMessage.createdAt,
+    });
     setText('');
-    dispatch(addTextMessage({ to: contacts[currentContact].contact._id, text }));
   };
   return (
     <Box

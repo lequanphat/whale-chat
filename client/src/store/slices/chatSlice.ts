@@ -24,12 +24,20 @@ const chatSlice = createSlice({
     addMessageToCurrentMessages(state, action) {
       state.chats.forEach((item) => {
         if (item.id === action.payload.from) {
+          const contact = state.contacts.find((contact) => contact.contact._id === action.payload.from);
           if (item.messages.length === 0) {
-            action.payload.avatar = state.contacts[state.currentContact].contact.avatar;
-          } else if (item.messages[item.messages.length - 1].to === state.contacts[state.currentContact].contact._id) {
-            action.payload.avatar = state.contacts[state.currentContact].contact.avatar;
+            action.payload.avatar = contact.contact.avatar;
+          } else if (item.messages[item.messages.length - 1].to !== action.payload.to) {
+            action.payload.avatar = contact.contact.avatar;
           }
           item.messages.push(action.payload);
+        }
+      });
+      state.contacts.forEach((item) => {
+        if (item.contact._id === action.payload.from) {
+          item.recentMessage.type = action.payload.type;
+          item.recentMessage.text = action.payload.text;
+          item.recentMessage.createdAt = action.payload.createdAt;
         }
       });
     },

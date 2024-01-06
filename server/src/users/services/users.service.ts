@@ -51,7 +51,9 @@ export class UsersService {
     const flag = []; // contains ignore-id
     const contacts: ContactDTO[] = [];
     recentMessages.forEach((mes: any) => {
-      if (!flag.includes(mes.from._id) && mes.from._id.toString() !== id) {
+      // from: A  to: B
+      // from: B  to: A
+      if (!flag.includes(mes.from._id.toString()) && mes.from._id.toString() !== id) {
         const {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           _doc: { password, verified, verifyCode, verifyCodeExpiredTime, createdAt, updatedAt, ...contact },
@@ -64,9 +66,9 @@ export class UsersService {
             createdAt: mes.createdAt,
           },
         });
-        flag.push(mes.from._id);
+        flag.push(mes.from._id.toString());
       }
-      if (!flag.includes(mes.to._id) && mes.to._id.toString() !== id) {
+      if (!flag.includes(mes.to._id.toString()) && mes.to._id.toString() !== id) {
         const {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           _doc: { password, verified, verifyCode, verifyCodeExpiredTime, createdAt, updatedAt, ...contact },
@@ -79,9 +81,11 @@ export class UsersService {
             createdAt: mes.createdAt,
           },
         });
-        flag.push(mes.to._id);
+        flag.push(mes.to._id.toString());
       }
     });
+    console.log(flag);
+
     return contacts;
   }
   async setAvatar({ id, file }: { id: string; file: string }) {

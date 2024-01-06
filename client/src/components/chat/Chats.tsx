@@ -25,7 +25,7 @@ const Chats = () => {
   }, []);
 
   const handlePickContact = async (index: number) => {
-    await dispatch(setCurrentContact(index));
+    await dispatch(setCurrentContact(contacts[index]));
     navigate(`/app/chat/${contacts[index].contact._id}`);
   };
 
@@ -75,7 +75,7 @@ const Chats = () => {
                       key={item.contact._id}
                       {...item.contact}
                       {...item.recentMessage}
-                      selected={currentContact === index}
+                      selected={currentContact?._id === contacts[index].contact._id}
                       online={item.contact.status === 'online'}
                       onClick={() => {
                         handlePickContact(index);

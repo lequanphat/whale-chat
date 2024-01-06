@@ -10,7 +10,7 @@ import VideoCalls from '../calls/VideoCalls';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { contacts, currentContact } = useSelector((state: stateType) => state.chat);
+  const { currentContact } = useSelector((state: stateType) => state.chat);
   const { sidebar } = useSelector((state: stateType) => state.app);
   const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
   const handleCloseVideoCall = () => {
@@ -31,18 +31,18 @@ const ChatHeader = () => {
       <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%" height="100%">
         <Stack direction="row" spacing={2}>
           <Box>
-            {contacts[currentContact].contact.status === 'online' ? (
+            {currentContact.status === 'online' ? (
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
-                <Avatar alt="Remy Sharp" src={contacts[currentContact].contact.avatar} />
+                <Avatar alt="Remy Sharp" src={currentContact.avatar} />
               </StyledBadge>
             ) : (
-              <Avatar alt="Remy Sharp" src={contacts[currentContact].contact.avatar} />
+              <Avatar alt="Remy Sharp" src={currentContact.avatar} />
             )}
           </Box>
           <Stack spacing={0}>
-            <Typography variant="subtitle2">{contacts[currentContact].contact.displayName}</Typography>
+            <Typography variant="subtitle2">{currentContact.displayName}</Typography>
             <Typography variant="body1" fontSize={13} sx={{ color: '#7f8c8d' }} textTransform="capitalize">
-              {contacts[currentContact].contact.status}
+              {currentContact.status}
             </Typography>
           </Stack>
         </Stack>

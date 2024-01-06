@@ -4,10 +4,14 @@ import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
 import { FileUploadDTO, MessageType, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
+import { User } from 'src/schemas/users.chema';
 
 @Injectable()
 export class MessagesService {
-  constructor(@InjectModel(Messages.name) private messageModel: Model<Messages>) {}
+  constructor(
+    @InjectModel(Messages.name) private messageModel: Model<Messages>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
   async getAllMessages(id: string, contactId: string) {
     const isValidId = mongoose.Types.ObjectId.isValid(contactId);
     if (!isValidId) {
@@ -26,13 +30,14 @@ export class MessagesService {
 
       messages = messages.slice(Math.max(messages.length - 20, 0));
       if (messages.length > 0) {
+        const contact = await this.userModel.findById(contactId);
         for (let i = 1; i < messages.length; i++) {
           if (messages[i - 1].from.toString() === id) {
-            messages[i].avatar = 'http://localhost:2411/defaults/default_avatar.jpeg';
+            messages[i].avatar = contact.avatar;
           }
         }
         if (messages[0].from.toString() === contactId) {
-          messages[0].avatar = 'http://localhost:2411/defaults/default_avatar.jpeg';
+          messages[0].avatar = contact.avatar;
         }
       }
       return { messages };

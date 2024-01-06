@@ -25,11 +25,14 @@ export class SocketGateway implements NestGateway {
     client.on('user-connected', (userId) => {
       // Xử lý khi người dùng kết nối
       console.log(`User connected with ID ${userId}`);
+      this.onlineUsers.set(userId, client.id);
     });
     client.on('send-message', (data) => {
       // Xử lý khi gửi tin nhắn
+      console.log('message from client');
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
+        console.log('return to clinent');
         client.to(sendUserSocket).emit('recieve-message', data);
       }
     });

@@ -26,7 +26,7 @@ export const Chat = () => {
       dispatch(setCurrentContact(null));
       navigate('/app/chat');
     } else {
-      dispatch(setCurrentContact(result));
+      dispatch(setCurrentContact(contacts[result].contact));
       const chat = chats.findIndex((item) => item.id === chatId);
       if (chat === -1) {
         dispatch(getMessages(chatId));

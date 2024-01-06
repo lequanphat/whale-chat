@@ -21,15 +21,16 @@ export interface appType {
     serverity: string;
   };
 }
-export interface Contacts {
-  contact: {
-    _id: string;
-    displayName: string;
-    email: string;
-    avatar: string;
-    about: string;
-    status: string;
-  };
+export interface Contact {
+  _id: string;
+  displayName: string;
+  email: string;
+  avatar: string;
+  about: string;
+  status: string;
+}
+export interface ExtendContact {
+  contact: Contact;
   recentMessage: {
     type: MessageType;
     text: string;
@@ -38,8 +39,8 @@ export interface Contacts {
 }
 
 export interface chatType {
-  contacts: Contacts[];
-  currentContact: number;
+  contacts: ExtendContact[];
+  currentContact: Contact;
   isLoading: boolean;
   isMessagesLoading: boolean;
   chats: {
