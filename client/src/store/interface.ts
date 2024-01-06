@@ -20,12 +20,19 @@ export interface appType {
   };
 }
 export interface Contacts {
-  _id: string;
-  displayName: string;
-  email: string;
-  avatar: string;
-  about: string;
-  status: string;
+  contact: {
+    _id: string;
+    displayName: string;
+    email: string;
+    avatar: string;
+    about: string;
+    status: string;
+  };
+  recentMessage: {
+    type: string;
+    text: string;
+    createdAt: string;
+  };
 }
 
 export interface chatType {
@@ -44,7 +51,6 @@ export interface chatType {
       image?: string;
     }[];
   }[];
-  recieveMessage: string;
 }
 export interface stateType {
   app: appType;

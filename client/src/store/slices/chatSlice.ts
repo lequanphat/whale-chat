@@ -25,14 +25,6 @@ const chatSlice = createSlice({
       state.recieveMessage = action.payload;
     },
     addMessageToCurrentMessages(state, action) {
-      // if (action.payload.from === state.contacts[state.currentContact]._id) {
-      //     if (state.messages.length === 0) {
-      //         action.payload.avatar = state.contacts[state.currentContact].avatar;
-      //     } else if (state.messages[state.messages.length - 1].to === state.contacts[state.currentContact]._id) {
-      //         action.payload.avatar = state.contacts[state.currentContact].avatar;
-      //     }
-      //     state.messages.push(action.payload);
-      // }
       state.chats.forEach((item) => {
         if (item.id === action.payload.from) {
           if (item.messages.length === 0) {
@@ -123,7 +115,7 @@ const chatSlice = createSlice({
 });
 export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get(`/users`);
+    const response = await api.get(`/users/contacts`);
     return { contacts: response.data };
   } catch (error) {
     return rejectWithValue({ error: error.response.data.message });
@@ -132,6 +124,7 @@ export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (
 export const getMessages = createAsyncThunk('chat/getAllMessages', async (contactId: string, { rejectWithValue }) => {
   try {
     const response = await api.get(`/messages/${contactId}`);
+    console.log(response); // log test
 
     return { messages: response.data.messages, id: contactId };
   } catch (error) {

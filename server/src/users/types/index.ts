@@ -32,3 +32,12 @@ export class EditProfileDTO {
   })
   about: string;
 }
+
+export class ContactDTO {
+  contact: object;
+  recentMessage: {
+    type: string;
+    text: string;
+    createdAt: string;
+  };
+}

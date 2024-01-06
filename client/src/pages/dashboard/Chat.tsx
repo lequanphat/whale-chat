@@ -21,7 +21,7 @@ export const Chat = () => {
   const [currentMessages, setCurrentMessages] = useState<object[]>([]);
 
   useEffect(() => {
-    const result = contacts.findIndex((contact) => contact._id === chatId);
+    const result = contacts.findIndex((contact) => contact.contact._id === chatId);
     if (result === -1) {
       dispatch(setCurrentContact(null));
       navigate('/app/chat');

@@ -3,17 +3,26 @@ import { InjectModel } from '@nestjs/mongoose';
 import { plainToClass } from 'class-transformer';
 import mongoose, { Model } from 'mongoose';
 import { User } from 'src/schemas/users.chema';
-import { SerializeUser, EditProfileDTO } from '../types';
+import { SerializeUser, EditProfileDTO, ContactDTO } from '../types';
 import { SERVER_URL } from 'src/config';
+import { Messages } from 'src/schemas/messages.chema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-
-  async getUserById(id: string) {
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Messages.name) private messagesModel: Model<Messages>,
+  ) {}
+  isValidID(id: string): boolean {
     const validId = mongoose.Types.ObjectId.isValid(id);
     if (!validId) {
       throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
+    }
+    return validId;
+  }
+  async getUserById(id: string) {
+    if (!this.isValidID(id)) {
+      return;
     }
     const user = await this.userModel.findOne({ _id: id });
     if (!user) {
@@ -26,6 +35,54 @@ export class UsersService {
       .find({ _id: { $ne: id }, verified: true })
       .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
     return users;
+  }
+  async getAllContacts(id: string) {
+    if (!this.isValidID(id)) {
+      return;
+    }
+    const recentMessages = await this.messagesModel
+      .find({
+        $or: [{ from: id }, { to: id }],
+      })
+      .populate('from')
+      .populate('to')
+      .sort({ createdAt: -1 });
+    // serialize
+    const flag = []; // contains ignore-id
+    const contacts: ContactDTO[] = [];
+    recentMessages.forEach((mes: any) => {
+      if (!flag.includes(mes.from._id) && mes.from._id.toString() !== id) {
+        const {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          _doc: { password, verified, verifyCode, verifyCodeExpiredTime, createdAt, updatedAt, ...contact },
+        } = mes.from;
+        contacts.push({
+          contact: contact,
+          recentMessage: {
+            type: mes.type,
+            text: mes.text,
+            createdAt: mes.createdAt,
+          },
+        });
+        flag.push(mes.from._id);
+      }
+      if (!flag.includes(mes.to._id) && mes.to._id.toString() !== id) {
+        const {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          _doc: { password, verified, verifyCode, verifyCodeExpiredTime, createdAt, updatedAt, ...contact },
+        } = mes.to;
+        contacts.push({
+          contact: contact,
+          recentMessage: {
+            type: mes.type,
+            text: mes.text,
+            createdAt: mes.createdAt,
+          },
+        });
+        flag.push(mes.to._id);
+      }
+    });
+    return contacts;
   }
   async setAvatar({ id, file }: { id: string; file: string }) {
     if (!id) {
@@ -47,9 +104,8 @@ export class UsersService {
     return { avatar: user.avatar };
   }
   async editProfile(data: EditProfileDTO, id: string) {
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
-    if (!isValidId) {
-      throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
+    if (!this.isValidID(id)) {
+      return;
     }
     const user = await this.userModel.findByIdAndUpdate(
       id,
@@ -62,31 +118,3 @@ export class UsersService {
     return { displayName: user.displayName, about: user.about };
   }
 }
-// },
-// editProfile: async (req, res, next) => {
-//   try {
-//       const { id } = req.params;
-//       const { displayName, about } = req.body;
-//       if (!displayName) {
-//           return res.status(200).json({ msg: 'Displayname is required', status: false });
-//       }
-//       const { error } = profileSchema.validate({ displayName, about });
-//       if (error) {
-//           return res.status(200).json({ msg: error.message, status: false });
-//       }
-//       const user = await userModel.findByIdAndUpdate(
-//           id,
-//           {
-//               displayName,
-//               about,
-//           },
-//           { new: true },
-//       );
-//       if (!user) {
-//           return res.status(200).json({ msg: 'Can not find user with id ' + id, status: false });
-//       }
-//       return res.status(200).json({ displayName: user.displayName, about: user.about, status: true });
-//   } catch (error) {
-//       return res.status(200).json({ msg: error.message, status: false });
-//   }
-// },

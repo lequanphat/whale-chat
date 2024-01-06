@@ -22,16 +22,26 @@ export class UsersController {
       return error;
     }
   }
+  @Get('contacts')
+  getAllContacts(@Req() req: any) {
+    const id: string = req.user.id;
+    try {
+      const data = this.usersService.getAllContacts(id);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  }
   @Get(':id')
   getUserByID(@Param('id') id: string) {
     return this.usersService.getUserById(id);
   }
-
   @Get()
   getAllUsers(@Req() req: any) {
     const id: string = req.user.id;
     return this.usersService.getAllUsers(id);
   }
+
   @Post('change-avatar')
   @UseInterceptors(
     FileInterceptor('avatar', {

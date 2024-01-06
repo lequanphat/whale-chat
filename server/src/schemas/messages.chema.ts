@@ -9,11 +9,11 @@ export class Messages extends Document {
   @Prop({ default: '' })
   text: string;
 
-  @Prop({ required: true, ref: 'Users' })
+  @Prop({ required: true, ref: 'User' })
   from: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ required: true })
-  to: string;
+  @Prop({ required: true, ref: 'User' })
+  to: mongoose.Schema.Types.ObjectId;
   @Prop()
   image: string;
   @Prop() // online, offline, block

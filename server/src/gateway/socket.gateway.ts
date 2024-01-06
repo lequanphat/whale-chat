@@ -28,7 +28,6 @@ export class SocketGateway implements NestGateway {
     });
     client.on('send-message', (data) => {
       // Xử lý khi gửi tin nhắn
-      console.log('send message event ...', data);
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
         client.to(sendUserSocket).emit('recieve-message', data);

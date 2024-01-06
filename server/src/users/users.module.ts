@@ -4,6 +4,7 @@ import { User, UserSchema } from 'src/schemas/users.chema';
 import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { JwtService } from 'src/common/services/jwt.service';
+import { Messages, Messageschema } from 'src/schemas/messages.chema';
 
 @Module({
   imports: [
@@ -11,6 +12,10 @@ import { JwtService } from 'src/common/services/jwt.service';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Messages.name,
+        schema: Messageschema,
       },
     ]),
   ],

@@ -22,6 +22,7 @@ export class MessagesService {
           ],
         })
         .sort({ createdAt: 1 });
+      console.log(messages);
 
       messages = messages.slice(Math.max(messages.length - 20, 0));
       if (messages.length > 0) {
