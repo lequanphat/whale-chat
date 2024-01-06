@@ -8,25 +8,23 @@ import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { stateType } from '../../store/interface';
-import { getAllContacts, setCurrentContact } from '../../store/slices/chatSlice';
+import { getAllContacts } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
 import { useNavigate } from 'react-router-dom';
-
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const navigate = useNavigate();
   const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
-
+  const contactsList = [...contacts];
   useEffect(() => {
     dispatch(getAllContacts());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePickContact = async (index: number) => {
-    await dispatch(setCurrentContact(contacts[index]));
-    navigate(`/app/chat/${contacts[index].contact._id}`);
+  const handlePickContact = async (id: string) => {
+    navigate(`/app/chat/${id}`);
   };
 
   return (
@@ -69,20 +67,26 @@ const Chats = () => {
                 <Typography variant="subtitle2" sx={{ color: '#676767' }}>
                   Pinned
                 </Typography>
-                {contacts.map((item, index) => {
-                  return (
-                    <ChatElement
-                      key={item.contact._id}
-                      {...item.contact}
-                      {...item.recentMessage}
-                      selected={currentContact?._id === contacts[index].contact._id}
-                      online={item.contact.status === 'online'}
-                      onClick={() => {
-                        handlePickContact(index);
-                      }}
-                    />
-                  );
-                })}
+                {contactsList
+                  .sort((a, b) => {
+                    const dateA = new Date(a.recentMessage.createdAt).getTime();
+                    const dateB = new Date(b.recentMessage.createdAt).getTime();
+                    return dateB - dateA;
+                  })
+                  .map((item, index) => {
+                    return (
+                      <ChatElement
+                        key={item.contact._id}
+                        {...item.contact}
+                        {...item.recentMessage}
+                        selected={currentContact?._id === contactsList[index].contact._id}
+                        online={item.contact.status === 'online'}
+                        onClick={() => {
+                          handlePickContact(item.contact._id);
+                        }}
+                      />
+                    );
+                  })}
               </Stack>
               <Stack spacing={1.6}>
                 <Typography variant="subtitle2" sx={{ color: '#676767' }}>
