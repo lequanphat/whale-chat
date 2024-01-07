@@ -5,6 +5,9 @@ export interface appType {
   sidebar: {
     index: number;
   };
+  friendsbar: {
+    index: number;
+  };
   contactbar: {
     open: boolean;
     type: string;

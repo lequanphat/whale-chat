@@ -10,6 +10,9 @@ const initialState: appType = {
   sidebar: {
     index: 0,
   },
+  friendsbar: {
+    index: 0,
+  },
   contactbar: {
     open: false,
     type: 'CONTACT', // CONTACT, STARRED, SHARED
@@ -27,6 +30,9 @@ const slice = createSlice({
   reducers: {
     setSidebar(state, action) {
       state.sidebar.index = action.payload;
+    },
+    setFriendsbar(state, action) {
+      state.friendsbar.index = action.payload;
     },
     toggleContact(state) {
       state.contactbar.open = !state.contactbar.open;
@@ -66,4 +72,5 @@ export const {
   openSnackbar,
   openSuccessSnackbar,
   openErrorSnackbar,
+  setFriendsbar,
 } = slice.actions;
