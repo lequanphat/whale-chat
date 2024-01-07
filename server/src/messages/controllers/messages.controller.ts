@@ -3,7 +3,7 @@ import { MessagesService } from '../services/messages.service';
 import { TextMessageDTO } from '../types';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { uploadStorage } from '../utils/uploadStorage';
 
 @Controller('messages')
 export class MessagesController {
@@ -31,19 +31,7 @@ export class MessagesController {
   }
 
   @Post('add-image-message')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public/uploads/images/', // images directory
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}-${file.originalname}`);
-          // next
-          req.fileName = `${uniqueSuffix}-${file.originalname}`;
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('image', uploadStorage('images')))
   async addImageMessage(@Req() req: any, @Res() res: Response) {
     const { to, text } = req.body;
     if (!req.fileName) {
@@ -58,20 +46,7 @@ export class MessagesController {
     }
   }
   @Post('add-doc-message')
-  @UseInterceptors(
-    FileInterceptor('doc', {
-      storage: diskStorage({
-        destination: './public/uploads/docs/', // docs directory
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}-${file.originalname}`);
-          // next
-          req.fileName = `${uniqueSuffix}-${file.originalname}`;
-          req.originalName = file.originalname;
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('doc', uploadStorage('docs')))
   async addDocMessage(@Req() req: any, @Res() res: Response) {
     const { to, text } = req.body;
     if (!req.fileName || !req.originalName) {
@@ -88,19 +63,7 @@ export class MessagesController {
     }
   }
   @Post('add-voice-message')
-  @UseInterceptors(
-    FileInterceptor('audio', {
-      storage: diskStorage({
-        destination: './public/uploads/audios/', // audios directory
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}-${file.originalname}`);
-          // next
-          req.fileName = `${uniqueSuffix}-${file.originalname}`;
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('audio', uploadStorage('audios')))
   async addVoiceMessage(@Req() req: any, @Res() res: Response) {
     const { to } = req.body;
     if (!req.fileName) {
