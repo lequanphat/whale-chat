@@ -2,16 +2,16 @@ import { Avatar, Box, Divider, IconButton, Stack, Typography, useTheme } from '@
 import StyledBadge from '../avatar/StyledBadge';
 import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from 'react-icons/io5';
 import { PiPhoneLight } from 'react-icons/pi';
-import { toggleSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { useState } from 'react';
 import VideoCalls from '../calls/VideoCalls';
+import { toggleContact } from '../../store/slices/appSlice';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { currentContact } = useSelector((state: stateType) => state.chat);
-  const { sidebar } = useSelector((state: stateType) => state.app);
+  const { contactbar } = useSelector((state: stateType) => state.app);
   const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
   const handleCloseVideoCall = () => {
     setIsVideoCall(false);
@@ -60,12 +60,12 @@ const ChatHeader = () => {
           <IconButton>
             <IoSearchOutline size={22} />
           </IconButton>
-          {!sidebar.open && (
+          {!contactbar.open && (
             <>
               <Divider orientation="vertical" flexItem />
               <IconButton
                 onClick={() => {
-                  dispatch(toggleSidebar());
+                  dispatch(toggleContact());
                 }}
               >
                 <IoInformationCircleOutline />

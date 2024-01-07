@@ -3,6 +3,9 @@ import { authType } from './types';
 
 export interface appType {
   sidebar: {
+    index: number;
+  };
+  contactbar: {
     open: boolean;
     type: string;
   };

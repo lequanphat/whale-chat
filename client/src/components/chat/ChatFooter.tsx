@@ -50,7 +50,6 @@ const ChatFooter = () => {
       formData.append('to', currentContact._id);
       formData.append('text', text);
       const response = await dispatch(addImageMessage(formData));
-      console.log(response);
       const result = response.payload.data.messages;
       if (result) {
         emitMessage({
@@ -89,7 +88,6 @@ const ChatFooter = () => {
       formData.append('text', text);
       const response = await dispatch(addDocMessage(formData));
       const responseMessage = response.payload.data.message;
-      console.log(response);
       if (response.error) {
         dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
         return;
@@ -131,7 +129,6 @@ const ChatFooter = () => {
     }
 
     const response = await dispatch(addTextMessage({ to: currentContact._id, text }));
-    console.log(response);
     const responseMessage = response.payload.message;
     emitMessage({
       type: MessageType.TEXT,

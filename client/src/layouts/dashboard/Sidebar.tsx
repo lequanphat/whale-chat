@@ -6,7 +6,7 @@ import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
-import { openSnackbar } from '../../store/slices/appSlice';
+import { openSnackbar, setSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
@@ -16,7 +16,7 @@ const Sidebar = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { avatar } = useSelector((state: stateType) => state.auth);
-  const [selected, setSelected] = useState(0);
+  const { sidebar } = useSelector((state: stateType) => state.app);
   const theme = useTheme();
   const { onToggleMode } = useSettings();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -58,7 +58,7 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
   const handleSidebarAction = (index) => {
-    setSelected(index);
+    dispatch(setSidebar(index));
     switch (index) {
       case 0:
         navigate('/app/chat');
@@ -103,7 +103,7 @@ const Sidebar = () => {
           </Box>
           <Stack spacing={3} sx={{ width: 'max-content' }} direction="column" alignItems="center">
             {Nav_Buttons.map((item) =>
-              item.index === selected ? (
+              item.index === sidebar.index ? (
                 <Box key={item.index} sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
                   {' '}
                   <IconButton
@@ -132,7 +132,7 @@ const Sidebar = () => {
               ),
             )}
             <Divider sx={{ width: '48px' }} />
-            {selected === 3 ? (
+            {sidebar.index === 3 ? (
               <Box sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
                 {' '}
                 <IconButton

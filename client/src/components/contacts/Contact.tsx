@@ -7,7 +7,6 @@ import { MdBlock } from 'react-icons/md';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleSidebar, updateSidebarType } from '../../store/slices/appSlice';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { Scrollbar } from '../scrollbar/Scrollbar';
@@ -15,6 +14,7 @@ import { useState } from 'react';
 import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
 import { stateType } from '../../store/interface';
 import React from 'react';
+import { toggleContact, updateContactType } from '../../store/slices/appSlice';
 
 const Contact = ({ currentMessages }): JSX.Element => {
   const theme = useTheme();
@@ -41,7 +41,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
           <Typography variant="subtitle2">Contact Info</Typography>
           <IconButton
             onClick={() => {
-              dispatch(toggleSidebar());
+              dispatch(toggleContact());
             }}
           >
             <IoCloseOutline />
@@ -81,7 +81,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
           <Typography variant="subtitle2">Media, Links and Docs</Typography>
           <IconButton
             onClick={() => {
-              dispatch(updateSidebarType({ type: 'SHARED' }));
+              dispatch(updateContactType({ type: 'SHARED' }));
             }}
           >
             <RxCaretRight size={26} />

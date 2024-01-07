@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import { Grid, IconButton, Stack, Tab, Tabs, ThemeOptions, Typography } from '@mui/material';
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
-import { updateSidebarType } from '../../store/slices/appSlice';
 import React, { useState } from 'react';
 import { Scrollbar } from '../scrollbar/Scrollbar';
+import { updateContactType } from '../../store/slices/appSlice';
 
 const SharedMessages = ({ currentMessages }) => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const SharedMessages = ({ currentMessages }) => {
       >
         <IconButton
           onClick={() => {
-            dispatch(updateSidebarType({ type: 'CONTACT' }));
+            dispatch(updateContactType({ type: 'CONTACT' }));
           }}
         >
           <GoChevronLeft size={22} />

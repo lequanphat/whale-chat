@@ -14,7 +14,7 @@ export const Chat = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
-  const { sidebar } = useSelector((state: stateType) => state.app);
+  const { contactbar } = useSelector((state: stateType) => state.app);
   const { contacts, chats } = useSelector((state: stateType) => state.chat);
   const { chatId } = useParams();
   const theme = useTheme();
@@ -60,9 +60,9 @@ export const Chat = () => {
           <ChatFooter />
         </Stack>
       </Box>
-      {sidebar.open &&
+      {contactbar.open &&
         (() => {
-          switch (sidebar.type) {
+          switch (contactbar.type) {
             case 'CONTACT':
               return <Contact currentMessages={currentMessages} />;
             case 'STARRED':

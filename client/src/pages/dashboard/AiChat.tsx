@@ -26,25 +26,28 @@ const AiChat = () => {
     //reset text
     setText('');
     setIsLoading(true);
-    const response = await axios.post(
-      `https://api.openai.com/v1/chat/completions`,
-      {
-        // model: 'gpt-3.5-turbo',
-        model: 'gpt-3.5-turbo',
-        messages: [...messages, { role: 'user', content: text }],
-        temperature: 0.9,
-        max_tokens: 150,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${OPENAI_KEY}`,
+    try {
+      const response = await axios.post(
+        `https://api.openai.com/v1/chat/completions`,
+        {
+          // model: 'gpt-3.5-turbo',
+          model: 'gpt-3.5-turbo',
+          messages: [...messages, { role: 'user', content: text }],
+          temperature: 0.9,
+          max_tokens: 150,
         },
-      },
-    );
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${OPENAI_KEY}`,
+          },
+        },
+      );
+      setMessages((pre) => [...pre, response.data.choices[0].message]);
+    } catch (error) {
+      setMessages((pre) => [...pre, { role: 'assistant', content: 'Something went wrong' }]);
+    }
     setIsLoading(false);
-    setMessages((pre) => [...pre, response.data.choices[0].message]);
-    console.log(response);
   };
   useEffect(() => {
     scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
