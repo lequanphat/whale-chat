@@ -16,7 +16,7 @@ export class UsersController {
     const id: string = req.user.id;
     try {
       const user = await this.usersService.getUserById(id);
-      const accessToken = this.jwtService.signAccessToken({ id });
+      const accessToken = this.jwtService.signAccessToken({ id, role: user.role });
       return res.status(HttpStatus.OK).json({ user, token: accessToken });
     } catch (error) {
       return error;

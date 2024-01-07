@@ -7,6 +7,7 @@ const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const RESET_PASSWORD_SECRET = process.env.RESET_PASSWORD_SECRET;
 const CLIENT_URL = process.env.CLIENT_URL;
 const corsOptions = {
   credentials: true,
@@ -21,6 +22,7 @@ export {
   EMAIL_PASSWORD,
   ACCESS_SECRET,
   REFRESH_SECRET,
+  RESET_PASSWORD_SECRET,
   CLIENT_URL,
   corsOptions,
   defaultAvatarUrl,

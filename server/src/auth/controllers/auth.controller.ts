@@ -33,7 +33,7 @@ export class AuthController {
     try {
       const { user } = await this.authSevice.verifyAccount(param);
       console.log('controller user', user);
-      const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
+      const refreshToken = this.jwtService.signRefreshToken({ id: user._id, role: user.role });
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
       // redirect
       res.redirect(`${CLIENT_URL}/auth/verify-account`);
@@ -46,9 +46,10 @@ export class AuthController {
     const loginData = plainToClass(UserLoginDTO, data, { excludeExtraneousValues: true });
     try {
       const { user } = await this.authSevice.login(loginData);
+
       // generate token
-      const accessToken = this.jwtService.signAccessToken({ id: user._id });
-      const refreshToken = this.jwtService.signRefreshToken({ id: user._id });
+      const accessToken = this.jwtService.signAccessToken({ id: user._id, role: user.role });
+      const refreshToken = this.jwtService.signRefreshToken({ id: user._id, role: user.role });
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
       // serialize data
       return res.status(200).json({ user, token: accessToken });
@@ -72,8 +73,9 @@ export class AuthController {
   async refreshToken(@Req() req: any, @Res() res: Response) {
     console.log('refresh token');
     const id = req.user.id;
-    const accessToken = this.jwtService.signAccessToken({ id });
-    const refreshToken = this.jwtService.signRefreshToken({ id });
+    const role = req.user.role;
+    const accessToken = this.jwtService.signAccessToken({ id, role });
+    const refreshToken = this.jwtService.signRefreshToken({ id, role });
     this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
     return res.status(200).json({ token: accessToken });
   }
@@ -91,10 +93,9 @@ export class AuthController {
     try {
       await this.authSevice.verifyChangePassword(data);
       console.log('data controller here...');
-      // // sign token
-      const resetPasswordToken = this.jwtService.signAccessToken({ id: data.id });
-      // // redirect
-      console.log(resetPasswordToken);
+      // sign token
+      const resetPasswordToken = this.jwtService.signResetPasswordToken({ id: data.id });
+      // redirect
       return res.redirect(`${CLIENT_URL}/auth/reset-password/${resetPasswordToken}`);
     } catch (error) {
       return error;
@@ -105,7 +106,8 @@ export class AuthController {
   async changePassword(@Body() data: ChangePasswordDTO) {
     try {
       // verify token
-      const value = this.jwtService.verifyAccessToken(data.token);
+      const value = this.jwtService.verifyResetPasswordToken(data.token);
+      // change password service
       return this.authSevice.changePassword(data, value.id);
     } catch (error) {
       throw error;

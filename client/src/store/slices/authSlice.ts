@@ -111,6 +111,7 @@ export const userSlice = createSlice({
         state.avatar = action.payload.user.avatar;
         state.token = action.payload.token;
         state.auth = true;
+        state.role = action.payload.user.role || Role.USER;
         state.isLoading = false;
       })
       .addCase(getUser.rejected, (state) => {

@@ -14,6 +14,8 @@ export class SerializeUser {
   about: string;
   @Expose()
   status: string;
+  @Expose()
+  role: string;
 }
 export class EditProfileDTO {
   @IsString({ message: 'The name should be a string' })

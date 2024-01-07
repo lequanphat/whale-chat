@@ -6,6 +6,7 @@ import { User } from 'src/schemas/users.chema';
 import { SerializeUser, EditProfileDTO, ContactDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { Messages } from 'src/schemas/messages.chema';
+import { UserRole } from 'src/schemas/types';
 
 @Injectable()
 export class UsersService {
@@ -32,7 +33,7 @@ export class UsersService {
   }
   async getAllUsers(id: string) {
     const users = await this.userModel
-      .find({ _id: { $ne: id }, verified: true })
+      .find({ _id: { $ne: id }, verified: true, role: UserRole.USER })
       .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'role']);
     return users;
   }
