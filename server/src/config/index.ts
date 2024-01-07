@@ -12,6 +12,7 @@ const corsOptions = {
   credentials: true,
   origin: CLIENT_URL, // Replace CLIENT_URL with your actual URL
 };
+const defaultAvatarUrl = `${SERVER_URL}/defaults/default_avatar.jpeg`;
 export {
   PORT,
   MONGO_URL,
@@ -22,4 +23,5 @@ export {
   REFRESH_SECRET,
   CLIENT_URL,
   corsOptions,
+  defaultAvatarUrl,
 };

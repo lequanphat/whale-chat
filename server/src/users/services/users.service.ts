@@ -33,7 +33,7 @@ export class UsersService {
   async getAllUsers(id: string) {
     const users = await this.userModel
       .find({ _id: { $ne: id }, verified: true })
-      .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
+      .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'role']);
     return users;
   }
   async getAllContacts(id: string) {

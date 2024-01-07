@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { UserRole, UserStatus } from './types';
+import { defaultAvatarUrl } from 'src/config';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -15,11 +17,14 @@ export class User extends Document {
   @Prop({ default: '' })
   about: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: defaultAvatarUrl })
   avatar: string;
 
-  @Prop({ default: 'offline' }) // online, offline, block
-  status: string;
+  @Prop({ default: UserStatus.OFFLINE })
+  status: UserStatus;
+
+  @Prop({ default: UserRole.USER })
+  role: UserRole;
 
   @Prop({ default: false })
   verified: boolean;

@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { MessageType } from './types';
 
 @Schema({ timestamps: true })
 export class Messages extends Document {
-  @Prop({ required: true, default: 'text' })
-  type: string; // text, image, doc, voice, system, timeline
+  @Prop({ required: true, default: MessageType.TEXT })
+  type: MessageType;
 
   @Prop({ default: '' })
   text: string;

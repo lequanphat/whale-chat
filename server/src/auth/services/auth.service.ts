@@ -48,7 +48,6 @@ export class AuthService {
       registerUser.verified = false;
       registerUser.verifyCode = verifyCode;
       registerUser.verifyCodeExpiredTime = verifyCodeExpiredTime;
-      registerUser.avatar = `${SERVER_URL}/defaults/default_avatar.jpeg`;
       user = new this.userModel(registerUser);
       await user.save();
     }
@@ -100,7 +99,7 @@ export class AuthService {
       // Authenticate
       const user = await this.userModel
         .findOneAndUpdate({ email: data.email, verified: true }, { status: 'online' }, { new: true })
-        .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'password']);
+        .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'password', 'role']);
       if (!user) {
         throw new HttpException('Incorrect email!', 401);
       }

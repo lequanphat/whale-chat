@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-import { ChangePasswordDTO, EditProfileDTO, LoginDTO, RegisterDTO, authType } from '../interface';
+import { ChangePasswordDTO, EditProfileDTO, LoginDTO, RegisterDTO } from '../interface';
+import { Role, authType } from '../types';
 
 const initialState: authType = {
   id: '',
@@ -9,6 +10,7 @@ const initialState: authType = {
   avatar: '',
   about: '',
   auth: false,
+  role: Role.USER,
   token: '',
   isLoading: false,
 };
@@ -53,6 +55,7 @@ export const userSlice = createSlice({
         state.avatar = action.payload.user.avatar;
         state.token = action.payload.token;
         state.auth = true;
+        state.role = action.payload.user.role || Role.USER;
         state.isLoading = false;
       })
       .addCase(userLogin.rejected, (state) => {

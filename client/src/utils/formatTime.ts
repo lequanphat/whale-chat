@@ -35,16 +35,15 @@ export function formatMongoTime(dateTimeString) {
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
 
-  const formattedDate = `${day}/${month}/${year}`;
-  const formattedTime = `${hours}:${minutes}`;
-
   if (
     date.getDate() === today.getDate() &&
     date.getMonth() === today.getMonth() &&
     date.getFullYear() === today.getFullYear()
   ) {
-    return formattedTime;
+    return `${hours}:${minutes}`;
+  } else if (date.getFullYear() === today.getFullYear()) {
+    return `${day}/${month}`;
   } else {
-    return formattedDate;
+    return `${day}/${month}/${year}`;
   }
 }

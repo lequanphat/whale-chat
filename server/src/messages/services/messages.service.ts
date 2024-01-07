@@ -2,9 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { FileUploadDTO, MessageType, TextMessageDTO } from '../types';
+import { FileUploadDTO, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { User } from 'src/schemas/users.chema';
+import { MessageType } from 'src/schemas/types';
 
 @Injectable()
 export class MessagesService {
