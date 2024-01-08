@@ -14,7 +14,3 @@ export enum MessageType {
   VOICE = 'voice',
   TIMELINE = 'timeline',
 }
-export enum RelationShipStatus {
-  OK = 'ok',
-  BLOCKED = 'blocked',
-}

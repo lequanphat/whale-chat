@@ -55,6 +55,16 @@ export class ContactController {
       throw error;
     }
   }
+  @Post('accept-friend-request')
+  async acceptFriendRequest(@Req() req: any, @Body('friendRequestId') friendRequestId: string) {
+    try {
+      const id = req.user.id;
+      const data = await this.contactServic.acceptFriendRequest({ id, friendRequestId });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
   @Get('get-all-friend-requests')
   async getAllFriendRequests(@Req() req: any) {
     try {

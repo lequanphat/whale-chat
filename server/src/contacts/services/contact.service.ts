@@ -5,6 +5,8 @@ import { FriendRequest } from 'src/schemas/friendrequest.chema';
 import { Relationship } from 'src/schemas/relationship.chema';
 import { FriendRequestType, createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 import { User } from 'src/schemas/users.chema';
+import { Messages } from 'src/schemas/messages.chema';
+import { MessageType } from 'src/schemas/types';
 
 @Injectable()
 export class ContactService {
@@ -12,6 +14,7 @@ export class ContactService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(FriendRequest.name) private friendRequestModel: Model<FriendRequest>,
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
+    @InjectModel(Messages.name) private messageModel: Model<Messages>,
   ) {}
   async getRecommendedUsers(id: string) {
     try {
@@ -26,13 +29,21 @@ export class ContactService {
           $or: [{ sendId: id }, { receiveId: id }],
         })
         .select(['_id', 'sendId', 'receiveId']);
-
+      const relationships = await this.relationshipModel.find({ users: { $in: [id] } });
       //
       users.forEach((user: any, index) => {
         friendRequests.forEach((friendRequest) => {
           if (
             user._id.toString() === friendRequest.sendId.toString() ||
             user._id.toString() === friendRequest.receiveId.toString()
+          ) {
+            users.splice(index, 1);
+          }
+        });
+        relationships.forEach((relationship) => {
+          if (
+            user._id.toString() === relationship.users[0].toString() ||
+            user._id.toString() === relationship.users[1].toString()
           ) {
             users.splice(index, 1);
           }
@@ -54,6 +65,8 @@ export class ContactService {
         })
         .select(['_id', 'sendId', 'receiveId']);
       //
+      const relationships = await this.relationshipModel.find({ users: { $in: [id] } });
+
       users.forEach((user: any) => {
         friendRequests.forEach((friendRequest) => {
           if (
@@ -61,7 +74,14 @@ export class ContactService {
             user._id.toString() === friendRequest.receiveId.toString()
           ) {
             user.status = 'Pending';
-          } else {
+          }
+        });
+        relationships.forEach((relationship) => {
+          if (
+            user._id.toString() === relationship.users[0].toString() ||
+            user._id.toString() === relationship.users[1].toString()
+          ) {
+            user.status = 'Friend';
           }
         });
       });
@@ -91,6 +111,12 @@ export class ContactService {
       });
       if (friendRequestExists) {
         throw new HttpException('friend request exists', HttpStatus.BAD_REQUEST);
+      }
+      const relationshipExists = await this.relationshipModel.findOne({
+        $or: [{ users: { $all: [data.sendId, data.receiveId] } }, { users: { $all: [data.receiveId, data.sendId] } }],
+      });
+      if (relationshipExists) {
+        throw new HttpException('relationship exists', HttpStatus.BAD_REQUEST);
       }
       const friendRequest = await this.friendRequestModel.create({
         sendId: data.sendId,
@@ -137,6 +163,42 @@ export class ContactService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async acceptFriendRequest({ id, friendRequestId }: { id: string; friendRequestId: string }) {
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+    if (!isValidId) {
+      throw new HttpException('Invalid sendId', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const friendRequest = await this.friendRequestModel.findOne({ _id: friendRequestId });
+      if (!friendRequest) {
+        throw new HttpException('Can not find request', HttpStatus.BAD_REQUEST);
+      }
+      if (id !== friendRequest.receiveId.toString()) {
+        throw new HttpException('You can not accept this request', HttpStatus.BAD_REQUEST);
+      }
+      // delete friend request
+      await this.friendRequestModel.findOneAndDelete({ _id: friendRequestId });
+      // create relationship between 2 users
+      await this.relationshipModel.create({
+        users: [id, friendRequest.sendId],
+      });
+      // send first message
+      const firstMessage = await this.messageModel.create({
+        from: id,
+        to: friendRequest.sendId,
+        type: MessageType.SYSTEM,
+        text: 'We have become friends',
+      });
+      // get user
+      const contact = await this.userModel
+        .findOne({ _id: friendRequest.sendId })
+        .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
+      // response
+      return { id: friendRequestId, contact, firstMessage };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   async getAllFriendRequests(id: string) {
     const isValidId = mongoose.Types.ObjectId.isValid(id);
@@ -147,7 +209,7 @@ export class ContactService {
       .find({ receiveId: id })
       .populate({
         path: 'sendId',
-        select: '_id displayName avatar',
+        select: '_id displayName avatar about status email',
       })
       .sort({ createdAt: 1 });
     return friendRequests;
@@ -161,7 +223,7 @@ export class ContactService {
       .find({ sendId: id })
       .populate({
         path: 'receiveId',
-        select: '_id displayName avatar',
+        select: '_id displayName avatar about status email',
       })
       .sort({ createdAt: -1 });
     return friendRequests;
