@@ -1,6 +1,11 @@
 import { Avatar, Box, Button, Stack, Typography, useTheme } from '@mui/material';
 
-export const FriendRequestItem = () => {
+export enum FriendRequestType {
+  SEND = 'send',
+  RECEIVE = 'receive',
+}
+
+export const FriendRequestItem = ({ type = FriendRequestType.SEND }: { type?: FriendRequestType }) => {
   const theme = useTheme();
   return (
     <Box sx={{ bgcolor: theme.palette.background.default, borderRadius: 0.4, width: '33.33% ' }} p={2}>
@@ -31,11 +36,19 @@ export const FriendRequestItem = () => {
             },
           }}
         >
-          Từ chối
+          Cancel
         </Button>
-        <Button variant="contained" fullWidth>
-          Đồng ý
-        </Button>
+        {type == FriendRequestType.RECEIVE && (
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              boxShadow: 'none',
+            }}
+          >
+            Accept
+          </Button>
+        )}
       </Stack>
     </Box>
   );

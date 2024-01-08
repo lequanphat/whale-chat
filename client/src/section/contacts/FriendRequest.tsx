@@ -1,5 +1,5 @@
 import { Stack, Typography, useTheme } from '@mui/material';
-import { FriendRequestItem } from './FriendRequestItem';
+import { FriendRequestItem, FriendRequestType } from './FriendRequestItem';
 
 const FriendRequest = () => {
   const theme = useTheme();
@@ -22,9 +22,9 @@ const FriendRequest = () => {
         <Stack mb={2} mt={2}>
           <Typography variant="body2">Invitation received (1)</Typography>
         </Stack>
-        <Stack direction="row" spacing={2} >
-          <FriendRequestItem />
-          <FriendRequestItem />
+        <Stack direction="row" spacing={2}>
+          <FriendRequestItem type={FriendRequestType.RECEIVE} />
+          <FriendRequestItem type={FriendRequestType.RECEIVE} />
         </Stack>
         <Stack mb={2} mt={4}>
           <Typography variant="body2">Invitation sent (0)</Typography>

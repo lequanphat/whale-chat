@@ -4,6 +4,8 @@ import StyledBadge from '../avatar/StyledBadge';
 import React from 'react';
 import { formatMongoTime } from '../../utils/formatTime';
 import { MessageType } from './types';
+import { IoDocumentTextOutline, IoImageOutline } from 'react-icons/io5';
+import { MdOutlineKeyboardVoice } from 'react-icons/md';
 interface ChatElementProps {
   displayName: string;
   avatar?: string;
@@ -15,6 +17,7 @@ interface ChatElementProps {
   selected: boolean;
   onClick: () => void;
 }
+// eslint-disable-next-line react-refresh/only-export-components
 const ChatElement: React.FC<ChatElementProps> = ({
   displayName,
   avatar,
@@ -28,16 +31,53 @@ const ChatElement: React.FC<ChatElementProps> = ({
   ...props
 }) => {
   const theme = useTheme();
-  const recentMessage = (type) => {
+  const recentMessage = (type: MessageType) => {
     switch (type) {
       case MessageType.TEXT:
-        return text;
+        return (
+          <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+            {text}
+          </Typography>
+        );
       case MessageType.IMAGE:
-        return 'An image';
+        return (
+          <>
+            <Typography variant="body1" color={selected ? '#eee8e8' : '#7f8c8d'}>
+              <IoImageOutline size={16} />
+            </Typography>
+            <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+              image
+            </Typography>
+          </>
+        );
       case MessageType.VOICE:
-        return 'A voice';
+        return (
+          <>
+            <Typography variant="body1" color={selected ? '#eee8e8' : '#7f8c8d'}>
+              <MdOutlineKeyboardVoice size={16} />
+            </Typography>
+            <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+              voice
+            </Typography>
+          </>
+        );
+      case MessageType.DOC:
+        return (
+          <>
+            <Typography variant="body1" color={selected ? '#eee8e8' : '#7f8c8d'}>
+              <IoDocumentTextOutline size={16} />
+            </Typography>
+            <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+              document
+            </Typography>
+          </>
+        );
       default:
-        return 'unknow';
+        return (
+          <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+            ...
+          </Typography>
+        );
     }
   };
   return (
@@ -71,9 +111,9 @@ const ChatElement: React.FC<ChatElementProps> = ({
             <Typography variant="subtitle2" color={selected ? '#eee8e8' : theme.palette.text.primary}>
               {displayName}
             </Typography>
-            <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+            <Stack direction="row" alignItems="center" spacing={0.4}>
               {recentMessage(type)}
-            </Typography>
+            </Stack>
           </Stack>
         </Stack>
         <Stack spacing={2} alignItems="center">
@@ -87,4 +127,5 @@ const ChatElement: React.FC<ChatElementProps> = ({
   );
 };
 
-export default ChatElement;
+// eslint-disable-next-line react-refresh/only-export-components
+export default React.memo(ChatElement);
