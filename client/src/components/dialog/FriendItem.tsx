@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { createFriendRequests } from '../../store/slices/relationshipSlice';
 import { openSuccessSnackbar } from '../../store/slices/appSlice';
 import { useState } from 'react';
+import { IoCheckmark } from 'react-icons/io5';
 export const FriendItem = ({ user }: { user: User }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -26,14 +27,19 @@ export const FriendItem = ({ user }: { user: User }) => {
       case 'Pending':
         return (
           <Typography variant="body2" color={theme.palette.primary.main} fontSize={12}>
-            Peding
+            Peding...
           </Typography>
         );
       case 'Friend':
         return (
-          <Typography variant="body2" color={theme.palette.primary.main} fontSize={12}>
-            Friend
-          </Typography>
+          <Stack direction="row" alignContent="center">
+            <Typography variant="body2" color={theme.palette.primary.main} fontSize={12}>
+              Friend
+            </Typography>
+            <Typography variant="body2" color={theme.palette.success.main} fontSize={12}>
+              <IoCheckmark size={15} />
+            </Typography>
+          </Stack>
         );
 
       default:

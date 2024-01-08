@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { formatMongoTime } from '../../utils/formatTime';
 import { useDispatch } from 'react-redux';
-import { deleteFriendRequests } from '../../store/slices/relationshipSlice';
+import { acceptFriendRequests, deleteFriendRequests } from '../../store/slices/relationshipSlice';
 import { FriendRequestType } from './types';
 import { ReceiveFriendRequest, SendFriendRequest } from '../../store/types';
 
@@ -21,6 +21,10 @@ export const FriendRequestItem = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDeleteFriendRequest = async ({ sendId, receiveId }: { sendId: any; receiveId: any }) => {
     dispatch(deleteFriendRequests({ sendId, receiveId }));
+  };
+  const handleAcceptFriendRequest = async () => {
+    const response = await dispatch(acceptFriendRequests({ friendRequestId: value._id }));
+    console.log(response);
   };
 
   // render
@@ -83,6 +87,7 @@ export const FriendRequestItem = ({
             sx={{
               boxShadow: 'none',
             }}
+            onClick={handleAcceptFriendRequest}
           >
             Accept
           </Button>

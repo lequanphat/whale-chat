@@ -53,6 +53,16 @@ export const relationshipSlice = createSlice({
       })
       .addCase(deleteFriendRequests.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(acceptFriendRequests.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(acceptFriendRequests.fulfilled, (state, action) => {
+        state.friendRequests.receive = state.friendRequests.receive.filter((value) => value._id !== action.payload.id);
+        state.isLoading = false;
+      })
+      .addCase(acceptFriendRequests.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
@@ -95,6 +105,17 @@ export const deleteFriendRequests = createAsyncThunk(
   async (data: DeleteFriendRequestDTO, { rejectWithValue }) => {
     try {
       const response = await api.post('/contacts/delete-friend-request', data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({ error: 'error' });
+    }
+  },
+);
+export const acceptFriendRequests = createAsyncThunk(
+  'relationship/acceptFriendRequests',
+  async (data: { friendRequestId: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/contacts/accept-friend-request', data);
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });

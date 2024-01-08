@@ -34,8 +34,19 @@ const ChatElement: React.FC<ChatElementProps> = ({
   const recentMessage = (type: MessageType) => {
     switch (type) {
       case MessageType.TEXT:
+      case MessageType.SYSTEM:
         return (
-          <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>
+          <Typography
+            variant="body1"
+            fontSize={15}
+            color={selected ? '#eee8e8' : '#7f8c8d'}
+            sx={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '140px',
+            }}
+          >
             {text}
           </Typography>
         );
@@ -72,6 +83,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
             </Typography>
           </>
         );
+
       default:
         return (
           <Typography variant="body1" fontSize={15} color={selected ? '#eee8e8' : '#7f8c8d'}>

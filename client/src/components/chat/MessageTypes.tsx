@@ -85,7 +85,7 @@ const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boo
         sx={{
           backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
           borderRadius: 1.8,
-          width: 'max-content',
+          maxWidth: '45%',
           p: '10px 16px',
         }}
       >

@@ -72,34 +72,43 @@ const Chats = () => {
             <>
               <Stack spacing={1.6}>
                 <Typography variant="subtitle2" sx={{ color: '#676767' }}>
-                  Pinned
-                </Typography>
-                {contactsList
-                  .sort((a, b) => {
-                    const dateA = new Date(a.recentMessage.createdAt).getTime();
-                    const dateB = new Date(b.recentMessage.createdAt).getTime();
-                    return dateB - dateA;
-                  })
-                  .map((item, index) => {
-                    return (
-                      <ChatElement
-                        key={item.contact._id}
-                        {...item.contact}
-                        {...item.recentMessage}
-                        selected={currentContact?._id === contactsList[index].contact._id}
-                        online={item.contact.status === 'online'}
-                        onClick={() => {
-                          handlePickContact(item.contact._id);
-                        }}
-                      />
-                    );
-                  })}
-              </Stack>
-              <Stack spacing={1.6}>
-                <Typography variant="subtitle2" sx={{ color: '#676767' }}>
                   All Chats
                 </Typography>
+                {contactsList.length ? (
+                  <>
+                    {contactsList
+                      .sort((a, b) => {
+                        const dateA = new Date(a.recentMessage.createdAt).getTime();
+                        const dateB = new Date(b.recentMessage.createdAt).getTime();
+                        return dateB - dateA;
+                      })
+                      .map((item, index) => {
+                        return (
+                          <ChatElement
+                            key={item.contact._id}
+                            {...item.contact}
+                            {...item.recentMessage}
+                            selected={currentContact?._id === contactsList[index].contact._id}
+                            online={item.contact.status === 'online'}
+                            onClick={() => {
+                              handlePickContact(item.contact._id);
+                            }}
+                          />
+                        );
+                      })}
+                  </>
+                ) : (
+                  <Stack alignItems="center" justifyContent="center">
+                    <Typography variant="body1" mb={1.6}>
+                      You have no friends
+                    </Typography>
+                    <Button variant="contained" sx={{ fontSize: 12, px: 2, py: 0.8 }} onClick={handleOpenAddFriends}>
+                      Add friends
+                    </Button>
+                  </Stack>
+                )}
               </Stack>
+              <Stack spacing={1.6}></Stack>
             </>
           )}
         </Scrollbar>

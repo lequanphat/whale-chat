@@ -22,7 +22,6 @@ export function AddFriendsDialog({ open, handleClose }) {
   const [search, setSearch] = useState<string>('');
   const debouncedSearchText = useDebounce(search, 500);
 
-
   useEffect(() => {
     (async () => {
       if (debouncedSearchText) {
@@ -31,7 +30,6 @@ export function AddFriendsDialog({ open, handleClose }) {
         setIsLoading(false);
         if (!response.error) {
           setUsers(response.payload);
-          console.log(response.payload);
         }
         return;
       }
@@ -39,7 +37,6 @@ export function AddFriendsDialog({ open, handleClose }) {
       const result = await dispatch(getRecommendedUsersForAddFriends());
       if (!result.error) {
         setUsers(result.payload);
-        console.log(result.payload);
       }
       setIsLoading(false);
     })();

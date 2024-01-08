@@ -28,7 +28,7 @@ export function EditAvatarDialog({ open, handleClose }) {
     setPreview(view);
   };
   const onBeforeFileLoad = (elem) => {
-    if (elem.target.files[0].size > 716800) {
+    if (elem.target.files[0].size > 8000000) {
       setError('File is too big! Please choose another');
       elem.target.value = '';
     }
