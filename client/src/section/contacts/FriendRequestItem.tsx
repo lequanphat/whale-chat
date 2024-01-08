@@ -3,29 +3,15 @@ import { formatMongoTime } from '../../utils/formatTime';
 import { useDispatch } from 'react-redux';
 import { deleteFriendRequests } from '../../store/slices/relationshipSlice';
 import { FriendRequestType } from './types';
+import { ReceiveFriendRequest, SendFriendRequest } from '../../store/types';
 
-
-export interface FriendRequest {
-  _id: string;
-  sendId: {
-    _id: string;
-    displayName: string;
-    avatar: string;
-  };
-  receiveId: {
-    _id: string;
-    displayName: string;
-    avatar: string;
-  };
-  text: string;
-  createdAt: string;
-}
 export const FriendRequestItem = ({
   type = FriendRequestType.SEND,
   value,
 }: {
   type?: FriendRequestType;
-  value: FriendRequest;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: SendFriendRequest | ReceiveFriendRequest | any;
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -39,7 +25,14 @@ export const FriendRequestItem = ({
 
   // render
   return (
-    <Box sx={{ bgcolor: theme.palette.background.default, borderRadius: 0.4, width: '33.33% ' }} p={2}>
+    <Box
+      sx={{
+        bgcolor: theme.palette.background.default,
+        borderRadius: 0.8,
+        width: '33.33% ',
+      }}
+      p={2}
+    >
       <Stack direction="row" alignItems="center" spacing={1}>
         <Avatar
           sx={{ width: 45, height: 45 }}
@@ -55,7 +48,9 @@ export const FriendRequestItem = ({
         </Stack>
       </Stack>
       <Box p={1} mt={2} mb={2} bgcolor={theme.palette.background.paper} sx={{ borderRadius: 0.4 }}>
-        <Typography>{value.text}</Typography>
+        <Typography variant="body1" fontSize={14}>
+          {value.text}
+        </Typography>
       </Box>
       <Stack direction="row" spacing={2}>
         <Button

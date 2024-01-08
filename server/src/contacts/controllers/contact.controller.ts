@@ -15,7 +15,16 @@ export class ContactController {
   // async userRouter() {
   //   return 'user router ok';
   // }
-
+  @Get('get-all-users')
+  async getAllUsers(@Req() req: any) {
+    try {
+      const id = req.user.id;
+      const data = await this.contactServic.getAllUsers(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
   @Post('create-friend-request')
   async createFriendRequest(@Req() req: any, @Body() body: createFriendRequestDTO) {
     try {
@@ -27,9 +36,10 @@ export class ContactController {
     }
   }
   @Post('delete-friend-request')
-  async deleteFriendRequest(@Body() body: deleteFriendRequestDTO) {
+  async deleteFriendRequest(@Req() req: any, @Body() body: deleteFriendRequestDTO) {
     try {
-      const data = await this.contactServic.deleteFriendRequest(body);
+      const id = req.user.id;
+      const data = await this.contactServic.deleteFriendRequest({ id, data: body });
       return data;
     } catch (error) {
       throw error;

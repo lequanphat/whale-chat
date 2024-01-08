@@ -3,6 +3,10 @@ import api from '../../api/internal';
 import { CreateFriendRequestDTO, DeleteFriendRequestDTO, relationshipType } from '../types';
 
 const initialState: relationshipType = {
+  friendRequests: {
+    send: [],
+    receive: [],
+  },
   isLoading: false,
 };
 
@@ -15,7 +19,8 @@ export const relationshipSlice = createSlice({
       .addCase(getAllFriendRequests.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllFriendRequests.fulfilled, (state) => {
+      .addCase(getAllFriendRequests.fulfilled, (state, action) => {
+        state.friendRequests.receive = action.payload;
         state.isLoading = false;
       })
       .addCase(getAllFriendRequests.rejected, (state) => {
@@ -24,15 +29,45 @@ export const relationshipSlice = createSlice({
       .addCase(getAllFriendRequestsFromSelf.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllFriendRequestsFromSelf.fulfilled, (state) => {
+      .addCase(getAllFriendRequestsFromSelf.fulfilled, (state, action) => {
+        state.friendRequests.send = action.payload;
         state.isLoading = false;
       })
       .addCase(getAllFriendRequestsFromSelf.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteFriendRequests.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteFriendRequests.fulfilled, (state, action) => {
+        if (action.payload.type === 'send') {
+          state.friendRequests.send = state.friendRequests.send.filter(
+            (value) => value._id !== action.payload.friendRequest._id,
+          );
+        } else {
+          state.friendRequests.receive = state.friendRequests.receive.filter(
+            (value) => value._id !== action.payload.friendRequest._id,
+          );
+        }
+        state.isLoading = false;
+      })
+      .addCase(deleteFriendRequests.rejected, (state) => {
         state.isLoading = false;
       });
   },
 });
 
+export const getAllUsersForAddFriends = createAsyncThunk(
+  'relationship/getAllUsersForAddFriends',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/contacts/get-all-users');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({ error: 'error' });
+    }
+  },
+);
 export const createFriendRequests = createAsyncThunk(
   'relationship/createFriendRequests',
   async (data: CreateFriendRequestDTO, { rejectWithValue }) => {
@@ -49,7 +84,6 @@ export const deleteFriendRequests = createAsyncThunk(
   async (data: DeleteFriendRequestDTO, { rejectWithValue }) => {
     try {
       const response = await api.post('/contacts/delete-friend-request', data);
-      console.log('res', response);
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });

@@ -7,3 +7,7 @@ export class deleteFriendRequestDTO {
   sendId: string;
   receiveId: string;
 }
+export enum FriendRequestType {
+  SEND = 'send',
+  RECEIVE = 'receive',
+}

@@ -4,9 +4,9 @@ import {
     IoSettingsOutline,
     IoLogInOutline,
     IoPersonOutline,
+    IoLogoReddit,
 } from 'react-icons/io5';
 import avatar from '../assets/avatar_4.jpg';
-import { PiRobotLight } from 'react-icons/pi';
 import { faker } from '@faker-js/faker';
 import { ReactNode } from 'react';
 interface NavButton {
@@ -24,7 +24,7 @@ export const Nav_Buttons: NavButton[] = [
     },
     {
         index: 2,
-        icon: <PiRobotLight />,
+        icon: <IoLogoReddit />,
     },
 ];
 export const Nav_Setting = [

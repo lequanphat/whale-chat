@@ -1,6 +1,5 @@
-import { Avatar, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
+import { Avatar, Badge, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
 import React, { useState } from 'react';
-import { RiSettings3Line } from 'react-icons/ri';
 import CustomSwitch from '../../components/switch/CustomSwitch';
 import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
@@ -11,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
 import { useNavigate } from 'react-router-dom';
+import { IoNotificationsOutline } from 'react-icons/io5';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -70,7 +70,7 @@ const Sidebar = () => {
         navigate('/gpt');
         break;
       case 3:
-        navigate('/settings');
+        navigate('/notifications');
         break;
       default:
         break;
@@ -141,7 +141,7 @@ const Sidebar = () => {
                     color: '#fff',
                   }}
                 >
-                  <RiSettings3Line />
+                  <IoNotificationsOutline />
                 </IconButton>
               </Box>
             ) : (
@@ -154,7 +154,9 @@ const Sidebar = () => {
                   color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
                 }}
               >
-                <RiSettings3Line />
+                <Badge badgeContent={1} color="primary">
+                  <IoNotificationsOutline />
+                </Badge>
               </IconButton>
             )}
           </Stack>

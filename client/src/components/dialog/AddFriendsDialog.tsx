@@ -6,9 +6,9 @@ import { CiSearch } from 'react-icons/ci';
 import { FriendItem } from './FriendItem';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getAllUsers } from '../../store/slices/chatSlice';
 import { User } from './types';
 import Loading from '../loading/Loading';
+import { getAllUsersForAddFriends } from '../../store/slices/relationshipSlice';
 
 export function AddFriendsDialog({ open, handleClose }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,11 +24,11 @@ export function AddFriendsDialog({ open, handleClose }) {
   useEffect(() => {
     (async () => {
       setIsLoading(true);
-      const response = await dispatch(getAllUsers()); // called when open dialog
+      const response = await dispatch(getAllUsersForAddFriends()); // called when open dialog
       setIsLoading(false);
-      if (response.payload.users) {
-        setUsers(response.payload.users);
-        console.log(response.payload.users);
+      if (!response.error) {
+        setUsers(response.payload);
+        console.log(response.payload);
       }
     })();
   }, [dispatch]);
@@ -75,7 +75,7 @@ export function AddFriendsDialog({ open, handleClose }) {
           </Search>
         </Stack>
         <Box py={2}>
-          <Typography px={3} variant="body1" fontSize={15} sx={{ opacity: 0.6 }}>
+          <Typography px={3} variant="body1" fontSize={15}>
             {search ? 'Kết quả tìm kiếm' : 'Gợi ý kết bạn'}
           </Typography>
           <Stack

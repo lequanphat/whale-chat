@@ -3,15 +3,45 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { FriendRequest } from 'src/schemas/friendrequest.chema';
 import { Relationship } from 'src/schemas/relationship.chema';
-import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
+import { FriendRequestType, createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
+import { User } from 'src/schemas/users.chema';
 
 @Injectable()
 export class ContactService {
   constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(FriendRequest.name) private friendRequestModel: Model<FriendRequest>,
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
   ) {}
+  async getAllUsers(id: string) {
+    try {
+      const users = await this.userModel
+        .find({ _id: { $ne: id } })
+        .select(['_id', 'displayName', 'email', 'status', 'avatar']);
 
+      const friendRequests = await this.friendRequestModel
+        .find({
+          $or: [{ sendId: id }, { receiveId: id }],
+        })
+        .select(['_id', 'sendId', 'receiveId']);
+      //
+      users.forEach((user: any) => {
+        friendRequests.forEach((friendRequest) => {
+          if (
+            user._id.toString() === friendRequest.sendId.toString() ||
+            user._id.toString() === friendRequest.receiveId.toString()
+          ) {
+            user.status = 'Pending';
+          } else {
+          }
+        });
+      });
+
+      return users;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
   async createFriendRequest(data: createFriendRequestDTO) {
     const isValidSendId = mongoose.Types.ObjectId.isValid(data.sendId);
     if (!isValidSendId) {
@@ -45,7 +75,7 @@ export class ContactService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-  async deleteFriendRequest(data: deleteFriendRequestDTO) {
+  async deleteFriendRequest({ id, data }: { id: string; data: deleteFriendRequestDTO }) {
     const isValidSendId = mongoose.Types.ObjectId.isValid(data.sendId);
     if (!isValidSendId) {
       throw new HttpException('Invalid sendId', HttpStatus.BAD_REQUEST);
@@ -65,7 +95,14 @@ export class ContactService {
       if (!friendRequest) {
         throw new HttpException('Can not delete friend request', HttpStatus.BAD_REQUEST);
       }
-      return { msg: 'ok' };
+      let type = FriendRequestType.RECEIVE;
+      if (id === data.receiveId) {
+        // send notification to sent user
+        console.log('send notification');
+      } else {
+        type = FriendRequestType.SEND;
+      }
+      return { friendRequest, type };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
