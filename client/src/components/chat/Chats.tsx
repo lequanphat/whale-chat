@@ -6,11 +6,12 @@ import { MdOutlineArchive } from 'react-icons/md';
 import ChatElement from './ChatElement';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { stateType } from '../../store/interface';
 import { getAllContacts } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
 import { useNavigate } from 'react-router-dom';
+import { AddFriendsDialog } from '../dialog/AddFriendsDialog';
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -18,6 +19,7 @@ const Chats = () => {
   const navigate = useNavigate();
   const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
   const contactsList = [...contacts];
+  const [openAddFriends, setOpenAddFriends] = useState<boolean>(true);
   useEffect(() => {
     dispatch(getAllContacts());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,7 +28,12 @@ const Chats = () => {
   const handlePickContact = async (id: string) => {
     navigate(`/app/chat/${id}`);
   };
-
+  const handleCloseAddFriends = () => {
+    setOpenAddFriends(false);
+  };
+  const handleOpenAddFriends = () => {
+    setOpenAddFriends(true);
+  };
   return (
     <Box
       sx={{
@@ -39,7 +46,7 @@ const Chats = () => {
       <Stack px={3} py={2} spacing={2} sx={{ height: '100vh' }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">Chats</Typography>
-          <IconButton>
+          <IconButton onClick={handleOpenAddFriends}>
             <IoPersonAddOutline size={20} />
           </IconButton>
         </Stack>
@@ -97,6 +104,7 @@ const Chats = () => {
           )}
         </Scrollbar>
       </Stack>
+      {openAddFriends && <AddFriendsDialog open={openAddFriends} handleClose={handleCloseAddFriends} />}
     </Box>
   );
 };
