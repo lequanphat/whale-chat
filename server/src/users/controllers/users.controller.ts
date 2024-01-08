@@ -32,14 +32,15 @@ export class UsersController {
       return error;
     }
   }
-  @Get(':id')
-  getUserByID(@Param('id') id: string) {
-    return this.usersService.getUserById(id);
-  }
-  @Get()
-  getAllUsers(@Req() req: any) {
+  @Get('get-all-users')
+  async getAllUsers(@Req() req: any) {
     const id: string = req.user.id;
-    return this.usersService.getAllUsers(id);
+    try {
+      const response = await this.usersService.getAllUsers(id);
+      return response;
+    } catch (error) {
+      return error;
+    }
   }
 
   @Post('change-avatar')
@@ -72,5 +73,9 @@ export class UsersController {
     } catch (error) {
       throw error;
     }
+  }
+  @Get(':id')
+  getUserByID(@Param('id') id: string) {
+    return this.usersService.getUserById(id);
   }
 }

@@ -19,7 +19,7 @@ const Chats = () => {
   const navigate = useNavigate();
   const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
   const contactsList = [...contacts];
-  const [openAddFriends, setOpenAddFriends] = useState<boolean>(true);
+  const [openAddFriends, setOpenAddFriends] = useState<boolean>(false);
   useEffect(() => {
     dispatch(getAllContacts());
     // eslint-disable-next-line react-hooks/exhaustive-deps

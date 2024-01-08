@@ -34,7 +34,7 @@ export class UsersService {
   async getAllUsers(id: string) {
     const users = await this.userModel
       .find({ _id: { $ne: id }, verified: true, role: UserRole.USER })
-      .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'role']);
+      .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
     return users;
   }
   async getAllContacts(id: string) {
@@ -85,8 +85,6 @@ export class UsersService {
         flag.push(mes.to._id.toString());
       }
     });
-    console.log(flag);
-
     return contacts;
   }
   async setAvatar({ id, file }: { id: string; file: string }) {

@@ -125,10 +125,18 @@ const chatSlice = createSlice({
       .addCase(addVoiceMessage.rejected, () => {});
   },
 });
-export const getAllContacts = createAsyncThunk('contacts/getAllContact', async (_, { rejectWithValue }) => {
+export const getAllContacts = createAsyncThunk('contacts/getAllContacts', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get(`/users/contacts`);
     return { contacts: response.data };
+  } catch (error) {
+    return rejectWithValue({ error: error.response.data.message });
+  }
+});
+export const getAllUsers = createAsyncThunk('contacts/getAllUsers', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/users/get-all-users`);
+    return { users: response.data };
   } catch (error) {
     return rejectWithValue({ error: error.response.data.message });
   }

@@ -4,9 +4,36 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
 import { CiSearch } from 'react-icons/ci';
 import { FriendItem } from './FriendItem';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getAllUsers } from '../../store/slices/chatSlice';
+import { User } from './types';
+import Loading from '../loading/Loading';
 
 export function AddFriendsDialog({ open, handleClose }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
   const theme = useTheme();
+
+  // state
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+
+  // effect
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      const response = await dispatch(getAllUsers()); // called when open dialog
+      setIsLoading(false);
+      if (response.payload.users) {
+        setUsers(response.payload.users);
+        console.log(response.payload.users);
+      }
+    })();
+  }, [dispatch]);
+
+  // render
   return (
     <Dialog
       open={open}
@@ -28,6 +55,7 @@ export function AddFriendsDialog({ open, handleClose }) {
       <DialogContent
         sx={{
           p: 0,
+          pb: 2,
           bgcolor: theme.palette.background.default,
         }}
       >
@@ -36,7 +64,14 @@ export function AddFriendsDialog({ open, handleClose }) {
             <SearchIconWrapper>
               <CiSearch size={18} />
             </SearchIconWrapper>
-            <StyledInputBase placeholder="Search..." inputProps={{ 'aria-label': 'search' }} />
+            <StyledInputBase
+              placeholder="Search..."
+              inputProps={{ 'aria-label': 'search' }}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
           </Search>
         </Stack>
         <Box py={2}>
@@ -57,12 +92,13 @@ export function AddFriendsDialog({ open, handleClose }) {
               },
             }}
           >
-            <FriendItem />
-            <FriendItem />
-            <FriendItem />
-            <FriendItem />
-            <FriendItem />
-            <FriendItem />
+            {isLoading ? (
+              <Loading />
+            ) : (
+              users
+                .filter((user) => user.displayName.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+                .map((user) => <FriendItem key={user._id} user={user} />)
+            )}
           </Stack>
         </Box>
       </DialogContent>
