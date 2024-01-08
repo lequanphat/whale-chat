@@ -13,12 +13,41 @@ export class ContactService {
     @InjectModel(FriendRequest.name) private friendRequestModel: Model<FriendRequest>,
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
   ) {}
-  async getAllUsers(id: string) {
+  async getRecommendedUsers(id: string) {
     try {
       const users = await this.userModel
         .find({ _id: { $ne: id } })
-        .select(['_id', 'displayName', 'email', 'status', 'avatar']);
+        .select(['_id', 'displayName', 'email', 'status', 'avatar'])
+        .sort({ createdAt: -1 })
+        .limit(5);
 
+      const friendRequests = await this.friendRequestModel
+        .find({
+          $or: [{ sendId: id }, { receiveId: id }],
+        })
+        .select(['_id', 'sendId', 'receiveId']);
+
+      //
+      users.forEach((user: any, index) => {
+        friendRequests.forEach((friendRequest) => {
+          if (
+            user._id.toString() === friendRequest.sendId.toString() ||
+            user._id.toString() === friendRequest.receiveId.toString()
+          ) {
+            users.splice(index, 1);
+          }
+        });
+      });
+      return users;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async searchUsers({ id, searchText }: { id: string; searchText: string }) {
+    try {
+      const users = await this.userModel
+        .find({ _id: { $ne: id }, displayName: { $regex: new RegExp(searchText, 'i') } })
+        .select(['_id', 'displayName', 'email', 'status', 'avatar']);
       const friendRequests = await this.friendRequestModel
         .find({
           $or: [{ sendId: id }, { receiveId: id }],
@@ -42,6 +71,7 @@ export class ContactService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
   async createFriendRequest(data: createFriendRequestDTO) {
     const isValidSendId = mongoose.Types.ObjectId.isValid(data.sendId);
     if (!isValidSendId) {

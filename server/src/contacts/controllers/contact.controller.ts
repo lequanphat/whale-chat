@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ContactService } from '../services/contact.service';
 import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 
@@ -15,11 +15,21 @@ export class ContactController {
   // async userRouter() {
   //   return 'user router ok';
   // }
-  @Get('get-all-users')
-  async getAllUsers(@Req() req: any) {
+  @Get('get-recommended-users')
+  async getRecommendedUsers(@Req() req: any) {
     try {
       const id = req.user.id;
-      const data = await this.contactServic.getAllUsers(id);
+      const data = await this.contactServic.getRecommendedUsers(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Get('search-users/:search')
+  async searchUsers(@Req() req: any, @Param('search') searchText: string) {
+    try {
+      const id = req.user.id;
+      const data = await this.contactServic.searchUsers({ id, searchText });
       return data;
     } catch (error) {
       throw error;

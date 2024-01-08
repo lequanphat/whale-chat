@@ -57,11 +57,22 @@ export const relationshipSlice = createSlice({
   },
 });
 
-export const getAllUsersForAddFriends = createAsyncThunk(
-  'relationship/getAllUsersForAddFriends',
+export const searchUsersForAddFriend = createAsyncThunk(
+  'relationship/searchUsersForAddFriend',
+  async (search: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/contacts/search-users/${search}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({ error: 'error' });
+    }
+  },
+);
+export const getRecommendedUsersForAddFriends = createAsyncThunk(
+  'relationship/getRecommendedUsersForAddFriends',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/contacts/get-all-users');
+      const response = await api.get('/contacts/get-recommended-users');
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });

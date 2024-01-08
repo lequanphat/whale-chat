@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { User } from './types';
 import Loading from '../loading/Loading';
-import { getAllUsersForAddFriends } from '../../store/slices/relationshipSlice';
+import { getRecommendedUsersForAddFriends, searchUsersForAddFriend } from '../../store/slices/relationshipSlice';
+import useDebounce from '../../hooks/useDebounce';
 
 export function AddFriendsDialog({ open, handleClose }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,19 +20,32 @@ export function AddFriendsDialog({ open, handleClose }) {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
+  const debouncedSearchText = useDebounce(search, 500);
 
-  // effect
+
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
-      const response = await dispatch(getAllUsersForAddFriends()); // called when open dialog
-      setIsLoading(false);
-      if (!response.error) {
-        setUsers(response.payload);
-        console.log(response.payload);
+      if (debouncedSearchText) {
+        setIsLoading(true);
+        const response = await dispatch(searchUsersForAddFriend(debouncedSearchText));
+        setIsLoading(false);
+        if (!response.error) {
+          setUsers(response.payload);
+          console.log(response.payload);
+        }
+        return;
       }
+      setIsLoading(true);
+      const result = await dispatch(getRecommendedUsersForAddFriends());
+      if (!result.error) {
+        setUsers(result.payload);
+        console.log(result.payload);
+      }
+      setIsLoading(false);
     })();
-  }, [dispatch]);
+  }, [debouncedSearchText, dispatch]);
+
+  // handle
 
   // render
   return (
@@ -92,15 +106,7 @@ export function AddFriendsDialog({ open, handleClose }) {
               },
             }}
           >
-            {isLoading ? (
-              <Loading />
-            ) : search ? (
-              users
-                .filter((user) => user.displayName.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-                .map((user) => <FriendItem key={user._id} user={user} />)
-            ) : (
-              users.slice(0, 10).map((user) => <FriendItem key={user._id} user={user} />)
-            )}
+            {isLoading ? <Loading /> : users.map((user) => <FriendItem key={user._id} user={user} />)}
           </Stack>
         </Box>
       </DialogContent>
