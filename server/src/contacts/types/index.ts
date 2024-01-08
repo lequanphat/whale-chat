@@ -3,3 +3,7 @@ export class createFriendRequestDTO {
   receiveId: string;
   text: string;
 }
+export class deleteFriendRequestDTO {
+  sendId: string;
+  receiveId: string;
+}

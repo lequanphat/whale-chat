@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ContactService } from '../services/contact.service';
-import { createFriendRequestDTO } from '../types';
+import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 
 @Controller('contacts')
 export class ContactController {
@@ -23,7 +23,16 @@ export class ContactController {
       const data = await this.contactServic.createFriendRequest(body);
       return data;
     } catch (error) {
-      return error;
+      throw error;
+    }
+  }
+  @Post('delete-friend-request')
+  async deleteFriendRequest(@Body() body: deleteFriendRequestDTO) {
+    try {
+      const data = await this.contactServic.deleteFriendRequest(body);
+      return data;
+    } catch (error) {
+      throw error;
     }
   }
   @Get('get-all-friend-requests')
@@ -32,7 +41,7 @@ export class ContactController {
       const data = await this.contactServic.getAllFriendRequests(req.user.id);
       return data;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
   @Get('get-all-friend-requests-from-self')
@@ -41,7 +50,7 @@ export class ContactController {
       const data = await this.contactServic.getAllFriendRequestsFromSelf(req.user.id);
       return data;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 }

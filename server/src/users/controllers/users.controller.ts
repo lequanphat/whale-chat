@@ -19,7 +19,7 @@ export class UsersController {
       const accessToken = this.jwtService.signAccessToken({ id, role: user.role });
       return res.status(HttpStatus.OK).json({ user, token: accessToken });
     } catch (error) {
-      return error;
+      throw error;
     }
   }
   @Get('contacts')
@@ -29,7 +29,7 @@ export class UsersController {
       const data = this.usersService.getAllContacts(id);
       return data;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
   @Get('get-all-users')
@@ -39,7 +39,7 @@ export class UsersController {
       const response = await this.usersService.getAllUsers(id);
       return response;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 

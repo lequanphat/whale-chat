@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { FriendRequest } from 'src/schemas/friendrequest.chema';
 import { Relationship } from 'src/schemas/relationship.chema';
-import { createFriendRequestDTO } from '../types';
+import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 
 @Injectable()
 export class ContactService {
@@ -45,6 +45,32 @@ export class ContactService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async deleteFriendRequest(data: deleteFriendRequestDTO) {
+    const isValidSendId = mongoose.Types.ObjectId.isValid(data.sendId);
+    if (!isValidSendId) {
+      throw new HttpException('Invalid sendId', HttpStatus.BAD_REQUEST);
+    }
+    const isValidReceiveId = mongoose.Types.ObjectId.isValid(data.receiveId);
+    if (!isValidReceiveId) {
+      throw new HttpException('Invalid receiveId', HttpStatus.BAD_REQUEST);
+    }
+    if (data.receiveId === data.sendId) {
+      throw new HttpException('sendId must be different with receiveId', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const friendRequest = await this.friendRequestModel.findOneAndDelete({
+        sendId: data.sendId,
+        receiveId: data.receiveId,
+      });
+      if (!friendRequest) {
+        throw new HttpException('Can not delete friend request', HttpStatus.BAD_REQUEST);
+      }
+      return { msg: 'ok' };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async getAllFriendRequests(id: string) {
     const isValidId = mongoose.Types.ObjectId.isValid(id);
     if (!isValidId) {
@@ -54,7 +80,7 @@ export class ContactService {
       .find({ receiveId: id })
       .populate({
         path: 'sendId',
-        select: '_id displayName avatar', // Chỉ định các trường muốn lấy
+        select: '_id displayName avatar',
       })
       .sort({ createdAt: 1 });
     return friendRequests;
@@ -64,7 +90,13 @@ export class ContactService {
     if (!isValidId) {
       throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
     }
-    const friendRequests = await this.friendRequestModel.find({ sendId: id }).sort({ createdAt: -1 });
+    const friendRequests = await this.friendRequestModel
+      .find({ sendId: id })
+      .populate({
+        path: 'receiveId',
+        select: '_id displayName avatar',
+      })
+      .sort({ createdAt: -1 });
     return friendRequests;
   }
 }

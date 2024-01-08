@@ -98,7 +98,7 @@ export class AuthController {
       // redirect
       return res.redirect(`${CLIENT_URL}/auth/reset-password/${resetPasswordToken}`);
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
