@@ -13,3 +13,15 @@ export interface authType {
   token: string;
   isLoading: boolean;
 }
+export interface relationshipType {
+  isLoading: boolean;
+}
+
+export interface CreateFriendRequestDTO {
+  receiveId: string;
+  text: string;
+}
+export interface DeleteFriendRequestDTO {
+  sendId: string;
+  receiveId: string;
+}

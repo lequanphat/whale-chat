@@ -76,7 +76,7 @@ export function AddFriendsDialog({ open, handleClose }) {
         </Stack>
         <Box py={2}>
           <Typography px={3} variant="body1" fontSize={15} sx={{ opacity: 0.6 }}>
-            Kết quả tìm kiếm
+            {search ? 'Kết quả tìm kiếm' : 'Gợi ý kết bạn'}
           </Typography>
           <Stack
             spacing={2.6}
@@ -94,10 +94,12 @@ export function AddFriendsDialog({ open, handleClose }) {
           >
             {isLoading ? (
               <Loading />
-            ) : (
+            ) : search ? (
               users
                 .filter((user) => user.displayName.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
                 .map((user) => <FriendItem key={user._id} user={user} />)
+            ) : (
+              users.slice(0, 10).map((user) => <FriendItem key={user._id} user={user} />)
             )}
           </Stack>
         </Box>

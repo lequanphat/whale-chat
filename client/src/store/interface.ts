@@ -1,5 +1,5 @@
 import { MessageType } from '../components/chat/types';
-import { authType } from './types';
+import { authType, relationshipType } from './types';
 
 export interface appType {
   sidebar: {
@@ -56,6 +56,7 @@ export interface stateType {
   app: appType;
   auth: authType;
   chat: chatType;
+  relationship: relationshipType;
 }
 export interface EditProfileDTO {
   displayName: string;
