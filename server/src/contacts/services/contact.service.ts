@@ -25,6 +25,13 @@ export class ContactService {
       throw new HttpException('sendId must be different with receiveId', HttpStatus.BAD_REQUEST);
     }
     try {
+      const friendRequestExists = await this.friendRequestModel.findOne({
+        sendId: data.sendId,
+        receiveId: data.receiveId,
+      });
+      if (friendRequestExists) {
+        throw new HttpException('friend request exists', HttpStatus.BAD_REQUEST);
+      }
       const friendRequest = await this.friendRequestModel.create({
         sendId: data.sendId,
         receiveId: data.receiveId,
@@ -43,7 +50,13 @@ export class ContactService {
     if (!isValidId) {
       throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
     }
-    const friendRequests = await this.friendRequestModel.find({ receiveId: id }).sort({ createdAt: -1 });
+    const friendRequests = await this.friendRequestModel
+      .find({ receiveId: id })
+      .populate({
+        path: 'sendId',
+        select: '_id displayName avatar', // Chỉ định các trường muốn lấy
+      })
+      .sort({ createdAt: 1 });
     return friendRequests;
   }
   async getAllFriendRequestsFromSelf(id: string) {
