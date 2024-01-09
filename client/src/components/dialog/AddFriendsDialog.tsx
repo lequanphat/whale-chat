@@ -10,8 +10,9 @@ import { User } from './types';
 import Loading from '../loading/Loading';
 import { getRecommendedUsersForAddFriends, searchUsersForAddFriend } from '../../store/slices/relationshipSlice';
 import useDebounce from '../../hooks/useDebounce';
+import { closeAddFriendDialog } from '../../store/slices/appSlice';
 
-export function AddFriendsDialog({ open, handleClose }) {
+export function AddFriendsDialog({ open }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
@@ -43,7 +44,9 @@ export function AddFriendsDialog({ open, handleClose }) {
   }, [debouncedSearchText, dispatch]);
 
   // handle
-
+  const handleClose = () => {
+    dispatch(closeAddFriendDialog());
+  };
   // render
   return (
     <Dialog

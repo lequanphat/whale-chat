@@ -6,19 +6,21 @@ import { stateType } from '../../store/interface';
 
 import Loading from '../../components/loading/Loading';
 import { Role } from '../../store/types';
+import { AddFriendsDialog } from '../../components/dialog/AddFriendsDialog';
 
 const DashboardLayout = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { auth, role, isLoading } = useSelector((state: stateType) => state.auth);
+  const { addFriendDialog } = useSelector((state: stateType) => state.app);
 
   if (!auth || role !== Role.USER) {
     return <Navigate to="/auth/login"></Navigate>;
   }
-
   return (
     <Stack direction="row">
       <Sidebar />
       {isLoading ? <Loading /> : <Outlet />}
+      {addFriendDialog.open && <AddFriendsDialog open={addFriendDialog.open} />}
     </Stack>
   );
 };

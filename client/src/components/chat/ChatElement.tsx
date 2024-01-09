@@ -14,7 +14,7 @@ interface ChatElementProps {
   createdAt?: string;
   unread?: number;
   online?: boolean;
-  selected: boolean;
+  selected?: boolean;
   onClick: () => void;
 }
 // eslint-disable-next-line react-refresh/only-export-components

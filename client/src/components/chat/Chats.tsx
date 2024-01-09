@@ -11,28 +11,27 @@ import { stateType } from '../../store/interface';
 import { getAllContacts } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
 import { useNavigate } from 'react-router-dom';
-import { AddFriendsDialog } from '../dialog/AddFriendsDialog';
+import { openAddFriendDialog } from '../../store/slices/appSlice';
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const [searchText, setSearchText] = useState<string>('');
+
   const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
   const contactsList = [...contacts];
-  const [openAddFriends, setOpenAddFriends] = useState<boolean>(false);
   useEffect(() => {
     dispatch(getAllContacts());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch]);
 
   const handlePickContact = async (id: string) => {
     navigate(`/app/chat/${id}`);
   };
-  const handleCloseAddFriends = () => {
-    setOpenAddFriends(false);
-  };
+
   const handleOpenAddFriends = () => {
-    setOpenAddFriends(true);
+    dispatch(openAddFriendDialog());
   };
   return (
     <Box
@@ -55,7 +54,14 @@ const Chats = () => {
             <SearchIconWrapper>
               <CiSearch size={18} />
             </SearchIconWrapper>
-            <StyledInputBase placeholder="Search..." inputProps={{ 'aria-label': 'search' }} />
+            <StyledInputBase
+              placeholder="Search..."
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+            />
           </Search>
         </Stack>
         <Stack spacing={1}>
@@ -76,26 +82,50 @@ const Chats = () => {
                 </Typography>
                 {contactsList.length ? (
                   <>
-                    {contactsList
-                      .sort((a, b) => {
-                        const dateA = new Date(a.recentMessage.createdAt).getTime();
-                        const dateB = new Date(b.recentMessage.createdAt).getTime();
-                        return dateB - dateA;
-                      })
-                      .map((item, index) => {
-                        return (
-                          <ChatElement
-                            key={item.contact._id}
-                            {...item.contact}
-                            {...item.recentMessage}
-                            selected={currentContact?._id === contactsList[index].contact._id}
-                            online={item.contact.status === 'online'}
-                            onClick={() => {
-                              handlePickContact(item.contact._id);
-                            }}
-                          />
-                        );
-                      })}
+                    {searchText
+                      ? contactsList
+                          .filter((contact) =>
+                            contact.contact.displayName.toLowerCase().includes(searchText.toLowerCase()),
+                          )
+                          .sort((a, b) => {
+                            const dateA = new Date(a.recentMessage.createdAt).getTime();
+                            const dateB = new Date(b.recentMessage.createdAt).getTime();
+                            return dateB - dateA;
+                          })
+                          .map((item) => {
+                            return (
+                              <ChatElement
+                                key={item.contact._id}
+                                {...item.contact}
+                                {...item.recentMessage}
+                                selected={currentContact?._id === item.contact._id}
+                                online={item.contact.status === 'online'}
+                                onClick={() => {
+                                  handlePickContact(item.contact._id);
+                                }}
+                              />
+                            );
+                          })
+                      : contactsList
+                          .sort((a, b) => {
+                            const dateA = new Date(a.recentMessage.createdAt).getTime();
+                            const dateB = new Date(b.recentMessage.createdAt).getTime();
+                            return dateB - dateA;
+                          })
+                          .map((item) => {
+                            return (
+                              <ChatElement
+                                key={item.contact._id}
+                                {...item.contact}
+                                {...item.recentMessage}
+                                selected={currentContact?._id === item.contact._id}
+                                online={item.contact.status === 'online'}
+                                onClick={() => {
+                                  handlePickContact(item.contact._id);
+                                }}
+                              />
+                            );
+                          })}
                   </>
                 ) : (
                   <Stack alignItems="center" justifyContent="center">
@@ -113,7 +143,6 @@ const Chats = () => {
           )}
         </Scrollbar>
       </Stack>
-      {openAddFriends && <AddFriendsDialog open={openAddFriends} handleClose={handleCloseAddFriends} />}
     </Box>
   );
 };

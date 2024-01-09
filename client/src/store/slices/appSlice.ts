@@ -22,6 +22,9 @@ const initialState: appType = {
     message: '',
     serverity: SERVERITY.SUCCESS,
   },
+  addFriendDialog: {
+    open: false,
+  },
 };
 
 const slice = createSlice({
@@ -59,6 +62,12 @@ const slice = createSlice({
       state.snackbar.open = false;
       state.snackbar.message = '';
     },
+    openAddFriendDialog(state) {
+      state.addFriendDialog.open = true;
+    },
+    closeAddFriendDialog(state) {
+      state.addFriendDialog.open = false;
+    },
   },
 });
 
@@ -73,4 +82,6 @@ export const {
   openSuccessSnackbar,
   openErrorSnackbar,
   setFriendsbar,
+  openAddFriendDialog,
+  closeAddFriendDialog,
 } = slice.actions;

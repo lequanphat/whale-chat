@@ -17,6 +17,9 @@ export interface appType {
     message: string;
     serverity: string;
   };
+  addFriendDialog: {
+    open: boolean;
+  };
 }
 export interface Contact {
   _id: string;

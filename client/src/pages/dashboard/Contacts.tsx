@@ -4,7 +4,7 @@ import { IoMailOutline, IoPersonAddOutline } from 'react-icons/io5';
 import { HiOutlineUserGroup } from 'react-icons/hi2';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFriendsbar } from '../../store/slices/appSlice';
+import { openAddFriendDialog, setFriendsbar } from '../../store/slices/appSlice';
 import { stateType } from '../../store/interface';
 import { useEffect } from 'react';
 
@@ -29,9 +29,16 @@ const Contacts = () => {
   const { friendsbar } = useSelector((state: stateType) => state.app);
   const { receiveTotal } = useSelector((state: stateType) => state.relationship);
   const theme = useTheme();
+
+  // handle
   const handleFriendsAction = (index) => {
     dispatch(setFriendsbar(index));
   };
+  const handleOpenAddFriend = () => {
+    dispatch(openAddFriendDialog());
+  };
+
+  // effect
   useEffect(() => {
     switch (friendsbar.index) {
       case 0:
@@ -60,7 +67,7 @@ const Contacts = () => {
         <Stack px={3} py={2} spacing={2} sx={{ height: '100vh' }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">Contacts</Typography>
-            <IconButton onClick={null}>
+            <IconButton onClick={handleOpenAddFriend}>
               <IoPersonAddOutline size={20} />
             </IconButton>
           </Stack>
