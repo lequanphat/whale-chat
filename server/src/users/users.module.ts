@@ -3,8 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/users.chema';
 import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
-import { JwtService } from 'src/common/services/jwt.service';
 import { Messages, Messageschema } from 'src/schemas/messages.chema';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -18,8 +18,9 @@ import { Messages, Messageschema } from 'src/schemas/messages.chema';
         schema: Messageschema,
       },
     ]),
+    CommonModule,
   ],
-  providers: [UsersService, JwtService],
+  providers: [UsersService],
   controllers: [UsersController],
 })
 export class UsersModule {}

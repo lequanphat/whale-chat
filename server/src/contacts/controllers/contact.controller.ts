@@ -5,16 +5,6 @@ import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 @Controller('contacts')
 export class ContactController {
   constructor(private readonly contactServic: ContactService) {}
-  // @Get('admin')
-  // @Roles(['user', 'admin'])
-  // async adminRouter() {
-  //   return 'admin router ok';
-  // }
-  // @Get('user')
-  // @Roles(['user'])
-  // async userRouter() {
-  //   return 'user router ok';
-  // }
   @Get('get-recommended-users')
   async getRecommendedUsers(@Req() req: any) {
     try {

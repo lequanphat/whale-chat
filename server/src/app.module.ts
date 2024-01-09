@@ -4,16 +4,26 @@ import { MONGO_URL } from './config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './common/middlewares/auth.middleware';
-import { JwtService } from './common/services/jwt.service';
 import { CheckRefreshTokenMiddleware } from './auth/middlewares/checkRefershToken.middleware';
 import { GatewayModule } from './gateway/gateway.module';
 import { MessageModule } from './messages/messages.module';
 import { RoleGuard } from './common/guards/role.guard';
 import { ContactModule } from './contacts/contact.module';
+import { CommonModule } from './common/common.module';
+import { NotificationModule } from './notifications/notifications.module';
 @Module({
-  imports: [MongooseModule.forRoot(MONGO_URL), UsersModule, AuthModule, GatewayModule, MessageModule, ContactModule],
+  imports: [
+    MongooseModule.forRoot(MONGO_URL),
+    UsersModule,
+    AuthModule,
+    GatewayModule,
+    MessageModule,
+    ContactModule,
+    CommonModule,
+    NotificationModule,
+  ],
   controllers: [],
-  providers: [JwtService, RoleGuard],
+  providers: [RoleGuard],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -24,6 +34,7 @@ export class AppModule implements NestModule {
         { path: 'auth/logout', method: RequestMethod.GET },
         { path: 'messages*', method: RequestMethod.ALL },
         { path: 'contacts*', method: RequestMethod.ALL },
+        { path: 'notifications*', method: RequestMethod.ALL },
       )
       .apply(CheckRefreshTokenMiddleware)
       .forRoutes({ path: 'auth/refresh-token', method: RequestMethod.GET });
