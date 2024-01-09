@@ -27,13 +27,20 @@ export class SocketGateway implements NestGateway {
       console.log(`User connected with ID ${userId}`);
       this.onlineUsers.set(userId, client.id);
     });
+    // Xử lý khi gửi tin nhắn
     client.on('send-message', (data) => {
-      // Xử lý khi gửi tin nhắn
       console.log('message from client');
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
-        console.log('return to clinent');
         client.to(sendUserSocket).emit('recieve-message', data);
+      }
+    });
+    // Xử lý khi gửi yêu cầu kết bạn
+    client.on('send-friend-request', (data) => {
+      console.log('friend request from client');
+      const sendUserSocket = this.onlineUsers.get(data.receiveId);
+      if (sendUserSocket) {
+        client.to(sendUserSocket).emit('recieve-friend-request', data);
       }
     });
   }

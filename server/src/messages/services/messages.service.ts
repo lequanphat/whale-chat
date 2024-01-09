@@ -33,7 +33,7 @@ export class MessagesService {
       if (messages.length > 0) {
         const contact = await this.userModel.findById(contactId);
         for (let i = 1; i < messages.length; i++) {
-          if (messages[i - 1].from.toString() === id) {
+          if (messages[i - 1].from.toString() === id || messages[i - 1].type === MessageType.SYSTEM) {
             messages[i].avatar = contact.avatar;
           }
         }

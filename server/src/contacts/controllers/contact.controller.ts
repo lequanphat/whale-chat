@@ -64,13 +64,4 @@ export class ContactController {
       throw error;
     }
   }
-  @Get('get-all-friend-requests-from-self')
-  async getAllFriendRequestsFromSelf(@Req() req: any) {
-    try {
-      const data = await this.contactServic.getAllFriendRequestsFromSelf(req.user.id);
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  }
 }

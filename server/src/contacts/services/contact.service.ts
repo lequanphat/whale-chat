@@ -109,7 +109,7 @@ export class ContactService {
       if (relationshipExists) {
         throw new HttpException('relationship exists', HttpStatus.BAD_REQUEST);
       }
-      const friendRequest = await this.friendRequestModel.create({
+      let friendRequest = await this.friendRequestModel.create({
         sendId: data.sendId,
         receiveId: data.receiveId,
         text: data.text,
@@ -117,6 +117,10 @@ export class ContactService {
       if (!friendRequest) {
         throw new HttpException('Can not create friend request', HttpStatus.BAD_REQUEST);
       }
+      friendRequest = await this.friendRequestModel.findOne({ _id: friendRequest._id }).populate({
+        path: 'sendId',
+        select: '_id displayName avatar about status email',
+      });
       return friendRequest;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -203,20 +207,13 @@ export class ContactService {
         select: '_id displayName avatar about status email',
       })
       .sort({ createdAt: 1 });
-    return friendRequests;
-  }
-  async getAllFriendRequestsFromSelf(id: string) {
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
-    if (!isValidId) {
-      throw new HttpException('Invalid Id', HttpStatus.BAD_REQUEST);
-    }
-    const friendRequests = await this.friendRequestModel
+    const friendRequestsFromSelf = await this.friendRequestModel
       .find({ sendId: id })
       .populate({
         path: 'receiveId',
         select: '_id displayName avatar about status email',
       })
       .sort({ createdAt: -1 });
-    return friendRequests;
+    return { friendRequests, friendRequestsFromSelf };
   }
 }
