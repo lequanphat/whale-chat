@@ -4,6 +4,7 @@ import { BACKEND_SERVER_PATH } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../store/interface';
 import { addMessageToCurrentMessages } from '../store/slices/chatSlice';
+import { addFriendRequest } from '../store/slices/relationshipSlice';
 
 type SocketContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,13 +43,16 @@ export const SocketProvider = ({ children }) => {
       console.log('disconnected...');
     });
     socketInstance.on('recieve-message', (data) => {
-      console.log(data);
       dispatch(addMessageToCurrentMessages(data));
+    });
+    socketInstance.on('recieve-friend-request', (data) => {
+      dispatch(addFriendRequest(data));
     });
     setSocket(socketInstance);
     return () => {
       console.log('unmout-event-socket');
       socketInstance.off('recieve-message');
+      socketInstance.off('recieve-friend-request');
       socketInstance.disconnect();
     };
   }, [id, dispatch, token]);

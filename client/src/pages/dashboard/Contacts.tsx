@@ -1,4 +1,4 @@
-import { IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { Badge, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { LiaUserFriendsSolid } from 'react-icons/lia';
 import { IoMailOutline, IoPersonAddOutline } from 'react-icons/io5';
 import { HiOutlineUserGroup } from 'react-icons/hi2';
@@ -27,6 +27,7 @@ const Contacts = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { friendsbar } = useSelector((state: stateType) => state.app);
+  const { receiveTotal } = useSelector((state: stateType) => state.relationship);
   const theme = useTheme();
   const handleFriendsAction = (index) => {
     dispatch(setFriendsbar(index));
@@ -70,8 +71,8 @@ const Contacts = () => {
                   key={index}
                   direction="row"
                   alignItems="center"
-                  spacing={1}
-                  p={1.4}
+                  justifyContent="space-between"
+                  p={2}
                   sx={{
                     bgcolor: index === friendsbar.index ? theme.palette.primary.main : theme.palette.background.default,
                     borderRadius: 1,
@@ -81,8 +82,11 @@ const Contacts = () => {
                     handleFriendsAction(index);
                   }}
                 >
-                  {item.icon}
-                  <Typography variant="body1">{item.name}</Typography>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    {item.icon}
+                    <Typography variant="body1">{item.name}</Typography>
+                  </Stack>
+                  <Badge badgeContent={index == 2 ? receiveTotal : 0} color="primary" />
                 </Stack>
               );
             })}

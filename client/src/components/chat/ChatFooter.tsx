@@ -1,7 +1,7 @@
 import { Box, IconButton, Stack, useTheme } from '@mui/material';
 import { IoCloseOutline, IoSendSharp } from 'react-icons/io5';
 import ChatInput from './ChatInput';
-import { useChatSocket } from '../../hooks/useChatSocket';
+import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { addDocMessage, addImageMessage, addTextMessage, addVoiceMessage } from '../../store/slices/chatSlice';
@@ -19,7 +19,7 @@ const ChatFooter = () => {
   const [voiceFile, setVoiceFile] = useState(null);
   const [openVoice, setOpenVoice] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
-  const { emitMessage } = useChatSocket();
+  const { emitMessage } = useSocket();
   const theme = useTheme();
 
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {

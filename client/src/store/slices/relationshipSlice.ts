@@ -3,6 +3,7 @@ import api from '../../api/internal';
 import { CreateFriendRequestDTO, DeleteFriendRequestDTO, relationshipType } from '../types';
 
 const initialState: relationshipType = {
+  receiveTotal: 0,
   friendRequests: {
     send: [],
     receive: [],
@@ -13,27 +14,24 @@ const initialState: relationshipType = {
 export const relationshipSlice = createSlice({
   name: 'relationship',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    addFriendRequest(state, action) {
+      state.friendRequests.receive.push(action.payload);
+      state.receiveTotal = state.receiveTotal + 1;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllFriendRequests.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getAllFriendRequests.fulfilled, (state, action) => {
-        state.friendRequests.receive = action.payload;
+        state.friendRequests.receive = action.payload.friendRequests;
+        state.friendRequests.send = action.payload.friendRequestsFromSelf;
+        state.receiveTotal = action.payload.friendRequests.length || 0;
         state.isLoading = false;
       })
       .addCase(getAllFriendRequests.rejected, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(getAllFriendRequestsFromSelf.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getAllFriendRequestsFromSelf.fulfilled, (state, action) => {
-        state.friendRequests.send = action.payload;
-        state.isLoading = false;
-      })
-      .addCase(getAllFriendRequestsFromSelf.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(deleteFriendRequests.pending, (state) => {
@@ -48,6 +46,7 @@ export const relationshipSlice = createSlice({
           state.friendRequests.receive = state.friendRequests.receive.filter(
             (value) => value._id !== action.payload.friendRequest._id,
           );
+          state.receiveTotal = state.receiveTotal - 1;
         }
         state.isLoading = false;
       })
@@ -59,6 +58,7 @@ export const relationshipSlice = createSlice({
       })
       .addCase(acceptFriendRequests.fulfilled, (state, action) => {
         state.friendRequests.receive = state.friendRequests.receive.filter((value) => value._id !== action.payload.id);
+        state.receiveTotal = state.receiveTotal - 1;
         state.isLoading = false;
       })
       .addCase(acceptFriendRequests.rejected, (state) => {
@@ -72,6 +72,7 @@ export const searchUsersForAddFriend = createAsyncThunk(
   async (search: string, { rejectWithValue }) => {
     try {
       const response = await api.get(`/contacts/search-users/${search}`);
+
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });
@@ -127,22 +128,12 @@ export const getAllFriendRequests = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get('/contacts/get-all-friend-requests');
+      console.log(response);
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });
     }
   },
 );
-export const getAllFriendRequestsFromSelf = createAsyncThunk(
-  'relationship/getAllFriendRequestsFromSelf',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get('/contacts/get-all-friend-requests-from-self');
-      return response.data;
-    } catch (error) {
-      return rejectWithValue({ error: 'error' });
-    }
-  },
-);
-
+export const { addFriendRequest } = relationshipSlice.actions;
 export default relationshipSlice.reducer;

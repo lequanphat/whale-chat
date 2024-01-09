@@ -36,6 +36,7 @@ export interface ReceiveFriendRequest {
   createdAt: string;
 }
 export interface relationshipType {
+  receiveTotal: number;
   friendRequests: {
     send: SendFriendRequest[];
     receive: ReceiveFriendRequest[];

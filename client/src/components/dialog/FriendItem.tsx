@@ -6,17 +6,20 @@ import { createFriendRequests } from '../../store/slices/relationshipSlice';
 import { openSuccessSnackbar } from '../../store/slices/appSlice';
 import { useState } from 'react';
 import { IoCheckmark } from 'react-icons/io5';
+import { useSocket } from '../../hooks/useSocket';
 export const FriendItem = ({ user }: { user: User }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const [userInstance, setUserInstance] = useState(user);
+
+  const { emitFriendRequest } = useSocket();
   // handle
   const handleSendFriendRequest = (receiveId: string) => {
-    console.log(`send friend request to ${user.displayName}`);
     (async () => {
       const response = await dispatch(createFriendRequests({ receiveId, text: 'Hello! How are you today?' }));
       if (!response.payload.error) {
+        emitFriendRequest(response.payload);
         dispatch(openSuccessSnackbar('Successfully'));
       }
       setUserInstance({ ...userInstance, status: 'Pending' });

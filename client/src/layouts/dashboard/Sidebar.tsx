@@ -1,24 +1,26 @@
-import { Avatar, Badge, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
+import { Avatar, Box, Divider, Menu, MenuItem, Stack, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CustomSwitch from '../../components/switch/CustomSwitch';
 import logo from '../../assets/logo.png';
-import { Nav_Buttons, Profile_Menu } from '../../data';
+import { Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
-import { openSnackbar, setSidebar } from '../../store/slices/appSlice';
+import { openSnackbar, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
+import { clearMessages, resetContacts, setCurrentContact } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
 import { useNavigate } from 'react-router-dom';
-import { IoNotificationsOutline } from 'react-icons/io5';
+import { IoChatbubbleEllipsesOutline, IoLogoReddit, IoNotificationsOutline, IoPeopleOutline } from 'react-icons/io5';
 import { getAllNotifications } from '../../store/slices/notificationSlice';
+import { getAllFriendRequests } from '../../store/slices/relationshipSlice';
+import { SidebarItem } from '../../components/sidebar/SidebarItem';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { avatar } = useSelector((state: stateType) => state.auth);
-  const { sidebar } = useSelector((state: stateType) => state.app);
   const { unseen } = useSelector((state: stateType) => state.notifications);
+  const { receiveTotal } = useSelector((state: stateType) => state.relationship);
   const theme = useTheme();
   const { onToggleMode } = useSettings();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -27,7 +29,8 @@ const Sidebar = () => {
   // useEffect
   useEffect(() => {
     (async () => {
-      await dispatch(getAllNotifications());
+      dispatch(getAllNotifications());
+      dispatch(getAllFriendRequests());
     })();
   }, [dispatch]);
 
@@ -72,9 +75,11 @@ const Sidebar = () => {
     switch (index) {
       case 0:
         navigate('/app/chat');
+        dispatch(setCurrentContact(null));
         break;
       case 1:
-        navigate('/contacts');
+        navigate('/contacts/friends');
+        dispatch(setFriendsbar(0));
         break;
       case 2:
         navigate('/gpt');
@@ -86,6 +91,8 @@ const Sidebar = () => {
         break;
     }
   };
+
+  // render
   return (
     <Box
       p={2}
@@ -112,63 +119,26 @@ const Sidebar = () => {
             <img src={logo} alt="logo" />
           </Box>
           <Stack spacing={3} sx={{ width: 'max-content' }} direction="column" alignItems="center">
-            {Nav_Buttons.map((item) =>
-              item.index === sidebar.index ? (
-                <Box key={item.index} sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
-                  {' '}
-                  <IconButton
-                    sx={{
-                      width: 'max-content',
-                      color: '#fff',
-                    }}
-                    key={item.index}
-                  >
-                    {item.icon}
-                  </IconButton>
-                </Box>
-              ) : (
-                <IconButton
-                  key={item.index}
-                  sx={{
-                    width: 'max-content',
-                    color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
-                  }}
-                  onClick={() => {
-                    handleSidebarAction(item.index);
-                  }}
-                >
-                  {item.icon}
-                </IconButton>
-              ),
-            )}
+            <SidebarItem
+              index={0}
+              action={handleSidebarAction}
+              icon={<IoChatbubbleEllipsesOutline />}
+              badgeContent={0}
+            />
+            <SidebarItem
+              index={1}
+              action={handleSidebarAction}
+              icon={<IoPeopleOutline />}
+              badgeContent={receiveTotal}
+            />
+            <SidebarItem index={2} action={handleSidebarAction} icon={<IoLogoReddit />} badgeContent={0} />
             <Divider sx={{ width: '48px' }} />
-            {sidebar.index === 3 ? (
-              <Box sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
-                {' '}
-                <IconButton
-                  sx={{
-                    width: 'max-content',
-                    color: '#fff',
-                  }}
-                >
-                  <IoNotificationsOutline />
-                </IconButton>
-              </Box>
-            ) : (
-              <IconButton
-                onClick={() => {
-                  handleSidebarAction(3);
-                }}
-                sx={{
-                  width: 'max-content',
-                  color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
-                }}
-              >
-                <Badge badgeContent={unseen} color="primary">
-                  <IoNotificationsOutline />
-                </Badge>
-              </IconButton>
-            )}
+            <SidebarItem
+              index={3}
+              action={handleSidebarAction}
+              icon={<IoNotificationsOutline />}
+              badgeContent={unseen}
+            />
           </Stack>
         </Stack>
         <Stack alignItems="center" spacing={2}>

@@ -1,22 +1,20 @@
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { FriendRequestItem } from './FriendRequestItem';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllFriendRequests, getAllFriendRequestsFromSelf } from '../../store/slices/relationshipSlice';
 import { FriendRequestType } from './types';
 import { stateType } from '../../store/interface';
+import { useEffect } from 'react';
+import { getAllFriendRequests } from '../../store/slices/relationshipSlice';
 
 const FriendRequest = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const { friendRequests } = useSelector((state: stateType) => state.relationship);
-  // effect
+
+  // useEffect
   useEffect(() => {
-    (async () => {
-      dispatch(getAllFriendRequests());
-      dispatch(getAllFriendRequestsFromSelf());
-    })();
+    dispatch(getAllFriendRequests());
   }, [dispatch]);
 
   //render
@@ -39,19 +37,19 @@ const FriendRequest = () => {
         <Stack mb={2} mt={2}>
           <Typography variant="body2">Invitation received ({friendRequests.receive?.length})</Typography>
         </Stack>
-        <Stack direction="row" spacing={2}>
+        <Grid container spacing={2}>
           {friendRequests.receive?.map((item) => (
             <FriendRequestItem key={item._id} value={item} type={FriendRequestType.RECEIVE} />
           ))}
-        </Stack>
+        </Grid>
         <Stack mb={2} mt={4}>
           <Typography variant="body2">Invitation sent ({friendRequests.send?.length})</Typography>
         </Stack>
-        <Stack direction="row" spacing={2} mb={2}>
+        <Grid container spacing={2}>
           {friendRequests.send?.map((item) => (
             <FriendRequestItem key={item._id} value={item} type={FriendRequestType.SEND} />
           ))}
-        </Stack>
+        </Grid>
       </Stack>
     </Stack>
   );

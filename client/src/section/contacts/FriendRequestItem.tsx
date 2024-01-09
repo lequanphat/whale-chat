@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { formatMongoTime } from '../../utils/formatTime';
 import { useDispatch } from 'react-redux';
 import { acceptFriendRequests, deleteFriendRequests } from '../../store/slices/relationshipSlice';
@@ -29,70 +29,71 @@ export const FriendRequestItem = ({
 
   // render
   return (
-    <Box
-      sx={{
-        bgcolor: theme.palette.background.default,
-        borderRadius: 0.8,
-        width: '33.33% ',
-      }}
-      p={2}
-    >
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <Avatar
-          sx={{ width: 45, height: 45 }}
-          src={type === FriendRequestType.RECEIVE ? value.sendId.avatar : value.receiveId.avatar}
-        />
-        <Stack>
-          <Typography variant="body2" fontSize={16}>
-            {type === FriendRequestType.RECEIVE ? value.sendId.displayName : value.receiveId.displayName}
-          </Typography>
-          <Typography variant="body1" fontSize={14}>
-            {formatMongoTime(value.createdAt)}
-          </Typography>
+    <Grid item xs={6} sm={4} md={3}>
+      <Box
+        p={2}
+        sx={{
+          bgcolor: theme.palette.background.default,
+          borderRadius: 0.8,
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Avatar
+            sx={{ width: 45, height: 45 }}
+            src={type === FriendRequestType.RECEIVE ? value.sendId.avatar : value.receiveId.avatar}
+          />
+          <Stack>
+            <Typography variant="body2" fontSize={16}>
+              {type === FriendRequestType.RECEIVE ? value.sendId.displayName : value.receiveId.displayName}
+            </Typography>
+            <Typography variant="body1" fontSize={14}>
+              {formatMongoTime(value.createdAt)}
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
-      <Box p={1} mt={2} mb={2} bgcolor={theme.palette.background.paper} sx={{ borderRadius: 0.4 }}>
-        <Typography variant="body1" fontSize={14}>
-          {value.text}
-        </Typography>
-      </Box>
-      <Stack direction="row" spacing={2}>
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            color: theme.palette.text.primary,
-            bgcolor: theme.palette.background.paper,
-            boxShadow: 'none',
-            ':hover': {
-              bgcolor: theme.palette.background.paper,
-            },
-          }}
-          onClick={
-            type === FriendRequestType.RECEIVE
-              ? () => {
-                  handleDeleteFriendRequest({ sendId: value.sendId._id, receiveId: value.receiveId });
-                }
-              : () => {
-                  handleDeleteFriendRequest({ sendId: value.sendId, receiveId: value.receiveId._id });
-                }
-          }
-        >
-          Cancel
-        </Button>
-        {type == FriendRequestType.RECEIVE && (
+        <Box p={1} mt={2} mb={2} bgcolor={theme.palette.background.paper} sx={{ borderRadius: 0.4 }}>
+          <Typography variant="body1" fontSize={14}>
+            {value.text}
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={2}>
           <Button
             variant="contained"
             fullWidth
             sx={{
+              color: theme.palette.text.primary,
+              bgcolor: theme.palette.background.paper,
               boxShadow: 'none',
+              ':hover': {
+                bgcolor: theme.palette.background.paper,
+              },
             }}
-            onClick={handleAcceptFriendRequest}
+            onClick={
+              type === FriendRequestType.RECEIVE
+                ? () => {
+                    handleDeleteFriendRequest({ sendId: value.sendId._id, receiveId: value.receiveId });
+                  }
+                : () => {
+                    handleDeleteFriendRequest({ sendId: value.sendId, receiveId: value.receiveId._id });
+                  }
+            }
           >
-            Accept
+            Cancel
           </Button>
-        )}
-      </Stack>
-    </Box>
+          {type == FriendRequestType.RECEIVE && (
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{
+                boxShadow: 'none',
+              }}
+              onClick={handleAcceptFriendRequest}
+            >
+              Accept
+            </Button>
+          )}
+        </Stack>
+      </Box>
+    </Grid>
   );
 };
