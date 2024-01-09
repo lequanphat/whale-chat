@@ -6,7 +6,7 @@ import { Relationship } from 'src/schemas/relationship.chema';
 import { FriendRequestType, createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 import { User } from 'src/schemas/users.chema';
 import { Messages } from 'src/schemas/messages.chema';
-import { MessageType } from 'src/schemas/types';
+import { MessageType, UserRole } from 'src/schemas/types';
 
 @Injectable()
 export class ContactService {
@@ -18,11 +18,10 @@ export class ContactService {
   ) {}
   async getRecommendedUsers(id: string) {
     try {
-      const users = await this.userModel
-        .find({ _id: { $ne: id } })
+      let users = await this.userModel
+        .find({ _id: { $ne: id }, role: UserRole.USER })
         .select(['_id', 'displayName', 'email', 'status', 'avatar'])
-        .sort({ createdAt: -1 })
-        .limit(5);
+        .sort({ createdAt: -1 });
 
       const friendRequests = await this.friendRequestModel
         .find({
@@ -31,24 +30,17 @@ export class ContactService {
         .select(['_id', 'sendId', 'receiveId']);
       const relationships = await this.relationshipModel.find({ users: { $in: [id] } });
       //
-      users.forEach((user: any, index) => {
-        friendRequests.forEach((friendRequest) => {
-          if (
-            user._id.toString() === friendRequest.sendId.toString() ||
-            user._id.toString() === friendRequest.receiveId.toString()
-          ) {
-            users.splice(index, 1);
-          }
-        });
-        relationships.forEach((relationship) => {
-          if (
-            user._id.toString() === relationship.users[0].toString() ||
-            user._id.toString() === relationship.users[1].toString()
-          ) {
-            users.splice(index, 1);
-          }
-        });
+      const idArray = [];
+      friendRequests.forEach((friendRequest) => {
+        idArray.push(friendRequest.sendId.toString());
+        idArray.push(friendRequest.receiveId.toString());
       });
+      relationships.forEach((relationship) => {
+        idArray.push(relationship.users[0].toString());
+        idArray.push(relationship.users[1].toString());
+      });
+      users = users.filter((user) => !idArray.includes(user._id.toString()));
+
       return users;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -67,23 +59,22 @@ export class ContactService {
       //
       const relationships = await this.relationshipModel.find({ users: { $in: [id] } });
 
+      const friendRequestIds = [];
+      const relationshipIds = [];
+      friendRequests.forEach((friendRequest) => {
+        friendRequestIds.push(friendRequest.sendId.toString());
+        friendRequestIds.push(friendRequest.receiveId.toString());
+      });
+      relationships.forEach((relationship) => {
+        relationshipIds.push(relationship.users[0].toString());
+        relationshipIds.push(relationship.users[1].toString());
+      });
       users.forEach((user: any) => {
-        friendRequests.forEach((friendRequest) => {
-          if (
-            user._id.toString() === friendRequest.sendId.toString() ||
-            user._id.toString() === friendRequest.receiveId.toString()
-          ) {
-            user.status = 'Pending';
-          }
-        });
-        relationships.forEach((relationship) => {
-          if (
-            user._id.toString() === relationship.users[0].toString() ||
-            user._id.toString() === relationship.users[1].toString()
-          ) {
-            user.status = 'Friend';
-          }
-        });
+        if (friendRequestIds.includes(user._id.toString())) {
+          user.status = 'Pending';
+        } else if (relationshipIds.includes(user._id.toString())) {
+          user.status = 'Friend';
+        }
       });
 
       return users;
