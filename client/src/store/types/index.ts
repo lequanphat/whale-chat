@@ -43,6 +43,19 @@ export interface relationshipType {
   isLoading: boolean;
 }
 
+export interface Notification {
+  _id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  seen: boolean;
+}
+export interface notificationType {
+  unseen: number;
+  notifications: Notification[];
+  isLoading: boolean;
+}
+
 export interface CreateFriendRequestDTO {
   receiveId: string;
   text: string;

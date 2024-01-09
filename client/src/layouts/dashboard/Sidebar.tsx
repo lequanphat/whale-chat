@@ -1,5 +1,5 @@
 import { Avatar, Badge, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomSwitch from '../../components/switch/CustomSwitch';
 import logo from '../../assets/logo.png';
 import { Nav_Buttons, Profile_Menu } from '../../data';
@@ -11,17 +11,27 @@ import { clearMessages, resetContacts } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
 import { useNavigate } from 'react-router-dom';
 import { IoNotificationsOutline } from 'react-icons/io5';
+import { getAllNotifications } from '../../store/slices/notificationSlice';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { avatar } = useSelector((state: stateType) => state.auth);
   const { sidebar } = useSelector((state: stateType) => state.app);
+  const { unseen } = useSelector((state: stateType) => state.notifications);
   const theme = useTheme();
   const { onToggleMode } = useSettings();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  // useEffect
+  useEffect(() => {
+    (async () => {
+      await dispatch(getAllNotifications());
+    })();
+  }, [dispatch]);
+
+  // handle
   const handleClick = (event: React.SyntheticEvent) => {
     setAnchorEl(event.currentTarget);
   };
@@ -154,7 +164,7 @@ const Sidebar = () => {
                   color: theme.palette.mode === 'light' ? theme.palette.text.primary : '#fff',
                 }}
               >
-                <Badge badgeContent={1} color="primary">
+                <Badge badgeContent={unseen} color="primary">
                   <IoNotificationsOutline />
                 </Badge>
               </IconButton>
