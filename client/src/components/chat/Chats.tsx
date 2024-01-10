@@ -8,7 +8,7 @@ import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { stateType } from '../../store/interface';
-import { getAllContacts } from '../../store/slices/chatSlice';
+import { getAllContacts, seenMessages } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { openAddFriendDialog } from '../../store/slices/appSlice';
@@ -26,8 +26,11 @@ const Chats = () => {
     dispatch(getAllContacts());
   }, [dispatch]);
 
-  const handlePickContact = async (id: string) => {
+  const handlePickContact = async ({ id, total }: { id: string; total: number }) => {
     navigate(`/app/chat/${id}`);
+    if (total !== 0) {
+      dispatch(seenMessages(id));
+    }
   };
 
   const handleOpenAddFriends = () => {
@@ -96,12 +99,12 @@ const Chats = () => {
                             return (
                               <ChatElement
                                 key={item.contact._id}
-                                {...item.contact}
-                                {...item.recentMessage}
+                                contact={item.contact}
                                 selected={currentContact?._id === item.contact._id}
-                                online={item.contact.status === 'online'}
+                                recentMessages={item.recentMessage}
+                                unseen={item.total}
                                 onClick={() => {
-                                  handlePickContact(item.contact._id);
+                                  handlePickContact({ id: item.contact._id, total: item.total });
                                 }}
                               />
                             );
@@ -116,12 +119,12 @@ const Chats = () => {
                             return (
                               <ChatElement
                                 key={item.contact._id}
-                                {...item.contact}
-                                {...item.recentMessage}
                                 selected={currentContact?._id === item.contact._id}
-                                online={item.contact.status === 'online'}
+                                contact={item.contact}
+                                recentMessages={item.recentMessage}
+                                unseen={item.total}
                                 onClick={() => {
-                                  handlePickContact(item.contact._id);
+                                  handlePickContact({ id: item.contact._id, total: item.total });
                                 }}
                               />
                             );

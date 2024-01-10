@@ -13,10 +13,12 @@ const Message = ({ currentMessages }) => {
   const { isMessagesLoading } = useSelector((state: stateType) => state.chat);
   const scrollRef = useRef(null);
 
+  // effect
   useEffect(() => {
     scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [scrollRef, currentMessages]);
 
+  //render
   return isMessagesLoading ? (
     <Loading />
   ) : (

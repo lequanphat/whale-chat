@@ -29,16 +29,19 @@ export interface Contact {
   about: string;
   status: string;
 }
+export interface RecentMessage{
+  type: MessageType;
+  text: string;
+  createdAt: string;
+}
 export interface ExtendContact {
   contact: Contact;
-  recentMessage: {
-    type: MessageType;
-    text: string;
-    createdAt: string;
-  };
+  recentMessage: RecentMessage;
+  total: number;
 }
 
 export interface chatType {
+  unseenMessage: number;
   contacts: ExtendContact[];
   currentContact: Contact;
   isLoading: boolean;

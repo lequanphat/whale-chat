@@ -4,7 +4,7 @@ import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
 import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
-import { IoImageOutline, IoCameraOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
+import { IoImageOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
 import MediaPreview from './MediaPreview';
 
@@ -13,11 +13,6 @@ const Actions = [
     color: '#4da5fe',
     icon: <IoImageOutline size={22} />,
     title: 'Photo/Video',
-  },
-  {
-    color: '#4da5fe',
-    icon: <IoCameraOutline size={22} />,
-    title: 'Camera',
   },
   {
     color: '#4da5fe',
@@ -57,15 +52,12 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
         imageInputRef.current.click();
         break;
       case 1:
-        alert('Camera feature');
-        break;
-      case 2:
         documentInputRef.current.click();
         break;
-      case 3:
+      case 2:
         setOpenVoice(true);
         break;
-      case 4:
+      case 3:
         alert('Contacts feature');
         break;
 
@@ -123,7 +115,6 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
       <StyledInput
         value={text}
         onChange={(e) => {
-          // dispatch(setMessage(e.target.value));
           setText(e.target.value);
         }}
         fullWidth

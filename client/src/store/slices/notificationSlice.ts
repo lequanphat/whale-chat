@@ -11,7 +11,13 @@ const initialState: notificationType = {
 export const notificationSlice = createSlice({
   name: 'notification',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    resetNotificationSlice(state) {
+      state.unseen = 0;
+      state.notifications = [];
+      state.isLoading = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllNotifications.pending, (state) => {
@@ -84,5 +90,5 @@ export const seenNotification = createAsyncThunk(
     }
   },
 );
-
+export const { resetNotificationSlice } = notificationSlice.actions;
 export default notificationSlice.reducer;

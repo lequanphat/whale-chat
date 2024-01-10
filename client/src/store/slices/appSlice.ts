@@ -31,6 +31,12 @@ const slice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+    resetAppSlice(state) {
+      state.sidebar.index = 0;
+      state.friendsbar.index = 0;
+      state.contactbar.open = false;
+      state.addFriendDialog.open = false;
+    },
     setSidebar(state, action) {
       state.sidebar.index = action.payload;
     },
@@ -84,4 +90,5 @@ export const {
   setFriendsbar,
   openAddFriendDialog,
   closeAddFriendDialog,
+  resetAppSlice,
 } = slice.actions;

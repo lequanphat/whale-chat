@@ -5,20 +5,21 @@ import logo from '../../assets/logo.png';
 import { Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 import { resetUser, userLogout } from '../../store/slices/authSlice';
-import { openSnackbar, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
+import { openSnackbar, resetAppSlice, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearMessages, resetContacts, setCurrentContact } from '../../store/slices/chatSlice';
+import { resetChatSlice, setCurrentContact } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
 import { useNavigate } from 'react-router-dom';
 import { IoChatbubbleEllipsesOutline, IoLogoReddit, IoNotificationsOutline, IoPeopleOutline } from 'react-icons/io5';
-import { getAllNotifications } from '../../store/slices/notificationSlice';
-import { getAllFriendRequests } from '../../store/slices/relationshipSlice';
+import { getAllNotifications, resetNotificationSlice } from '../../store/slices/notificationSlice';
+import { getAllFriendRequests, resetRelationshipSlice } from '../../store/slices/relationshipSlice';
 import { SidebarItem } from '../../components/sidebar/SidebarItem';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { avatar } = useSelector((state: stateType) => state.auth);
+  const { unseenMessage } = useSelector((state: stateType) => state.chat);
   const { unseen } = useSelector((state: stateType) => state.notifications);
   const { receiveTotal } = useSelector((state: stateType) => state.relationship);
   const theme = useTheme();
@@ -43,15 +44,15 @@ const Sidebar = () => {
   };
   const handleLogout = async () => {
     const response = await dispatch(userLogout());
-    if (response.error) {
-      dispatch(openSnackbar({ message: 'Something went wrong!', serverity: 'error' }));
+    if (!response.error) {
+      dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
+      dispatch(resetChatSlice());
+      dispatch(resetAppSlice());
       dispatch(resetUser());
-      return;
+      dispatch(resetNotificationSlice());
+      dispatch(resetRelationshipSlice());
+      window.localStorage.removeItem('accessToken');
     }
-    dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
-    dispatch(resetContacts());
-    dispatch(clearMessages());
-    window.localStorage.removeItem('accessToken');
   };
   const handleAccountManager = (index) => {
     switch (index) {
@@ -70,6 +71,7 @@ const Sidebar = () => {
     }
     setAnchorEl(null);
   };
+
   const handleSidebarAction = (index) => {
     dispatch(setSidebar(index));
     switch (index) {
@@ -91,7 +93,6 @@ const Sidebar = () => {
         break;
     }
   };
-
   // render
   return (
     <Box
@@ -123,7 +124,7 @@ const Sidebar = () => {
               index={0}
               action={handleSidebarAction}
               icon={<IoChatbubbleEllipsesOutline />}
-              badgeContent={0}
+              badgeContent={unseenMessage}
             />
             <SidebarItem
               index={1}

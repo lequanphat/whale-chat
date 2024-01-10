@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 import { chatType } from '../interface';
 const initialState: chatType = {
+  unseenMessage: 0,
   chats: [],
   contacts: [],
   currentContact: undefined,
@@ -19,8 +20,15 @@ const chatSlice = createSlice({
       state.currentContact = undefined;
       state.contacts = [];
     },
+    resetChatSlice(state) {
+      state.unseenMessage = 0;
+      state.chats = [];
+      state.contacts = [];
+      state.currentContact = undefined;
+      state.isLoading = false;
+      state.isMessagesLoading = false;
+    },
 
-    setRecieveMessage() {},
     addMessageToCurrentMessages(state, action) {
       state.chats.forEach((item) => {
         if (item.id === action.payload.from) {
@@ -38,8 +46,14 @@ const chatSlice = createSlice({
           item.recentMessage.type = action.payload.type;
           item.recentMessage.text = action.payload.text;
           item.recentMessage.createdAt = action.payload.createdAt;
+          if (action.payload.from !== state.currentContact?._id) {
+            item.total += 1;
+          }
         }
       });
+      if (action.payload.from !== state.currentContact?._id) {
+        state.unseenMessage += 1;
+      }
     },
 
     clearMessages(state) {
@@ -53,6 +67,7 @@ const chatSlice = createSlice({
       })
       .addCase(getAllContacts.fulfilled, (state, action) => {
         state.contacts = [...action.payload.contacts];
+        state.unseenMessage = state.contacts.reduce((total, current) => total + current.total, 0);
         state.isLoading = false;
       })
       .addCase(getAllContacts.rejected, (state) => {
@@ -122,12 +137,22 @@ const chatSlice = createSlice({
           }
         });
       })
-      .addCase(addVoiceMessage.rejected, () => {});
+      .addCase(addVoiceMessage.rejected, () => {})
+      .addCase(seenMessages.pending, () => {})
+      .addCase(seenMessages.fulfilled, (state, action) => {
+        for (const contact of state.contacts) {
+          if (contact.contact._id === action.payload.contactId) {
+            state.unseenMessage -= contact.total;
+            contact.total = 0;
+          }
+        }
+      })
+      .addCase(seenMessages.rejected, () => {});
   },
 });
 export const getAllContacts = createAsyncThunk('contacts/getAllContacts', async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get(`/users/contacts`);
+    const response = await api.get(`/contacts/all-contacts`);
     return { contacts: response.data };
   } catch (error) {
     return rejectWithValue({ error: error.response.data.message });
@@ -211,13 +236,16 @@ export const addVoiceMessage = createAsyncThunk('chat/addVoiceMessage', async (d
     return rejectWithValue({ error: error.response.data.message });
   }
 });
+export const seenMessages = createAsyncThunk('chat/seenMessages', async (contactId: string, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/messages/seen/${contactId}`);
+    console.log(response);
+
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error: error.response.data.message });
+  }
+});
 export default chatSlice.reducer;
-export const {
-  setCurrentContact,
-  resetContacts,
-
-  setRecieveMessage,
-  addMessageToCurrentMessages,
-
-  clearMessages,
-} = chatSlice.actions;
+export const { setCurrentContact, resetContacts, resetChatSlice, addMessageToCurrentMessages, clearMessages } =
+  chatSlice.actions;

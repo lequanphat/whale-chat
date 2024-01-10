@@ -15,6 +15,14 @@ export const relationshipSlice = createSlice({
   name: 'relationship',
   initialState: initialState,
   reducers: {
+    resetRelationshipSlice(state) {
+      state.receiveTotal = 0;
+      state.friendRequests = {
+        send: [],
+        receive: [],
+      };
+      state.isLoading = false;
+    },
     addFriendRequest(state, action) {
       state.friendRequests.receive.push(action.payload);
       state.receiveTotal = state.receiveTotal + 1;
@@ -128,12 +136,11 @@ export const getAllFriendRequests = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get('/contacts/get-all-friend-requests');
-      console.log(response);
       return response.data;
     } catch (error) {
       return rejectWithValue({ error: 'error' });
     }
   },
 );
-export const { addFriendRequest } = relationshipSlice.actions;
+export const { addFriendRequest, resetRelationshipSlice } = relationshipSlice.actions;
 export default relationshipSlice.reducer;
