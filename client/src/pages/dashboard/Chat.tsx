@@ -20,6 +20,7 @@ export const Chat = () => {
   const theme = useTheme();
   const [currentMessages, setCurrentMessages] = useState<object[]>([]);
 
+  // effect
   useEffect(() => {
     const result = contacts.findIndex((contact) => contact.contact._id === chatId);
     if (result === -1) {
@@ -32,17 +33,17 @@ export const Chat = () => {
         dispatch(getMessages(chatId));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatId, contacts]);
+  }, [chatId, chats, contacts, dispatch, navigate]);
 
-  // set current messages
-
+  // effect
   useEffect(() => {
     const chat = chats.find((value) => value.id === chatId);
     if (chat) {
       setCurrentMessages(chat.messages);
     }
   }, [chatId, chats]);
+
+  // render
   return (
     <>
       <Box
