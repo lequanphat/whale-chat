@@ -9,3 +9,7 @@ export class FileUploadDTO {
   text: string;
   file: string;
 }
+export class SeenMessagesDTO {
+  from: string;
+  to: string;
+}

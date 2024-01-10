@@ -5,6 +5,16 @@ import { createFriendRequestDTO, deleteFriendRequestDTO } from '../types';
 @Controller('contacts')
 export class ContactController {
   constructor(private readonly contactServic: ContactService) {}
+  @Get('all-contacts')
+  async getAllContacts(@Req() req: any) {
+    try {
+      const id = req.user.id;
+      const data = await this.contactServic.getAllContacts(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
   @Get('get-recommended-users')
   async getRecommendedUsers(@Req() req: any) {
     try {

@@ -16,6 +16,79 @@ export class ContactService {
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
     @InjectModel(Messages.name) private messageModel: Model<Messages>,
   ) {}
+  async getAllContacts(id: string) {
+    console.log(id);
+    try {
+      const relationalContacts = await this.relationshipModel
+        .aggregate([
+          {
+            $match: {
+              users: { $in: [mongoose.Types.ObjectId.createFromHexString(id)] },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'users',
+              foreignField: '_id',
+              as: 'details',
+            },
+          },
+          {
+            $project: {
+              'details._id': 1,
+              'details.displayName': 1,
+              'details.email': 1,
+              'details.about': 1,
+              'details.avatar': 1,
+              'details.status': 1,
+            },
+          },
+        ])
+        .exec();
+
+      const contacts = [];
+      relationalContacts.forEach((contact) => {
+        if (contact.details[0]._id.toString() !== id) {
+          contacts.push(contact.details[0]);
+        } else if (contact.details[1]._id.toString() !== id) {
+          contacts.push(contact.details[1]);
+        }
+      });
+      const responeContacts = [];
+      for (const contact of contacts) {
+        let messages = await this.messageModel
+          .find({
+            $or: [
+              { from: id, to: contact._id },
+              { from: contact._id, to: id },
+            ],
+            seen: false,
+          })
+          .sort({ createdAt: -1 });
+        let totalUnSeen = messages.length;
+        if (totalUnSeen === 0) {
+          messages = await this.messageModel
+            .find({
+              $or: [
+                { from: id, to: contact._id },
+                { from: contact._id, to: id },
+              ],
+            })
+            .sort({ createdAt: -1 });
+        } else {
+          if (messages[0].from.toString() === id) {
+            totalUnSeen = 0;
+          }
+        }
+        //
+        responeContacts.push({ contact: contact, recentMessage: messages[0], total: totalUnSeen });
+      }
+      return responeContacts;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
   async getRecommendedUsers(id: string) {
     try {
       let users = await this.userModel

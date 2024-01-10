@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { FileUploadDTO, TextMessageDTO } from '../types';
+import { FileUploadDTO, SeenMessagesDTO, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { User } from 'src/schemas/users.chema';
 import { MessageType } from 'src/schemas/types';
@@ -27,7 +27,6 @@ export class MessagesService {
           ],
         })
         .sort({ createdAt: 1 });
-      console.log(messages);
 
       messages = messages.slice(Math.max(messages.length - 20, 0));
       if (messages.length > 0) {
@@ -137,6 +136,24 @@ export class MessagesService {
         throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
       }
       return { message: voiceMessage };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async seenMessages({ from, to }: SeenMessagesDTO) {
+    try {
+      const messages = await this.messageModel.updateMany(
+        {
+          from,
+          to,
+        },
+        { $set: { seen: true } },
+      );
+      if (!messages) {
+        throw new HttpException('Error in seen message', HttpStatus.BAD_REQUEST);
+      }
+      console.log(messages);
+      return { contactId: from };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

@@ -76,6 +76,14 @@ export class MessagesController {
       throw error;
     }
   }
+  @Get('seen/:contactId')
+  async seenMessages(@Param('contactId') contactId: string, @Req() req: any) {
+    try {
+      return await this.messageService.seenMessages({ from: contactId, to: req.user.id });
+    } catch (error) {
+      throw error;
+    }
+  }
   @Get(':contactId')
   async getAllMessages(@Param('contactId') contactId: string, @Req() req: any, @Res() res: Response) {
     try {

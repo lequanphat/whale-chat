@@ -85,6 +85,7 @@ export class UsersService {
         flag.push(mes.to._id.toString());
       }
     });
+
     return contacts;
   }
   async setAvatar({ id, file }: { id: string; file: string }) {

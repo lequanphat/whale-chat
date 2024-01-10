@@ -17,12 +17,14 @@ export class Messages extends Document {
   to: mongoose.Schema.Types.ObjectId;
   @Prop()
   image: string;
-  @Prop() // online, offline, block
+  @Prop()
   doc: string;
   @Prop()
   voice: string;
   @Prop()
   avatar: string;
+  @Prop({ required: true, default: false })
+  seen: boolean;
 }
 
 export const Messageschema = SchemaFactory.createForClass(Messages);
