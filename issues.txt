@@ -1,1 +1,1 @@
-[1] Receive message when user isn't in chat page. CurrentContact is not null
+[1] Receive message when user isn't in chat page. CurrentContact is not null.
