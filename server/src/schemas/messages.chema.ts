@@ -2,6 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { MessageType } from './types';
 
+export class ContactType {
+  _id: string;
+  avatar: string;
+  displayName: string;
+  email: string;
+}
+
 @Schema({ timestamps: true })
 export class Messages extends Document {
   @Prop({ required: true, default: MessageType.TEXT })
@@ -15,14 +22,22 @@ export class Messages extends Document {
 
   @Prop({ required: true, ref: 'User' })
   to: mongoose.Schema.Types.ObjectId;
+
   @Prop()
   image: string;
+
   @Prop()
   doc: string;
+
   @Prop()
   voice: string;
+
+  @Prop()
+  contact: ContactType;
+
   @Prop()
   avatar: string;
+
   @Prop({ required: true, default: false })
   seen: boolean;
 }

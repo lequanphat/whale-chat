@@ -1,3 +1,5 @@
+import { ContactType } from 'src/schemas/messages.chema';
+
 export class TextMessageDTO {
   from: string;
   to: string;
@@ -12,4 +14,9 @@ export class FileUploadDTO {
 export class SeenMessagesDTO {
   from: string;
   to: string;
+}
+export class ContactMessageDTO {
+  from: string;
+  to: string;
+  contact: ContactType;
 }

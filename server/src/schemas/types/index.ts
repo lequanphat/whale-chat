@@ -13,4 +13,5 @@ export enum MessageType {
   DOC = 'doc',
   VOICE = 'voice',
   TIMELINE = 'timeline',
+  CONTACT = 'contact',
 }

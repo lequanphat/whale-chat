@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { MessagesService } from '../services/messages.service';
-import { TextMessageDTO } from '../types';
+import { ContactMessageDTO, TextMessageDTO } from '../types';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { uploadStorage } from '../utils/uploadStorage';
@@ -25,6 +25,16 @@ export class MessagesController {
     try {
       const { message } = await this.messageService.addSystemMessage(data);
       return res.status(HttpStatus.OK).json({ message });
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Post('add-contact-message')
+  async addContactMessage(@Body() data: ContactMessageDTO, @Req() req: any) {
+    data.from = req.user.id;
+    try {
+      const { message } = await this.messageService.addContactMessage(data);
+      return message;
     } catch (error) {
       throw error;
     }

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { FileUploadDTO, SeenMessagesDTO, TextMessageDTO } from '../types';
+import { ContactMessageDTO, FileUploadDTO, SeenMessagesDTO, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { User } from 'src/schemas/users.chema';
 import { MessageType } from 'src/schemas/types';
@@ -70,6 +70,25 @@ export class MessagesService {
         to: data.to,
         text: data.text,
         type: MessageType.SYSTEM,
+      });
+      if (message) {
+        return { message };
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addContactMessage(data: ContactMessageDTO) {
+    const isValidFrom = mongoose.Types.ObjectId.isValid(data.from);
+    if (!isValidFrom) {
+      throw new HttpException('Invalid From field', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const message = await this.messageModel.create({
+        from: data.from,
+        to: data.to,
+        contact: data.contact,
+        type: MessageType.CONTACT,
       });
       if (message) {
         return { message };
