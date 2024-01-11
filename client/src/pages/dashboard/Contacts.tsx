@@ -1,6 +1,6 @@
 import { Badge, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { LiaUserFriendsSolid } from 'react-icons/lia';
-import { IoMailOutline, IoPersonAddOutline } from 'react-icons/io5';
+import { IoMailOutline, IoPeopleOutline, IoPersonAddOutline } from 'react-icons/io5';
 import { HiOutlineUserGroup } from 'react-icons/hi2';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -67,9 +67,14 @@ const Contacts = () => {
         <Stack px={3} py={2} spacing={2} sx={{ height: '100vh' }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">Contacts</Typography>
-            <IconButton onClick={handleOpenAddFriend}>
-              <IoPersonAddOutline size={20} />
-            </IconButton>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <IconButton onClick={handleOpenAddFriend}>
+                <IoPersonAddOutline size={20} />
+              </IconButton>
+              <IconButton onClick={null}>
+                <IoPeopleOutline size={22} />
+              </IconButton>
+            </Stack>
           </Stack>
           <Stack spacing={1.2}>
             {Action.map((item, index) => {

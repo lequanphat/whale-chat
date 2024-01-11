@@ -1,12 +1,13 @@
-import { Avatar, Box, IconButton, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, CircularProgress, IconButton, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import download from 'downloadjs';
 import default_img from '../../assets/default-img.jpg';
 import getFileImage from '../../utils/getFileImage';
 import api from '../../api/internal';
-import { Message } from './interface';
+import { Message } from './types';
+import { IoPlay, IoStop } from 'react-icons/io5';
 
 const Message_Option = [
   {
@@ -183,9 +184,80 @@ const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
   );
 });
 const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+  const theme = useTheme();
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+
+  //handle
+  const handlePlayAudio = () => {
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
+  const handlePauseAudio = () => {
+    audioRef.current.pause();
+    setIsPlaying(false);
+  };
+
+  // effect
+  const handleAudioTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+  const handleAudioEnded = () => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
+  const handleAudioLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+      console.log(audioRef.current.duration);
+    }
+  };
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('timeupdate', handleAudioTimeUpdate);
+      audioRef.current.addEventListener('loadedmetadata', handleAudioLoadedMetadata);
+      audioRef.current.addEventListener('ended', handleAudioEnded);
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('timeupdate', handleAudioTimeUpdate);
+        audioRef.current.removeEventListener('loadedmetadata', handleAudioLoadedMetadata);
+        audioRef.current.removeEventListener('ended', handleAudioEnded);
+      }
+    };
+  }, []);
+
+  // render
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
-      <audio controls src={msg.voice} />
+      <Stack
+        direction="row"
+        alignItems="center"
+        p={1}
+        spacing={1}
+        sx={{
+          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+          borderRadius: 1.2,
+          color: fromSelf ? '#fff' : theme.palette.text.primary,
+        }}
+      >
+        <IconButton
+          sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
+          onClick={isPlaying ? handlePauseAudio : handlePlayAudio}
+        >
+          {isPlaying ? <IoStop size={20} /> : <IoPlay size={20} />}
+        </IconButton>
+        <Typography>{`${Math.floor(currentTime)}/${Math.floor(duration)}`}</Typography>
+        {isPlaying && <CircularProgress size={20} color="success" />}
+        <audio ref={audioRef}>
+          <source src={msg.voice} />
+        </audio>
+      </Stack>
     </MessageWrapper>
   );
 });
