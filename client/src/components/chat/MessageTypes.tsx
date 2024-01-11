@@ -213,7 +213,6 @@ const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
   const handleAudioLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
-      console.log(audioRef.current.duration);
     }
   };
   useEffect(() => {

@@ -7,6 +7,7 @@ import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
 import { IoImageOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
 import MediaPreview from './MediaPreview';
+import { ContactCardDialog } from '../dialog/ContactCardDialog';
 
 const Actions = [
   {
@@ -35,6 +36,7 @@ const Actions = [
 const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile, setOpenVoice }) => {
   const [openPicker, setOpenPicker] = useState<boolean>(false);
   const [openActions, setOpenActions] = useState<boolean>(false);
+  const [openContactCard, setOpenContactCard] = useState<boolean>(false);
   const imageInputRef = useRef(null);
   const documentInputRef = useRef(null);
 
@@ -58,7 +60,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
         setOpenVoice(true);
         break;
       case 3:
-        alert('Contacts feature');
+        setOpenContactCard(true);
         break;
 
       default:
@@ -174,6 +176,14 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
           ),
         }}
       />
+      {openContactCard && (
+        <ContactCardDialog
+          open={openContactCard}
+          handleClose={() => {
+            setOpenContactCard(false);
+          }}
+        />
+      )}
     </Box>
   );
 };

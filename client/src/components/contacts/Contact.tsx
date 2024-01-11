@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Divider, Grid, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
-import { IoCloseOutline } from 'react-icons/io5';
+import { IoCloseOutline, IoPersonCircleOutline } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
 import { PiPhoneLight } from 'react-icons/pi';
 import { MdBlock } from 'react-icons/md';
@@ -15,9 +15,11 @@ import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
 import { stateType } from '../../store/interface';
 import React from 'react';
 import { toggleContact, updateContactType } from '../../store/slices/appSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Contact = ({ currentMessages }): JSX.Element => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentContact } = useSelector((state: stateType) => state.chat);
   const [openBlock, setOpenBlock] = useState(false);
@@ -50,10 +52,20 @@ const Contact = ({ currentMessages }): JSX.Element => {
       </Box>
       <Scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
         <Stack direction="column" alignItems="center" justifyContent="center" spacing={1}>
-          <Avatar src={currentContact.avatar} alt="avt" sx={{ width: 62, height: 62 }} />
-          <Typography variant="subtitle1">{currentContact.displayName}</Typography>
+          <Avatar src={currentContact?.avatar} alt="avt" sx={{ width: 62, height: 62 }} />
+          <Typography variant="subtitle1">{currentContact?.displayName}</Typography>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-evenly">
+          <Stack direction="column" alignItems="center">
+            <IconButton
+              onClick={() => {
+                navigate(`/personal/${currentContact?._id}`);
+              }}
+            >
+              <IoPersonCircleOutline />
+            </IconButton>
+            <Typography variant="body1">Profile</Typography>
+          </Stack>
           <Stack direction="column" alignItems="center">
             <IconButton>
               <PiPhoneLight />
@@ -62,7 +74,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
           </Stack>
           <Stack direction="column" alignItems="center">
             <IconButton>
-              <IoVideocamOutline />
+              <IoVideocamOutline size={22} />
             </IconButton>
             <Typography variant="body1">Video</Typography>
           </Stack>
@@ -73,7 +85,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
             About
           </Typography>
           <Typography variant="body1" fontSize={15}>
-            {currentContact.about}
+            {currentContact?.about}
           </Typography>
         </Stack>
         <Divider />
