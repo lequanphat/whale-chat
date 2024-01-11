@@ -22,6 +22,15 @@ export class UsersController {
       throw error;
     }
   }
+  @Get('user/:id')
+  async getUserById(@Param('id') id: string) {
+    try {
+      const user = await this.usersService.getUserById(id);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
   @Get('contacts')
   getAllContacts(@Req() req: any) {
     const id: string = req.user.id;

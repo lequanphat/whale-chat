@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { plainToClass } from 'class-transformer';
 import mongoose, { Model } from 'mongoose';
 import { User } from 'src/schemas/users.chema';
-import { SerializeUser, EditProfileDTO, ContactDTO } from '../types';
+import { EditProfileDTO, ContactDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { Messages } from 'src/schemas/messages.chema';
 import { UserRole } from 'src/schemas/types';
@@ -25,11 +24,13 @@ export class UsersService {
     if (!this.isValidID(id)) {
       return;
     }
-    const user = await this.userModel.findOne({ _id: id });
+    const user = await this.userModel
+      .findOne({ _id: id })
+      .select(['_id', 'displayName', 'email', 'avatar', 'status', 'about']);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
-    return plainToClass(SerializeUser, user, { excludeExtraneousValues: true });
+    return user;
   }
   async getAllUsers(id: string) {
     const users = await this.userModel
