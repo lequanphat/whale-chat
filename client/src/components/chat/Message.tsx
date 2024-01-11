@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { DocMessage, MediaMessage, SystemMessage, TextMessage, VoiceMessage } from './MessageTypes';
+import { ContactMessage, DocMessage, MediaMessage, SystemMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { useEffect, useRef } from 'react';
@@ -48,6 +48,8 @@ const Message = ({ currentMessages }) => {
                 return <VoiceMessage key={index} msg={msg} fromSelf={msg.from === id} />;
               case MessageType.SYSTEM:
                 return <SystemMessage key={index} msg={msg} />;
+              case MessageType.CONTACT:
+                return <ContactMessage key={index} msg={msg} fromSelf={msg.from === id} />;
               default:
                 return '';
             }

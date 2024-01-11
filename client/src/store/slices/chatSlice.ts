@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 import { chatType } from '../interface';
+import { ContactMessageDTO } from '../types';
 const initialState: chatType = {
   unseenMessage: 0,
   chats: [],
@@ -99,6 +100,22 @@ const chatSlice = createSlice({
         });
       })
       .addCase(addTextMessage.rejected, () => {})
+      .addCase(addContactMessage.pending, () => {})
+      .addCase(addContactMessage.fulfilled, (state, action) => {
+        state.chats.forEach((item) => {
+          if (item.id === action.payload.id) {
+            item.messages.push(action.payload.message);
+          }
+        });
+        state.contacts.forEach((item) => {
+          if (item.contact._id === action.payload.id) {
+            item.recentMessage.type = action.payload.message.type;
+            item.recentMessage.text = action.payload.message.text;
+            item.recentMessage.createdAt = action.payload.message.createdAt;
+          }
+        });
+      })
+      .addCase(addContactMessage.rejected, () => {})
       .addCase(addImageMessage.pending, () => {})
       .addCase(addImageMessage.fulfilled, (state, action) => {
         state.chats.forEach((item) => {
@@ -175,7 +192,7 @@ export const getMessages = createAsyncThunk('chat/getAllMessages', async (contac
   }
 });
 export const addTextMessage = createAsyncThunk(
-  'chat/addMessage',
+  'chat/addTextMessage',
   async (data: { to: string; text: string }, { rejectWithValue }) => {
     try {
       const response = await api.post('/messages/add-text-message', data);
@@ -183,6 +200,20 @@ export const addTextMessage = createAsyncThunk(
       return {
         id: data.to,
         message: response.data.message,
+      };
+    } catch (error) {
+      return rejectWithValue({ error: error.response.data.message });
+    }
+  },
+);
+export const addContactMessage = createAsyncThunk(
+  'chat/addContactMessage',
+  async (data: ContactMessageDTO, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/messages/add-contact-message', data);
+      return {
+        id: data.to,
+        message: response.data,
       };
     } catch (error) {
       return rejectWithValue({ error: error.response.data.message });

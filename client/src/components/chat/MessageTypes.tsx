@@ -1,4 +1,15 @@
-import { Avatar, Box, CircularProgress, IconButton, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
@@ -8,6 +19,7 @@ import getFileImage from '../../utils/getFileImage';
 import api from '../../api/internal';
 import { Message } from './types';
 import { IoPlay, IoStop } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const Message_Option = [
   {
@@ -93,6 +105,40 @@ const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boo
         <Typography variant="body1" color={fromSelf ? '#fff' : theme.palette.text.primary}>
           {msg.text}
         </Typography>
+      </Box>
+    </MessageWrapper>
+  );
+});
+const ContactMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  return (
+    <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
+      <Box
+        sx={{
+          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+          borderRadius: 1.8,
+          maxWidth: '45%',
+          p: '10px 16px',
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1.4}>
+          <Avatar src={msg.contact.avatar} />
+          <Stack color={fromSelf ? '#fff' : theme.palette.text.primary}>
+            <Typography variant="body2">{msg.contact.displayName}</Typography>
+            <Typography variant="body1">{msg.contact.email}</Typography>
+          </Stack>
+        </Stack>
+        <Stack alignItems="end">
+          <Button
+            sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
+            onClick={() => {
+              navigate(`/personal/${msg.contact?._id}`);
+            }}
+          >
+            View details
+          </Button>
+        </Stack>
       </Box>
     </MessageWrapper>
   );
@@ -281,4 +327,4 @@ const TimeLine = ({ text }) => {
   );
 };
 
-export { TimeLine, TextMessage, MediaMessage, DocMessage, VoiceMessage, SystemMessage };
+export { TimeLine, TextMessage, MediaMessage, DocMessage, VoiceMessage, SystemMessage, ContactMessage };

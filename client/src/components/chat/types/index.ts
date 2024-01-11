@@ -5,6 +5,7 @@ export enum MessageType {
   DOC = 'doc',
   VOICE = 'voice',
   TIMELINE = 'timeline',
+  CONTACT = 'contact',
 }
 export interface Message {
   _id: string;
@@ -16,6 +17,12 @@ export interface Message {
   image?: string;
   voice?: string;
   avatar?: string;
+  contact?: {
+    _id: string;
+    avatar: string;
+    displayName: string;
+    email: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 }

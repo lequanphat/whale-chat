@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import { formatMongoTime } from '../../utils/formatTime';
 import { MessageType } from './types';
 import { IoDocumentTextOutline, IoImageOutline } from 'react-icons/io5';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { MdOutlineKeyboardVoice } from 'react-icons/md';
 import { Contact, RecentMessage } from '../../store/interface';
 interface ChatElementProps {
@@ -75,6 +76,17 @@ const ChatElement: React.FC<ChatElementProps> = ({
             </Typography>
           </>
         );
+      case MessageType.CONTACT:
+        return (
+          <>
+            <Typography variant="body1" pt={0.5}>
+              <FaRegAddressCard size={16} />
+            </Typography>
+            <Typography variant="body1" fontSize={15}>
+              contact
+            </Typography>
+          </>
+        );
       default:
         return (
           <Typography variant="body1" fontSize={15}>
@@ -116,7 +128,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
             <Typography variant="subtitle2" color={selected ? '#eee8e8' : theme.palette.text.primary}>
               {contact.displayName}
             </Typography>
-            <Stack direction="row" alignItems="center" spacing={0.4}>
+            <Stack direction="row" alignItems="center" spacing={0.6}>
               {recentMessageFormat}
             </Stack>
           </Stack>

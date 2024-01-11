@@ -65,3 +65,13 @@ export interface DeleteFriendRequestDTO {
   sendId: string;
   receiveId: string;
 }
+export interface ContactMessageDTO {
+  from: string;
+  to: string;
+  contact: {
+    _id: string;
+    avatar: string;
+    displayName: string;
+    email: string;
+  };
+}

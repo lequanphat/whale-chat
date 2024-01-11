@@ -1,14 +1,30 @@
 import { Avatar, Button, Stack, Typography, useTheme } from '@mui/material';
 import { User } from './types';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContactMessage } from '../../store/slices/chatSlice';
+import { stateType } from '../../store/interface';
 export const ContactCardItem = ({ user }: { user: User }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
   const theme = useTheme();
+  const { currentContact } = useSelector((state: stateType) => state.chat);
   const [userInstance, setUserInstance] = useState(user);
   // handle
-  const handleSendFriendRequest = (userId: string) => {
+  const handleSendFriendRequest = (user: User) => {
     (async () => {
-      console.log(userId);
+      dispatch(
+        addContactMessage({
+          from: '',
+          to: currentContact._id,
+          contact: {
+            _id: user._id,
+            avatar: user.avatar,
+            displayName: user.displayName,
+            email: user.email,
+          },
+        }),
+      );
       setUserInstance({ ...userInstance, status: 'Sended' });
     })();
   };
@@ -35,7 +51,7 @@ export const ContactCardItem = ({ user }: { user: User }) => {
           variant="outlined"
           sx={{ fontSize: 12, py: 0.4, px: 2, borderRadius: 1 }}
           onClick={() => {
-            handleSendFriendRequest(userInstance._id);
+            handleSendFriendRequest(userInstance);
           }}
         >
           Send
