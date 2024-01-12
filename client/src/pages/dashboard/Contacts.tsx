@@ -6,7 +6,8 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openAddFriendDialog, setFriendsbar } from '../../store/slices/appSlice';
 import { stateType } from '../../store/interface';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { NewGroupDialog } from '../../components/dialog/NewGroupDialog';
 
 const Action = [
   {
@@ -29,6 +30,7 @@ const Contacts = () => {
   const { friendsbar } = useSelector((state: stateType) => state.app);
   const { receiveTotal } = useSelector((state: stateType) => state.relationship);
   const theme = useTheme();
+  const [openNewGroup, setOpenNewGroup] = useState<boolean>(false);
 
   // handle
   const handleFriendsAction = (index) => {
@@ -71,7 +73,11 @@ const Contacts = () => {
               <IconButton onClick={handleOpenAddFriend}>
                 <IoPersonAddOutline size={20} />
               </IconButton>
-              <IconButton onClick={null}>
+              <IconButton
+                onClick={() => {
+                  setOpenNewGroup(true);
+                }}
+              >
                 <IoPeopleOutline size={22} />
               </IconButton>
             </Stack>
@@ -106,6 +112,14 @@ const Contacts = () => {
         </Stack>
       </Stack>
       <Outlet />
+      {openNewGroup && (
+        <NewGroupDialog
+          open={openNewGroup}
+          handleClose={() => {
+            setOpenNewGroup(false);
+          }}
+        />
+      )}
     </Stack>
   );
 };

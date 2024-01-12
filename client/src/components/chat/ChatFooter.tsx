@@ -106,7 +106,6 @@ const ChatFooter = () => {
     if (text.trim() === '') {
       return;
     }
-
     const response = await dispatch(addTextMessage({ to: currentContact._id, text }));
     emitMessage(response.payload.message);
     setText('');
