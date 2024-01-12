@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 import { chatType } from '../interface';
-import { ContactMessageDTO } from '../types';
+import { ContactMessageDTO, CreateGroupDTO } from '../types';
 const initialState: chatType = {
   unseenMessage: 0,
   chats: [],
@@ -272,6 +272,15 @@ export const seenMessages = createAsyncThunk('chat/seenMessages', async (contact
     const response = await api.get(`/messages/seen/${contactId}`);
     console.log(response);
 
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error: error.response.data.message });
+  }
+});
+export const createGroup = createAsyncThunk('chat/createGroup', async (data: CreateGroupDTO, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/groups/create-group', data);
+    console.log(response);
     return response.data;
   } catch (error) {
     return rejectWithValue({ error: error.response.data.message });

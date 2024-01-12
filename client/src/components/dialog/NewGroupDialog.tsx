@@ -17,21 +17,27 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
 import { CiSearch } from 'react-icons/ci';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
 import { MemberItem } from './MemberItem';
+import { createGroup } from '../../store/slices/chatSlice';
+import { openSuccessSnackbar } from '../../store/slices/appSlice';
 enum ChooseType {
   REMOVE = 'remove',
   ADD = 'add',
 }
 export function NewGroupDialog({ open, handleClose }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
   const theme = useTheme();
-  const { avatar } = useSelector((state: stateType) => state.auth);
+  const { avatar, id } = useSelector((state: stateType) => state.auth);
   const { contacts } = useSelector((state: stateType) => state.chat);
   // state
   const [search, setSearch] = useState<string>('');
   const [members, setMembers] = useState<string[]>([]);
   const [groupName, setGroupName] = useState<string>('');
+
+  // handle
   const handleChooseMember = (id: string, type: ChooseType) => {
     switch (type) {
       case ChooseType.ADD:
@@ -44,6 +50,16 @@ export function NewGroupDialog({ open, handleClose }) {
         break;
     }
   };
+
+  // handle
+  const handleCreateGroup = async () => {
+    const response = await dispatch(createGroup({ groupName, members, createdBy: id }));
+    if (!response.payload.error) {
+      dispatch(openSuccessSnackbar('Created group successfully'));
+      handleClose();
+    }
+  };
+
   // render
   return (
     <Dialog
@@ -152,7 +168,7 @@ export function NewGroupDialog({ open, handleClose }) {
           </Stack>
         </Box>
         <Stack pr={3} direction="row" justifyContent="end">
-          <Button variant="contained" sx={{ px: 2.4, py: 0.6 }}>
+          <Button variant="contained" sx={{ px: 2.4, py: 0.6 }} onClick={handleCreateGroup}>
             Create
           </Button>
         </Stack>
