@@ -11,6 +11,7 @@ import { RoleGuard } from './common/guards/role.guard';
 import { ContactModule } from './contacts/contact.module';
 import { CommonModule } from './common/common.module';
 import { NotificationModule } from './notifications/notifications.module';
+import { GroupModule } from './groups/groups.module';
 @Module({
   imports: [
     MongooseModule.forRoot(MONGO_URL),
@@ -21,6 +22,7 @@ import { NotificationModule } from './notifications/notifications.module';
     ContactModule,
     CommonModule,
     NotificationModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [RoleGuard],
@@ -35,6 +37,7 @@ export class AppModule implements NestModule {
         { path: 'messages*', method: RequestMethod.ALL },
         { path: 'contacts*', method: RequestMethod.ALL },
         { path: 'notifications*', method: RequestMethod.ALL },
+        { path: 'groups*', method: RequestMethod.ALL },
       )
       .apply(CheckRefreshTokenMiddleware)
       .forRoutes({ path: 'auth/refresh-token', method: RequestMethod.GET });
