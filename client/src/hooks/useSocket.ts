@@ -11,6 +11,7 @@ export const useSocket = () => {
     image,
     doc,
     voice,
+    contact,
     createdAt,
   }: {
     type: string;
@@ -20,9 +21,15 @@ export const useSocket = () => {
     image?: string;
     doc?: string;
     voice?: string;
+    contact?: {
+      _id: string;
+      displayName: string;
+      email: string;
+      avatar: string;
+    };
     createdAt: string;
   }) => {
-    socket.emit('send-message', { type, text, to, from, image, doc, voice, createdAt });
+    socket.emit('send-message', { type, text, to, from, image, doc, voice, contact, createdAt });
   };
   const emitFriendRequest = (data: {
     _id: string;

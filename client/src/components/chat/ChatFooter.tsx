@@ -30,15 +30,8 @@ const ChatFooter = () => {
       formData.append('audio', voiceFile.blob, 'recording.mp3');
       formData.append('to', currentContact._id);
       const response = await dispatch(addVoiceMessage(formData));
-      const responseMessage = response.payload.data.message;
       // emit
-      emitMessage({
-        type: MessageType.VOICE,
-        voice: responseMessage.voice,
-        from: responseMessage.from,
-        to: responseMessage.to,
-        createdAt: responseMessage.createdAt,
-      });
+      emitMessage(response.payload.data.message);
       // reset voice file
       setVoiceFile(null);
       return;
@@ -67,13 +60,7 @@ const ChatFooter = () => {
           createdAt: result[1].createdAt,
         });
       } else {
-        emitMessage({
-          type: MessageType.IMAGE,
-          image: response.payload.data.message.image,
-          from: response.payload.data.message.from,
-          to: response.payload.data.message.to,
-          createdAt: response.payload.data.message.createdAt,
-        });
+        emitMessage(response.payload.data.message);
       }
 
       setImageFile(null);
@@ -87,7 +74,6 @@ const ChatFooter = () => {
       formData.append('to', currentContact._id);
       formData.append('text', text);
       const response = await dispatch(addDocMessage(formData));
-      const responseMessage = response.payload.data.message;
       if (response.error) {
         dispatch(openSnackbar({ message: response.payload.error, serverity: 'error' }));
         return;
@@ -111,14 +97,7 @@ const ChatFooter = () => {
           createdAt: result[1].createdAt,
         });
       } else {
-        emitMessage({
-          type: MessageType.DOC,
-          text: responseMessage.text,
-          doc: responseMessage.doc,
-          from: responseMessage.from,
-          to: responseMessage.to,
-          createdAt: responseMessage.createdAt,
-        });
+        emitMessage(response.payload.data.message);
       }
       setDocFile(null);
       setText('');
@@ -129,14 +108,7 @@ const ChatFooter = () => {
     }
 
     const response = await dispatch(addTextMessage({ to: currentContact._id, text }));
-    const responseMessage = response.payload.message;
-    emitMessage({
-      type: MessageType.TEXT,
-      text: responseMessage.text,
-      from: responseMessage.from,
-      to: responseMessage.to,
-      createdAt: responseMessage.createdAt,
-    });
+    emitMessage(response.payload.message);
     setText('');
   };
   return (
