@@ -7,6 +7,7 @@ import { FriendRequestType, createFriendRequestDTO, deleteFriendRequestDTO } fro
 import { User } from 'src/schemas/users.chema';
 import { Messages } from 'src/schemas/messages.chema';
 import { MessageType, UserRole } from 'src/schemas/types';
+import { Group } from 'src/schemas/groups.schema';
 
 @Injectable()
 export class ContactService {
@@ -15,9 +16,9 @@ export class ContactService {
     @InjectModel(FriendRequest.name) private friendRequestModel: Model<FriendRequest>,
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
     @InjectModel(Messages.name) private messageModel: Model<Messages>,
+    @InjectModel(Group.name) private groupModel: Model<Group>,
   ) {}
   async getAllContacts(id: string) {
-    console.log(id);
     try {
       const relationalContacts = await this.relationshipModel
         .aggregate([
@@ -82,8 +83,16 @@ export class ContactService {
           }
         }
         //
-        responeContacts.push({ contact: contact, recentMessage: messages[0], total: totalUnSeen });
+        responeContacts.push({ contact: { ...contact, type: 'user' }, recentMessage: messages[0], total: totalUnSeen });
       }
+      const groups = await this.groupModel.find({ members: id }).select(['_id', 'groupName', 'createdBy', 'members']);
+      groups.forEach((group) => {
+        responeContacts.push({
+          contact: group,
+          recentMessage: { _id: '123', type: 'text', text: 'test message', createdAt: '123' },
+          total: 2,
+        });
+      });
       return responeContacts;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

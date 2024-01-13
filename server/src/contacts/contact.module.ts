@@ -6,6 +6,7 @@ import { FriendRequest, FriendRequestSchema } from 'src/schemas/friendrequest.ch
 import { Relationship, RelationshipSchema } from 'src/schemas/relationship.chema';
 import { User, UserSchema } from 'src/schemas/users.chema';
 import { Messages, Messageschema } from 'src/schemas/messages.chema';
+import { Group, GroupSchema } from 'src/schemas/groups.schema';
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { Messages, Messageschema } from 'src/schemas/messages.chema';
       {
         name: Relationship.name,
         schema: RelationshipSchema,
+      },
+      {
+        name: Group.name,
+        schema: GroupSchema,
       },
     ]),
   ],

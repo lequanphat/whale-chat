@@ -23,4 +23,14 @@ export class GroupService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  async getMemberOfGroup(groupId: string) {
+    try {
+      const groups = await this.groupModel
+        .findOne({ _id: groupId })
+        .populate({ path: 'members', select: '_id displayName avatar' });
+      return { members: groups.members };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

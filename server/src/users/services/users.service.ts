@@ -122,4 +122,12 @@ export class UsersService {
     }
     return { displayName: user.displayName, about: user.about };
   }
+  async getUsers(usersId: string[]) {
+    try {
+      const users = await this.userModel.find({ _id: { $in: usersId } });
+      return { users };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
