@@ -2,7 +2,7 @@ import { Avatar, Box, IconButton, Stack, Typography, useTheme } from '@mui/mater
 import StyledBadge from '../../components/avatar/StyledBadge';
 import { IoEllipsisVertical } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/interface';
 
 const Friends = () => {
   const theme = useTheme();
@@ -20,41 +20,48 @@ const Friends = () => {
         }}
         p={2}
       >
-        <Typography variant="body2">My Friends ({contacts.length}) </Typography>
+        <Typography variant="body2">
+          My Friends ({contacts.filter((contact) => contact.contact.type === ContactType.USER).length}){' '}
+        </Typography>
       </Stack>
       <Stack>
-        {contacts.map((contact) => {
-          return (
-            <Stack
-              key={contact.contact._id}
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              p={2.2}
-              sx={{ ':hover': { bgcolor: theme.palette.background.paper } }}
-            >
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Box>
-                  {contact.contact.status === 'online' ? (
-                    <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      variant="dot"
-                    >
+        {contacts
+          .filter((contact) => contact.contact.type === ContactType.USER)
+          .map((contact) => {
+            return (
+              <Stack
+                key={contact.contact._id}
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                p={2.2}
+                sx={{ ':hover': { bgcolor: theme.palette.background.paper } }}
+              >
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Box>
+                    {contact.contact.status === 'online' ? (
+                      <StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                      >
+                        <Avatar alt="Remy Sharp" src={contact.contact.avatar} />
+                      </StyledBadge>
+                    ) : (
                       <Avatar alt="Remy Sharp" src={contact.contact.avatar} />
-                    </StyledBadge>
-                  ) : (
-                    <Avatar alt="Remy Sharp" src={contact.contact.avatar} />
-                  )}
-                </Box>
-                <Typography variant="body2">{contact.contact.displayName}</Typography>
+                    )}
+                  </Box>
+                  <Stack>
+                    <Typography variant="body2">{contact.contact.displayName}</Typography>
+                    <Typography variant="body1" fontSize={14}>{contact.contact.email}</Typography>
+                  </Stack>
+                </Stack>
+                <IconButton>
+                  <IoEllipsisVertical size={18} />
+                </IconButton>
               </Stack>
-              <IconButton>
-                <IoEllipsisVertical size={18} />
-              </IconButton>
-            </Stack>
-          );
-        })}
+            );
+          })}
       </Stack>
     </Stack>
   );

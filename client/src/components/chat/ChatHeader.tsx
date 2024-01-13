@@ -40,9 +40,9 @@ const ChatHeader = () => {
             )}
           </Box>
           <Stack spacing={0}>
-            <Typography variant="subtitle2">{currentContact.displayName}</Typography>
+            <Typography variant="subtitle2">{currentContact.displayName || currentContact.groupName}</Typography>
             <Typography variant="body1" fontSize={13} sx={{ color: '#7f8c8d' }} textTransform="capitalize">
-              {currentContact.status}
+              {currentContact.status || `${currentContact.members.length} members`}
             </Typography>
           </Stack>
         </Stack>

@@ -1,11 +1,10 @@
 import { Avatar, Button, Stack, Typography, useTheme } from '@mui/material';
-import { User } from './types';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContactMessage } from '../../store/slices/chatSlice';
-import { stateType } from '../../store/interface';
+import { Contact, stateType } from '../../store/interface';
 import { useSocket } from '../../hooks/useSocket';
-export const ContactCardItem = ({ user }: { user: User }) => {
+export const ContactCardItem = ({ user }: { user: Contact }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
@@ -13,7 +12,7 @@ export const ContactCardItem = ({ user }: { user: User }) => {
   const { currentContact } = useSelector((state: stateType) => state.chat);
   const [userInstance, setUserInstance] = useState(user);
   // handle
-  const handleSendFriendRequest = (user: User) => {
+  const handleSendFriendRequest = (user: Contact) => {
     (async () => {
       const response = await dispatch(
         addContactMessage({

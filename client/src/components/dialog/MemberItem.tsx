@@ -1,7 +1,7 @@
 import { Avatar, Radio, Stack, Typography } from '@mui/material';
-import { User } from './types';
+import { Contact } from '../../store/interface';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const MemberItem = ({ user, selected, handleChoose }: { user: User; selected: boolean; handleChoose: any }) => {
+export const MemberItem = ({ user, selected, handleChoose }: { user: Contact; selected: boolean; handleChoose: any }) => {
   // handle
   const handleChange = () => {
     if (!selected) {

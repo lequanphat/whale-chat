@@ -21,15 +21,26 @@ export interface appType {
     open: boolean;
   };
 }
-export interface Contact {
-  _id: string;
-  displayName: string;
-  email: string;
-  avatar: string;
-  about: string;
-  status: string;
+export enum ContactType {
+  USER = 'user',
+  GROUP = 'group',
 }
-export interface RecentMessage{
+export interface Contact {
+  type: ContactType;
+  // user
+  _id: string;
+  displayName?: string;
+  email?: string;
+  avatar?: string;
+  about?: string;
+  status?: string;
+  // group
+  groupName?: string;
+  createdBy?: string;
+  members?: string[];
+}
+
+export interface RecentMessage {
   type: MessageType;
   text: string;
   createdAt: string;

@@ -34,7 +34,7 @@ export function NewGroupDialog({ open, handleClose }) {
   const { contacts } = useSelector((state: stateType) => state.chat);
   // state
   const [search, setSearch] = useState<string>('');
-  const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<string[]>([id]);
   const [groupName, setGroupName] = useState<string>('');
 
   // handle
@@ -104,7 +104,7 @@ export function NewGroupDialog({ open, handleClose }) {
               setGroupName(e.target.value);
             }}
           />
-          <AvatarGroup total={members.length + 1} max={10}>
+          <AvatarGroup total={members.length} max={10}>
             <Avatar key={0} alt="avatar" src={avatar} />
             {contacts
               .filter((contact) => members.includes(contact.contact._id))

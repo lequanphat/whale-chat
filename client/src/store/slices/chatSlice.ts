@@ -286,6 +286,14 @@ export const createGroup = createAsyncThunk('chat/createGroup', async (data: Cre
     return rejectWithValue({ error: error.response.data.message });
   }
 });
+export const getMemberOfGroup = createAsyncThunk('chat/getMemberOfGroup', async (id: string, { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/groups/members/${id}`);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({ error: error.response.data.message });
+  }
+});
 export default chatSlice.reducer;
 export const { setCurrentContact, resetContacts, resetChatSlice, addMessageToCurrentMessages, clearMessages } =
   chatSlice.actions;

@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Divider, Grid, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
-import { IoCloseOutline, IoPersonCircleOutline } from 'react-icons/io5';
+import { IoCloseOutline, IoExitOutline, IoPersonAddOutline, IoPersonCircleOutline } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
 import { PiPhoneLight } from 'react-icons/pi';
 import { MdBlock } from 'react-icons/md';
@@ -10,26 +10,43 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { Scrollbar } from '../scrollbar/Scrollbar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlockDialog, DeleteDialog } from '../dialog/ContactDialog';
-import { stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/interface';
 import React from 'react';
 import { toggleContact, updateContactType } from '../../store/slices/appSlice';
 import { useNavigate } from 'react-router-dom';
+import { getMemberOfGroup } from '../../store/slices/chatSlice';
 
 const Contact = ({ currentMessages }): JSX.Element => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
   const { currentContact } = useSelector((state: stateType) => state.chat);
   const [openBlock, setOpenBlock] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [members, setMembers] = useState([]);
+  // handle
   const handleCloseBlock = () => {
     setOpenBlock(false);
   };
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
+  // effect
+  useEffect(() => {
+    (async () => {
+      if (currentContact.type !== ContactType.USER) {
+        const response = await dispatch(getMemberOfGroup(currentContact._id));
+        if (response.payload.members) {
+          setMembers(response.payload.members);
+        }
+      }
+    })();
+  }, [currentContact, dispatch]);
+  // render
   return (
     <Stack width={320} height="100%">
       <Box
@@ -56,39 +73,63 @@ const Contact = ({ currentMessages }): JSX.Element => {
           <Typography variant="subtitle1">{currentContact?.displayName}</Typography>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-evenly">
-          <Stack direction="column" alignItems="center">
-            <IconButton
-              onClick={() => {
-                navigate(`/personal/${currentContact?._id}`);
-              }}
-            >
-              <IoPersonCircleOutline />
-            </IconButton>
-            <Typography variant="body1">Profile</Typography>
-          </Stack>
-          <Stack direction="column" alignItems="center">
-            <IconButton>
-              <PiPhoneLight />
-            </IconButton>
-            <Typography variant="body1">Voice</Typography>
-          </Stack>
-          <Stack direction="column" alignItems="center">
-            <IconButton>
-              <IoVideocamOutline size={22} />
-            </IconButton>
-            <Typography variant="body1">Video</Typography>
-          </Stack>
+          {currentContact?.type === ContactType.USER ? (
+            <>
+              <Stack direction="column" alignItems="center">
+                <IconButton
+                  onClick={() => {
+                    navigate(`/personal/${currentContact?._id}`);
+                  }}
+                >
+                  <IoPersonCircleOutline />
+                </IconButton>
+                <Typography variant="body1">Profile</Typography>
+              </Stack>
+              <Stack direction="column" alignItems="center">
+                <IconButton>
+                  <PiPhoneLight />
+                </IconButton>
+                <Typography variant="body1">Voice</Typography>
+              </Stack>
+              <Stack direction="column" alignItems="center">
+                <IconButton>
+                  <IoVideocamOutline size={22} />
+                </IconButton>
+                <Typography variant="body1">Video</Typography>
+              </Stack>
+            </>
+          ) : (
+            <>
+              <Stack direction="column" alignItems="center">
+                <IconButton>
+                  <IoPersonAddOutline />
+                </IconButton>
+                <Typography variant="body1">Add member</Typography>
+              </Stack>
+              <Stack direction="column" alignItems="center">
+                <IconButton>
+                  <IoExitOutline />
+                </IconButton>
+                <Typography variant="body1">Leave group</Typography>
+              </Stack>
+            </>
+          )}
         </Stack>
         <Divider />
-        <Stack>
-          <Typography variant="subtitle2" mb={1}>
-            About
-          </Typography>
-          <Typography variant="body1" fontSize={15}>
-            {currentContact?.about}
-          </Typography>
-        </Stack>
-        <Divider />
+        {currentContact?.type === ContactType.USER && (
+          <>
+            <Stack>
+              <Typography variant="subtitle2" mb={1}>
+                About
+              </Typography>
+              <Typography variant="body1" fontSize={15}>
+                {currentContact?.about}
+              </Typography>
+            </Stack>
+            <Divider />
+          </>
+        )}
+
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="subtitle2">Media, Links and Docs</Typography>
           <IconButton
@@ -135,43 +176,62 @@ const Contact = ({ currentMessages }): JSX.Element => {
           <Switch inputProps={{ 'aria-label': 'controlled' }} />
         </Stack>
         <Divider />
-        <Typography variant="body1">2 group in common</Typography>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
+        {currentContact?.type === ContactType.USER ? (
+          <>
+            <Typography variant="body1">2 group in common</Typography>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
+              <Stack>
+                <Typography variant="subtitle2">Coding Monk</Typography>
+                <Typography variant="caption">16 members</Typography>
+              </Stack>
+            </Stack>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
+              <Stack>
+                <Typography variant="subtitle2">Coding Monk</Typography>
+                <Typography variant="caption">16 members</Typography>
+              </Stack>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Button
+                onClick={() => {
+                  setOpenBlock(true);
+                }}
+                startIcon={<MdBlock />}
+                variant="outlined"
+                fullWidth
+              >
+                Block
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpenDelete(true);
+                }}
+                startIcon={<RiDeleteBin6Line />}
+                variant="outlined"
+                fullWidth
+              >
+                Delete
+              </Button>
+            </Stack>
+          </>
+        ) : (
           <Stack>
-            <Typography variant="subtitle2">Coding Monk</Typography>
-            <Typography variant="caption">16 members</Typography>
+            <Typography variant="subtitle2" mb={2}>
+              {`${currentContact?.members.length} members`}
+            </Typography>
+
+            <Stack spacing={2}>
+              {members.map((member) => (
+                <Stack direction="row" alignItems="center" spacing={1.4}>
+                  <Avatar src={member.avatar} />
+                  <Typography variant="body1">{member.displayName}</Typography>
+                </Stack>
+              ))}
+            </Stack>
           </Stack>
-        </Stack>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar src={faker.image.url()} alt={faker.person.fullName()} />
-          <Stack>
-            <Typography variant="subtitle2">Coding Monk</Typography>
-            <Typography variant="caption">16 members</Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Button
-            onClick={() => {
-              setOpenBlock(true);
-            }}
-            startIcon={<MdBlock />}
-            variant="outlined"
-            fullWidth
-          >
-            Block
-          </Button>
-          <Button
-            onClick={() => {
-              setOpenDelete(true);
-            }}
-            startIcon={<RiDeleteBin6Line />}
-            variant="outlined"
-            fullWidth
-          >
-            Delete
-          </Button>
-        </Stack>
+        )}
       </Scrollbar>
       {openBlock && <BlockDialog open={openBlock} handleClose={handleCloseBlock} />}
       {openDelete && <DeleteDialog open={openDelete} handleClose={handleCloseDelete} />}

@@ -126,7 +126,7 @@ const ChatElement: React.FC<ChatElementProps> = ({
 
           <Stack spacing={0.3}>
             <Typography variant="subtitle2" color={selected ? '#eee8e8' : theme.palette.text.primary}>
-              {contact.displayName}
+              {contact.displayName || contact.groupName}
             </Typography>
             <Stack direction="row" alignItems="center" spacing={0.6}>
               {recentMessageFormat}
