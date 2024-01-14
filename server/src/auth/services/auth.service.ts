@@ -180,5 +180,3 @@ export class AuthService {
     return { message: 'Change password successfully' };
   }
 }
-
-
