@@ -86,13 +86,20 @@ export class ContactService {
         responeContacts.push({ contact: { ...contact, type: 'user' }, recentMessage: messages[0], total: totalUnSeen });
       }
       const groups = await this.groupModel.find({ members: id }).select(['_id', 'groupName', 'createdBy', 'members']);
-      groups.forEach((group) => {
+
+      for (const group of groups) {
+        const messages = await this.messageModel
+          .find({
+            to: group._id,
+          })
+          .sort({ createdAt: -1 });
         responeContacts.push({
           contact: group,
-          recentMessage: { _id: '123', type: 'text', text: 'test message', createdAt: '123' },
+          recentMessage: messages[0],
           total: 2,
         });
-      });
+      }
+
       return responeContacts;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

@@ -181,34 +181,4 @@ export class AuthService {
   }
 }
 
-// changePassword: async (req, res, next) => {
-//   try {
-//     const { password, token } = req.body;
-//     // validate password
-//     const { error, value } = passwordSchema.validate(password);
-//     if (error) {
-//       res.status(200).json({ msg: error.message, status: false });
-//     }
-//     // verify token
-//     const { err, data } = verifyAccessToken(token);
-//     if (err) {
-//       return res.status(200).json({ msg: err.message, status: false });
-//     }
-//     // hash password
-//     const salt = await brcypt.genSalt();
-//     const hashedPassword = await brcypt.hash(password, salt);
-//     const user = await userModel.findOneAndUpdate(
-//       { _id: data.id },
-//       { $set: { password: hashedPassword } },
-//       { new: true },
-//     );
-//     // check user exists
-//     if (!user) {
-//       return res.status(200).json({ msg: 'Please confirm email before change your password.', status: false });
-//     }
-//     return res.status(200).json({ msg: 'Change password succesfully!', status: true });
-//   } catch (error) {
-//     return res.status(200).json({ msg: error.message, status: false });
-//   }
-// },
-// };
+
