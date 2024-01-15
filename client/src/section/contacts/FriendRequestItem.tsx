@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { acceptFriendRequests, deleteFriendRequests } from '../../store/slices/relationshipSlice';
 import { FriendRequestType } from './types';
 import { ReceiveFriendRequest, SendFriendRequest } from '../../store/types';
+import { useSocket } from '../../hooks/useSocket';
 
 export const FriendRequestItem = ({
   type = FriendRequestType.SEND,
@@ -16,6 +17,7 @@ export const FriendRequestItem = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
+  const { emitAcceptFriend } = useSocket();
 
   // handle
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +26,14 @@ export const FriendRequestItem = ({
   };
   const handleAcceptFriendRequest = async () => {
     const response = await dispatch(acceptFriendRequests({ friendRequestId: value._id }));
-    console.log(response);
+    if (!response.payload.error) {
+      emitAcceptFriend({
+        contact: response.payload.contact,
+        recentMessage: response.payload.recentMessage,
+        to: value.sendId._id,
+        total: 1,
+      });
+    }
   };
 
   // render

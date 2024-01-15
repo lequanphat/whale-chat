@@ -75,8 +75,4 @@ export interface ContactMessageDTO {
     email: string;
   };
 }
-export interface CreateGroupDTO {
-  groupName: string;
-  members: string[];
-  createdBy: string;
-}
+

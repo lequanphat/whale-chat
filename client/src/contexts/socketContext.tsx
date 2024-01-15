@@ -3,7 +3,7 @@ import { io as ClientIO } from 'socket.io-client';
 import { BACKEND_SERVER_PATH } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../store/interface';
-import { addMessageToCurrentMessages } from '../store/slices/chatSlice';
+import { addMessageToCurrentMessages, addNewContact } from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
 
 type SocketContextType = {
@@ -43,12 +43,13 @@ export const SocketProvider = ({ children }) => {
       console.log('disconnected...');
     });
     socketInstance.on('recieve-message', (data) => {
-      console.log(data);
-
       dispatch(addMessageToCurrentMessages(data));
     });
     socketInstance.on('recieve-friend-request', (data) => {
       dispatch(addFriendRequest(data));
+    });
+    socketInstance.on('recieve-accept-friend', (data) => {
+      dispatch(addNewContact(data));
     });
     setSocket(socketInstance);
     return () => {

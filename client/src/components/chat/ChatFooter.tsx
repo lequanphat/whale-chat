@@ -37,7 +37,6 @@ const ChatFooter = () => {
       return;
     }
     if (imageFile) {
-      console.log(imageFile);
       const formData = new FormData();
       formData.append('image', imageFile);
       formData.append('to', currentContact._id);
@@ -68,7 +67,6 @@ const ChatFooter = () => {
       return;
     }
     if (docFile) {
-      console.log(docFile);
       const formData = new FormData();
       formData.append('doc', docFile);
       formData.append('to', currentContact._id);

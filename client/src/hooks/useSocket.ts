@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { SocketContext } from '../contexts/socketContext';
+import { MessageType } from '../components/chat/types';
 
 export const useSocket = () => {
   const { socket } = useContext(SocketContext);
@@ -40,5 +41,28 @@ export const useSocket = () => {
   }) => {
     socket.emit('send-friend-request', data);
   };
-  return { emitMessage, emitFriendRequest };
+  const emitAcceptFriend = (data: {
+    to: string;
+    contact: {
+      _id: string;
+      displayName: string;
+      email: string;
+      about: string;
+      avatar: string;
+      status: string;
+      type: string;
+    };
+
+    recentMessage: {
+      _id: string;
+      type: MessageType;
+      from: string;
+      to: string;
+      text: string;
+    };
+    total: number;
+  }) => {
+    socket.emit('send-accept-friend', data);
+  };
+  return { emitMessage, emitFriendRequest, emitAcceptFriend };
 };

@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 import { chatType } from '../interface';
-import { ContactMessageDTO, CreateGroupDTO } from '../types';
+import { ContactMessageDTO } from '../types';
+import { MessageType } from '../../components/chat/types';
+import { acceptFriendRequests } from './relationshipSlice';
 const initialState: chatType = {
   unseenMessage: 0,
   chats: [],
@@ -36,7 +38,10 @@ const chatSlice = createSlice({
           const contact = state.contacts.find((contact) => contact.contact._id === action.payload.from);
           if (item.messages.length === 0) {
             action.payload.avatar = contact.contact.avatar;
-          } else if (item.messages[item.messages.length - 1].to !== action.payload.to) {
+          } else if (
+            item.messages[item.messages.length - 1].to !== action.payload.to ||
+            item.messages[item.messages.length - 1].type === MessageType.SYSTEM
+          ) {
             action.payload.avatar = contact.contact.avatar;
           }
           item.messages.push(action.payload);
@@ -56,7 +61,10 @@ const chatSlice = createSlice({
         state.unseenMessage += 1;
       }
     },
-
+    addNewContact(state, action) {
+      state.contacts.push(action.payload);
+      state.unseenMessage += 1;
+    },
     clearMessages(state) {
       state.chats = [];
     },
@@ -164,7 +172,17 @@ const chatSlice = createSlice({
           }
         }
       })
-      .addCase(seenMessages.rejected, () => {});
+      .addCase(seenMessages.rejected, () => {})
+      .addCase(createGroup.pending, () => {})
+      .addCase(createGroup.fulfilled, (state) => {
+        state.unseenMessage += 1;
+      })
+      .addCase(createGroup.rejected, () => {})
+      .addCase(acceptFriendRequests.pending, () => {})
+      .addCase(acceptFriendRequests.fulfilled, (state) => {
+        state.unseenMessage += 1;
+      })
+      .addCase(acceptFriendRequests.rejected, () => {});
   },
 });
 export const getAllContacts = createAsyncThunk('contacts/getAllContacts', async (_, { rejectWithValue }) => {
@@ -277,9 +295,13 @@ export const seenMessages = createAsyncThunk('chat/seenMessages', async (contact
     return rejectWithValue({ error: error.response.data.message });
   }
 });
-export const createGroup = createAsyncThunk('chat/createGroup', async (data: CreateGroupDTO, { rejectWithValue }) => {
+export const createGroup = createAsyncThunk('chat/createGroup', async (data: FormData, { rejectWithValue }) => {
   try {
-    const response = await api.post('/groups/create-group', data);
+    const response = await api.post('/groups/create-group', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     console.log(response);
     return response.data;
   } catch (error) {
@@ -295,5 +317,11 @@ export const getMemberOfGroup = createAsyncThunk('chat/getMemberOfGroup', async 
   }
 });
 export default chatSlice.reducer;
-export const { setCurrentContact, resetContacts, resetChatSlice, addMessageToCurrentMessages, clearMessages } =
-  chatSlice.actions;
+export const {
+  setCurrentContact,
+  resetContacts,
+  resetChatSlice,
+  addMessageToCurrentMessages,
+  clearMessages,
+  addNewContact,
+} = chatSlice.actions;

@@ -13,12 +13,12 @@ import {
   useTheme,
 } from '@mui/material';
 import Transition from './Transition';
-import { IoCloseOutline } from 'react-icons/io5';
+import { IoCameraOutline, IoCloseOutline } from 'react-icons/io5';
 import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
 import { CiSearch } from 'react-icons/ci';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/interface';
 import { MemberItem } from './MemberItem';
 import { createGroup } from '../../store/slices/chatSlice';
 import { openSuccessSnackbar } from '../../store/slices/appSlice';
@@ -35,7 +35,9 @@ export function NewGroupDialog({ open, handleClose }) {
   // state
   const [search, setSearch] = useState<string>('');
   const [members, setMembers] = useState<string[]>([id]);
-  const [groupName, setGroupName] = useState<string>('');
+  const [groupName, setGroupName] = useState<string>('My group');
+  const [groupAvatar, setGroupAvatar] = useState<Blob>(null);
+  const groupAvatarRef = useRef(null);
 
   // handle
   const handleChooseMember = (id: string, type: ChooseType) => {
@@ -53,13 +55,27 @@ export function NewGroupDialog({ open, handleClose }) {
 
   // handle
   const handleCreateGroup = async () => {
-    const response = await dispatch(createGroup({ groupName, members, createdBy: id }));
+    const formData = new FormData();
+    formData.append('groupAvatar', groupAvatar);
+    formData.append('groupName', groupName);
+    formData.append('members', JSON.stringify(members));
+    formData.append('createdBy', id);
+    const response = await dispatch(createGroup(formData));
+    console.log(response);
+
     if (!response.payload.error) {
       dispatch(openSuccessSnackbar('Created group successfully'));
       handleClose();
     }
   };
 
+  const handleChooseImageFile = (e) => {
+    console.log(e.target.files[0]);
+    setGroupAvatar(e.target.files[0]);
+  };
+  const openFileChooser = () => {
+    groupAvatarRef.current.click();
+  };
   // render
   return (
     <Dialog
@@ -93,17 +109,41 @@ export function NewGroupDialog({ open, handleClose }) {
           },
         }}
       >
-        <Stack spacing={2} px={3} pb={3} alignItems="start">
-          <TextField
-            fullWidth
-            id="standard-basic"
-            label="Group name"
-            variant="standard"
-            value={groupName}
-            onChange={(e) => {
-              setGroupName(e.target.value);
-            }}
-          />
+        <Stack spacing={2} px={3} pb={3} pt={1} alignItems="start">
+          <Stack direction="row" alignItems="center" spacing={2} width="100%">
+            <Stack
+              justifyContent="center"
+              alignItems="center"
+              sx={{ bgcolor: theme.palette.background.paper, borderRadius: '50%' }}
+            >
+              {groupAvatar ? (
+                <Avatar src={URL.createObjectURL(groupAvatar)} onClick={openFileChooser} />
+              ) : (
+                <IconButton onClick={openFileChooser}>
+                  <IoCameraOutline />
+                </IconButton>
+              )}
+              <input
+                ref={groupAvatarRef}
+                type="file"
+                accept="image/*,video/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  handleChooseImageFile(e);
+                }}
+              />
+            </Stack>
+            <TextField
+              fullWidth
+              id="standard-basic"
+              label="Group name"
+              variant="standard"
+              value={groupName}
+              onChange={(e) => {
+                setGroupName(e.target.value);
+              }}
+            />
+          </Stack>
           <AvatarGroup total={members.length} max={10}>
             <Avatar key={0} alt="avatar" src={avatar} />
             {contacts
@@ -148,7 +188,11 @@ export function NewGroupDialog({ open, handleClose }) {
           >
             {search
               ? contacts
-                  .filter((contact) => contact.contact.displayName.toLowerCase().includes(search.toLowerCase()))
+                  .filter(
+                    (contact) =>
+                      contact.contact.type === ContactType.USER &&
+                      contact.contact.displayName.toLowerCase().includes(search.toLowerCase()),
+                  )
                   .map((contact) => (
                     <MemberItem
                       key={contact.contact._id}
@@ -157,14 +201,16 @@ export function NewGroupDialog({ open, handleClose }) {
                       handleChoose={handleChooseMember}
                     />
                   ))
-              : contacts.map((contact) => (
-                  <MemberItem
-                    key={contact.contact._id}
-                    user={contact.contact}
-                    selected={members.includes(contact.contact._id)}
-                    handleChoose={handleChooseMember}
-                  />
-                ))}
+              : contacts
+                  .filter((contact) => contact.contact.type === ContactType.USER)
+                  .map((contact) => (
+                    <MemberItem
+                      key={contact.contact._id}
+                      user={contact.contact}
+                      selected={members.includes(contact.contact._id)}
+                      handleChoose={handleChooseMember}
+                    />
+                  ))}
           </Stack>
         </Box>
         <Stack pr={3} direction="row" justifyContent="end">
