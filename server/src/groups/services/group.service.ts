@@ -16,7 +16,12 @@ export class GroupService {
       } else {
         data.avatar = defaultGroupAvatarUrl;
       }
-      const group = await this.groupModel.create(data);
+      const group = await this.groupModel.create({
+        members: data.members,
+        avatar: data.avatar,
+        createdBy: data.createdBy,
+        groupName: data.groupName,
+      });
       if (!group) {
         throw new HttpException('Can not create this group', HttpStatus.BAD_REQUEST);
       }

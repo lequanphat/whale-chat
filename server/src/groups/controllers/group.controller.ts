@@ -16,6 +16,8 @@ export class GroupController {
   async createGroup(@Req() req: any, @Body() data: any) {
     try {
       // assign id
+      console.log(data);
+
       const group = await this.groupService.createGroup({
         groupName: data.groupName,
         members: JSON.parse(data.members),

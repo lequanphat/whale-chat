@@ -4,6 +4,7 @@ import { MessagesService } from './services/messages.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Messages, Messageschema } from 'src/schemas/messages.chema';
 import { User, UserSchema } from 'src/schemas/users.chema';
+import { Group, GroupSchema } from 'src/schemas/groups.schema';
 
 @Module({
   imports: [
@@ -15,6 +16,10 @@ import { User, UserSchema } from 'src/schemas/users.chema';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Group.name,
+        schema: GroupSchema,
       },
     ]),
   ],

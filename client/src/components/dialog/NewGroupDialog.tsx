@@ -61,8 +61,6 @@ export function NewGroupDialog({ open, handleClose }) {
     formData.append('members', JSON.stringify(members));
     formData.append('createdBy', id);
     const response = await dispatch(createGroup(formData));
-    console.log(response);
-
     if (!response.payload.error) {
       dispatch(openSuccessSnackbar('Created group successfully'));
       handleClose();

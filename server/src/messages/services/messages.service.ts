@@ -6,12 +6,13 @@ import { ContactMessageDTO, FileUploadDTO, SeenMessagesDTO, TextMessageDTO } fro
 import { SERVER_URL } from 'src/config';
 import { User } from 'src/schemas/users.chema';
 import { MessageType } from 'src/schemas/types';
-
+import { Group } from 'src/schemas/groups.schema';
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectModel(Messages.name) private messageModel: Model<Messages>,
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Group.name) private groupModel: Model<Group>,
   ) {}
   async getAllMessages(id: string, contactId: string) {
     const isValidId = mongoose.Types.ObjectId.isValid(contactId);
@@ -31,13 +32,31 @@ export class MessagesService {
       messages = messages.slice(Math.max(messages.length - 20, 0));
       if (messages.length > 0) {
         const contact = await this.userModel.findById(contactId);
-        for (let i = 1; i < messages.length; i++) {
-          if (messages[i - 1].from.toString() === id || messages[i - 1].type === MessageType.SYSTEM) {
-            messages[i].avatar = contact.avatar;
+        if (contact) {
+          for (let i = 1; i < messages.length; i++) {
+            if (messages[i - 1].from.toString() === id || messages[i - 1].type === MessageType.SYSTEM) {
+              messages[i].avatar = contact.avatar;
+            }
           }
-        }
-        if (messages[0].from.toString() === contactId) {
-          messages[0].avatar = contact.avatar;
+          if (messages[0].from.toString() === contactId) {
+            messages[0].avatar = contact.avatar;
+          }
+        } else {
+          const groups = await this.groupModel
+            .findOne({ _id: contactId })
+            .populate({ path: 'members', select: '_id displayName avatar' });
+          messages = await this.messageModel
+            .find({
+              to: contactId,
+            })
+            .sort({ createdAt: 1 });
+          for (let i = 1; i < messages.length; i++) {
+            groups.members.forEach((member: any) => {
+              if (member._id.toString() === messages[i].from.toString()) {
+                messages[i].avatar = member.avatar;
+              }
+            });
+          }
         }
       }
       return { messages };
@@ -169,22 +188,31 @@ export class MessagesService {
     }
   }
   async seenMessages({ id, from, to }: SeenMessagesDTO) {
+    console.log('seen message');
+
     try {
-      const messages = await this.messageModel.updateMany(
-        {
+      const contact = await this.userModel.findOne({ _id: from });
+      let findOption = null;
+      if (contact) {
+        findOption = {
           $or: [
             { from: from, to: to },
             { from: to, to: from },
           ],
           seens: { $nin: [id] },
-        },
-        { $addToSet: { seens: id } },
-      );
+        };
+      } else {
+        findOption = {
+          to: from,
+          seens: { $nin: [id] },
+        };
+      }
+      const messages = await this.messageModel.updateMany(findOption, { $addToSet: { seens: id } });
       if (!messages) {
         throw new HttpException('Error in seen message', HttpStatus.BAD_REQUEST);
       }
       console.log(messages);
-      return { contactId: from === id ? to : from };
+      return { contactId: from };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
