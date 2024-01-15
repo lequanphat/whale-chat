@@ -37,6 +37,8 @@ export class Messages extends Document {
 
   @Prop()
   avatar: string;
+  @Prop()
+  authorName: string;
 
   @Prop({
     required: true,

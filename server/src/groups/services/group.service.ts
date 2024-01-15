@@ -27,6 +27,7 @@ export class GroupService {
       }
       return group;
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

@@ -31,8 +31,6 @@ export class GroupController {
       });
       return group;
     } catch (error) {
-      console.log(error);
-
       throw error;
     }
   }

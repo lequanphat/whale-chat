@@ -8,5 +8,6 @@ import { Notification, NotificationSchema } from 'src/schemas/notification.chema
   imports: [MongooseModule.forFeature([{ name: Notification.name, schema: NotificationSchema }])],
   controllers: [NotificationController],
   providers: [NotificationService],
+  exports: [NotificationService],
 })
 export class NotificationModule {}

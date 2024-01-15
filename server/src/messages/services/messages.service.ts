@@ -20,46 +20,49 @@ export class MessagesService {
       throw new HttpException('Invalid contact id', HttpStatus.BAD_REQUEST);
     }
     try {
-      let messages = await this.messageModel
-        .find({
-          $or: [
-            { from: id, to: contactId },
-            { from: contactId, to: id },
-          ],
-        })
-        .sort({ createdAt: 1 });
-
-      messages = messages.slice(Math.max(messages.length - 20, 0));
-      if (messages.length > 0) {
-        const contact = await this.userModel.findById(contactId);
-        if (contact) {
-          for (let i = 1; i < messages.length; i++) {
-            if (messages[i - 1].from.toString() === id || messages[i - 1].type === MessageType.SYSTEM) {
-              messages[i].avatar = contact.avatar;
-            }
-          }
-          if (messages[0].from.toString() === contactId) {
-            messages[0].avatar = contact.avatar;
-          }
-        } else {
-          const groups = await this.groupModel
-            .findOne({ _id: contactId })
-            .populate({ path: 'members', select: '_id displayName avatar' });
-          messages = await this.messageModel
-            .find({
-              to: contactId,
-            })
-            .sort({ createdAt: 1 });
-          for (let i = 1; i < messages.length; i++) {
-            groups.members.forEach((member: any) => {
-              if (member._id.toString() === messages[i].from.toString()) {
-                messages[i].avatar = member.avatar;
-              }
-            });
+      const contact = await this.userModel.findById(contactId);
+      if (contact) {
+        // get message with another user
+        const messages = await this.messageModel
+          .find({
+            $or: [
+              { from: id, to: contactId },
+              { from: contactId, to: id },
+            ],
+          })
+          .sort({ createdAt: 1 });
+        // messages = messages.slice(Math.max(messages.length - 20, 0));
+        for (let i = 1; i < messages.length; i++) {
+          if (messages[i - 1].from.toString() === id || messages[i - 1].type === MessageType.SYSTEM) {
+            messages[i].avatar = contact.avatar;
           }
         }
+        if (messages[0].from.toString() === contactId) {
+          messages[0].avatar = contact.avatar;
+        }
+        return { messages };
+      } else {
+        // get message from a group
+        const groups = await this.groupModel
+          .findOne({ _id: contactId })
+          .populate({ path: 'members', select: '_id displayName avatar' });
+        const messages = await this.messageModel
+          .find({
+            to: contactId,
+          })
+          .sort({ createdAt: 1 });
+        let beforeMember = null;
+        for (let i = 1; i < messages.length; i++) {
+          groups.members.forEach((member: any) => {
+            if (member._id.toString() === messages[i].from.toString() && member._id.toString() !== beforeMember) {
+              messages[i].avatar = member.avatar;
+              messages[i].authorName = member.displayName;
+              beforeMember = member._id.toString();
+            }
+          });
+        }
+        return { messages };
       }
-      return { messages };
     } catch (error) {
       throw new HttpException('Can not get messages', HttpStatus.BAD_REQUEST);
     }

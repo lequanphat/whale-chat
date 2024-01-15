@@ -7,6 +7,7 @@ import { Relationship, RelationshipSchema } from 'src/schemas/relationship.chema
 import { User, UserSchema } from 'src/schemas/users.chema';
 import { Messages, Messageschema } from 'src/schemas/messages.chema';
 import { Group, GroupSchema } from 'src/schemas/groups.schema';
+import { NotificationModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Group, GroupSchema } from 'src/schemas/groups.schema';
         schema: GroupSchema,
       },
     ]),
+    NotificationModule,
   ],
   controllers: [ContactController],
   providers: [ContactService],

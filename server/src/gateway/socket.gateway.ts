@@ -55,6 +55,14 @@ export class SocketGateway implements NestGateway {
         client.to(sendUserSocket).emit('recieve-accept-friend', data);
       }
     });
+
+    // handle send notification
+    client.on('send-notification', (data) => {
+      const sendUserSocket = this.onlineUsers.get(data.to);
+      if (sendUserSocket) {
+        client.to(sendUserSocket).emit('recieve-notification', data);
+      }
+    });
   }
 
   // disconnect

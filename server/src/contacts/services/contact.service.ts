@@ -8,6 +8,7 @@ import { User } from 'src/schemas/users.chema';
 import { Messages } from 'src/schemas/messages.chema';
 import { MessageType, UserRole } from 'src/schemas/types';
 import { Group } from 'src/schemas/groups.schema';
+import { NotificationService } from 'src/notifications/services/notification.service';
 
 @Injectable()
 export class ContactService {
@@ -17,6 +18,7 @@ export class ContactService {
     @InjectModel(Relationship.name) private relationshipModel: Model<Relationship>,
     @InjectModel(Messages.name) private messageModel: Model<Messages>,
     @InjectModel(Group.name) private groupModel: Model<Group>,
+    private readonly notificationService: NotificationService,
   ) {}
   async getAllContacts(id: string) {
     try {
@@ -242,14 +244,18 @@ export class ContactService {
       if (!friendRequest) {
         throw new HttpException('Can not delete friend request', HttpStatus.BAD_REQUEST);
       }
-      let type = FriendRequestType.RECEIVE;
       if (id === data.receiveId) {
-        // send notification to sent user
-        console.log('send notification');
+        const contact = await this.userModel.findOne({ _id: id }).select(['displayName']);
+        // send notification
+        const notification = await this.notificationService.sendNotification({
+          to: friendRequest.sendId.toString(),
+          title: `${contact.displayName} have refused the friend request.`,
+          content: `${contact.displayName} have refused the friend request.`,
+        });
+        return { friendRequest, type: FriendRequestType.RECEIVE, notification };
       } else {
-        type = FriendRequestType.SEND;
+        return { friendRequest, type: FriendRequestType.SEND };
       }
-      return { friendRequest, type };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -284,11 +290,20 @@ export class ContactService {
       const contact = await this.userModel
         .findOne({ _id: id })
         .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
+
+      // send notification
+      const notification = await this.notificationService.sendNotification({
+        to: friendRequest.sendId.toString(),
+        title: `${contact.displayName} have accepted the friend request.`,
+        content: `${contact.displayName} have accepted the friend request. Let chat now`,
+      });
+
       // response
       return {
         id: friendRequestId,
         contact,
         recentMessage,
+        notification,
       };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
