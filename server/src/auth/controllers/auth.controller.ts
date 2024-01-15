@@ -46,25 +46,12 @@ export class AuthController {
     const loginData = plainToClass(UserLoginDTO, data, { excludeExtraneousValues: true });
     try {
       const { user } = await this.authSevice.login(loginData);
-
       // generate token
       const accessToken = this.jwtService.signAccessToken({ id: user._id, role: user.role });
       const refreshToken = this.jwtService.signRefreshToken({ id: user._id, role: user.role });
       this.cookieService.saveCookie(res, 'refreshToken', refreshToken);
       // serialize data
       return res.status(200).json({ user, token: accessToken });
-    } catch (error) {
-      throw error;
-    }
-  }
-  @Get('logout')
-  async logout(@Req() req: any, @Res() res: Response) {
-    try {
-      const id: string = req.user.id;
-      await this.authSevice.logout(id);
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      return res.status(200).json({ msg: 'logout successfully' });
     } catch (error) {
       throw error;
     }

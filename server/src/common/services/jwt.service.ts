@@ -8,7 +8,7 @@ export interface JWTPayload {
 @Injectable()
 export class JwtService {
   // access token
-  signAccessToken(payload: JWTPayload, expiryTime = '60m', secret?: string): string {
+  signAccessToken(payload: JWTPayload, expiryTime = '30m', secret?: string): string {
     const accessTokenSecret = secret || ACCESS_SECRET;
     return jwt.sign(payload, accessTokenSecret, { expiresIn: expiryTime });
   }

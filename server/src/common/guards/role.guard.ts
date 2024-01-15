@@ -7,8 +7,6 @@ import { Roles } from '../decorators/role.decorator';
 export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    console.log('role guard');
-
     const roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) {
       return true;

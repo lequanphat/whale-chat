@@ -79,7 +79,6 @@ export class AuthService {
         verifyCodeExpiredTime: { $gt: Date.now() },
       });
       if (!user) {
-        console.log('here ..... -> ');
         throw new HttpException('VerifyCode has expired!', HttpStatus.BAD_REQUEST);
       }
       // verify account
@@ -98,7 +97,7 @@ export class AuthService {
     try {
       // Authenticate
       const user = await this.userModel
-        .findOneAndUpdate({ email: data.email, verified: true }, { status: 'online' }, { new: true })
+        .findOne({ email: data.email, verified: true })
         .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar', 'password', 'role']);
       if (!user) {
         throw new HttpException('Incorrect email!', 401);
@@ -107,15 +106,6 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new HttpException('Incorrect password!', 401);
       }
-      return { user };
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-  async logout(id: string) {
-    try {
-      console.log('logout');
-      const user = await this.userModel.findByIdAndUpdate({ _id: id }, { status: 'offline' });
       return { user };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -162,8 +152,6 @@ export class AuthService {
       { _id: data.id, verifyCode: data.code, verifyCodeExpiredTime: { $gt: Date.now() } },
       { $set: { verifyCode: '', verifyCodeExpiredTime: 0 } },
     );
-    console.log('user', user);
-
     if (!user) {
       throw new HttpException('Verify-code has expired', HttpStatus.BAD_REQUEST);
     }

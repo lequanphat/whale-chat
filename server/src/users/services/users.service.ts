@@ -5,7 +5,7 @@ import { User } from 'src/schemas/users.chema';
 import { EditProfileDTO, ContactDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { Messages } from 'src/schemas/messages.chema';
-import { UserRole } from 'src/schemas/types';
+import { UserRole, UserStatus } from 'src/schemas/types';
 
 @Injectable()
 export class UsersService {
@@ -126,6 +126,22 @@ export class UsersService {
     try {
       const users = await this.userModel.find({ _id: { $in: usersId } });
       return { users };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async setOnlineUser(userID: string) {
+    try {
+      const users = await this.userModel.findOneAndUpdate({ _id: userID }, { status: UserStatus.ONLINE });
+      return users;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async setOfflineUser(userID: string) {
+    try {
+      const users = await this.userModel.findOneAndUpdate({ _id: userID }, { status: UserStatus.OFFLINE });
+      return users;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
