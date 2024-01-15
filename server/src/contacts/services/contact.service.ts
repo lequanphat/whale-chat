@@ -64,10 +64,10 @@ export class ContactService {
               { from: id, to: contact._id },
               { from: contact._id, to: id },
             ],
-            seen: false,
+            seens: { $nin: id },
           })
           .sort({ createdAt: -1 });
-        let totalUnSeen = messages.length;
+        const totalUnSeen = messages.length;
         if (totalUnSeen === 0) {
           messages = await this.messageModel
             .find({
@@ -77,26 +77,33 @@ export class ContactService {
               ],
             })
             .sort({ createdAt: -1 });
-        } else {
-          if (messages[0].from.toString() === id) {
-            totalUnSeen = 0;
-          }
         }
         //
         responeContacts.push({ contact: { ...contact, type: 'user' }, recentMessage: messages[0], total: totalUnSeen });
       }
-      const groups = await this.groupModel.find({ members: id }).select(['_id', 'groupName', 'createdBy', 'members']);
+      const groups = await this.groupModel
+        .find({ members: id })
+        .select(['_id', 'groupName', 'createdBy', 'members', 'avatar']);
 
       for (const group of groups) {
-        const messages = await this.messageModel
+        let messages = await this.messageModel
           .find({
             to: group._id,
+            seens: { $nin: id },
           })
           .sort({ createdAt: -1 });
+        const totalUnSeen = messages.length;
+        if (totalUnSeen === 0) {
+          messages = await this.messageModel
+            .find({
+              to: group._id,
+            })
+            .sort({ createdAt: -1 });
+        }
         responeContacts.push({
           contact: group,
           recentMessage: messages[0],
-          total: 2,
+          total: totalUnSeen,
         });
       }
 
@@ -267,7 +274,7 @@ export class ContactService {
         users: [id, friendRequest.sendId],
       });
       // send first message
-      const firstMessage = await this.messageModel.create({
+      const recentMessage = await this.messageModel.create({
         from: id,
         to: friendRequest.sendId,
         type: MessageType.SYSTEM,
@@ -275,10 +282,14 @@ export class ContactService {
       });
       // get user
       const contact = await this.userModel
-        .findOne({ _id: friendRequest.sendId })
+        .findOne({ _id: id })
         .select(['_id', 'displayName', 'email', 'status', 'about', 'avatar']);
       // response
-      return { id: friendRequestId, contact, firstMessage };
+      return {
+        id: friendRequestId,
+        contact,
+        recentMessage,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

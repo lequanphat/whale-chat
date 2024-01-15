@@ -9,5 +9,7 @@ export class CreateGroupDTO {
   @IsArray()
   members: string[];
   @IsString()
+  avatar?: string;
+  @IsString()
   createdBy: string;
 }

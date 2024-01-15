@@ -51,7 +51,12 @@ export class MessagesService {
       throw new HttpException('Invalid From field', HttpStatus.BAD_REQUEST);
     }
     try {
-      const message = await this.messageModel.create({ from: data.from, to: data.to, text: data.text });
+      const message = await this.messageModel.create({
+        from: data.from,
+        to: data.to,
+        text: data.text,
+        seens: [data.from],
+      });
       if (message) {
         return { message };
       }
@@ -89,6 +94,7 @@ export class MessagesService {
         to: data.to,
         contact: data.contact,
         type: MessageType.CONTACT,
+        seens: [data.from],
       });
       if (message) {
         return { message };
@@ -105,6 +111,7 @@ export class MessagesService {
         to,
         type: MessageType.IMAGE,
         image: `${SERVER_URL}/uploads/images/${file}`,
+        seens: [from],
       });
       if (!imageMessage) {
         throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
@@ -128,6 +135,7 @@ export class MessagesService {
         type: MessageType.DOC,
         doc: `${SERVER_URL}/uploads/docs/${file}`,
         text: originalName,
+        seens: [from],
       });
       if (!docMessage) {
         throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
@@ -150,6 +158,7 @@ export class MessagesService {
         to,
         type: MessageType.VOICE,
         voice: `${SERVER_URL}/uploads/audios/${file}`,
+        seens: [from],
       });
       if (!voiceMessage) {
         throw new HttpException('Error in save message', HttpStatus.BAD_REQUEST);
@@ -159,20 +168,23 @@ export class MessagesService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-  async seenMessages({ from, to }: SeenMessagesDTO) {
+  async seenMessages({ id, from, to }: SeenMessagesDTO) {
     try {
       const messages = await this.messageModel.updateMany(
         {
-          from,
-          to,
+          $or: [
+            { from: from, to: to },
+            { from: to, to: from },
+          ],
+          seens: { $nin: [id] },
         },
-        { $set: { seen: true } },
+        { $addToSet: { seens: id } },
       );
       if (!messages) {
         throw new HttpException('Error in seen message', HttpStatus.BAD_REQUEST);
       }
       console.log(messages);
-      return { contactId: from };
+      return { contactId: from === id ? to : from };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

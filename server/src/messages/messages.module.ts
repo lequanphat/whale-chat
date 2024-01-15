@@ -20,5 +20,6 @@ import { User, UserSchema } from 'src/schemas/users.chema';
   ],
   controllers: [MessagesController],
   providers: [MessagesService],
+  exports: [MessagesService],
 })
 export class MessageModule {}

@@ -38,8 +38,16 @@ export class Messages extends Document {
   @Prop()
   avatar: string;
 
-  @Prop({ required: true, default: false })
-  seen: boolean;
+  @Prop({
+    required: true,
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    // default: function () {
+    //   return [this.from];
+    // },
+    default: [],
+  })
+  seens: mongoose.Schema.Types.ObjectId[];
 }
 
 export const Messageschema = SchemaFactory.createForClass(Messages);

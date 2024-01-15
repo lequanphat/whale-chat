@@ -12,6 +12,7 @@ export class FileUploadDTO {
   file: string;
 }
 export class SeenMessagesDTO {
+  id: string;
   from: string;
   to: string;
 }

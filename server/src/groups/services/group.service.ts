@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Group } from 'src/schemas/groups.schema';
 import { CreateGroupDTO } from '../types';
+import { SERVER_URL, defaultGroupAvatarUrl } from 'src/config';
 
 @Injectable()
 export class GroupService {
@@ -10,11 +11,12 @@ export class GroupService {
 
   async createGroup(data: CreateGroupDTO) {
     try {
-      const group = await this.groupModel.create({
-        groupName: data.groupName,
-        members: data.members,
-        createdBy: data.createdBy,
-      });
+      if (data.avatar) {
+        data.avatar = `${SERVER_URL}/uploads/avatars/${data.avatar}`;
+      } else {
+        data.avatar = defaultGroupAvatarUrl;
+      }
+      const group = await this.groupModel.create(data);
       if (!group) {
         throw new HttpException('Can not create this group', HttpStatus.BAD_REQUEST);
       }
