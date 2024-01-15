@@ -224,7 +224,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
 
             <Stack spacing={2}>
               {members.map((member) => (
-                <Stack direction="row" alignItems="center" spacing={1.4}>
+                <Stack key={member._id} direction="row" alignItems="center" spacing={1.4}>
                   <Avatar src={member.avatar} />
                   <Typography variant="body1">{member.displayName}</Typography>
                 </Stack>

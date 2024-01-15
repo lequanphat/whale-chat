@@ -12,7 +12,6 @@ export class CheckRefreshTokenMiddleware implements NestMiddleware {
       if (!token) {
         throw new HttpException('Un-Authorized', HttpStatus.FORBIDDEN);
       }
-      console.log('refreshToken', token);
       try {
         const data = this.jwtService.verifyRefreshToken(token);
         req.user = data;

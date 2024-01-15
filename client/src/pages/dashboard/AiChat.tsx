@@ -5,6 +5,8 @@ import { Scrollbar } from '../../components/scrollbar/Scrollbar';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { OPENAI_KEY } from '../../config';
+import { ChatHeader } from '../../section/aichats/ChatHeader';
+import { AiMessage } from '../../section/aichats/AiMessage';
 
 interface Message {
   content: string;
@@ -17,6 +19,8 @@ const AiChat = () => {
   const [text, setText] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef(null);
+
+  // handle
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLoading) {
@@ -49,9 +53,18 @@ const AiChat = () => {
     }
     setIsLoading(false);
   };
+
+  // handle clear message
+  const handleClearMessage = () => {
+    setMessages([]);
+  };
+
+  // effect
   useEffect(() => {
     scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [scrollRef, messages]);
+
+  // render
   return (
     <Stack direction="row" width="100%">
       <Stack
@@ -67,6 +80,7 @@ const AiChat = () => {
         </Stack>
       </Stack>
       <Stack height="100vh" flexGrow={1}>
+        <ChatHeader handleOff={handleClearMessage} />
         <Stack flexGrow={1} maxHeight="calc(100vh - 79px)">
           <Scrollbar
             ref={scrollRef}
@@ -78,29 +92,7 @@ const AiChat = () => {
           >
             <Stack spacing={1.5}>
               {messages.map((message, index) => {
-                return (
-                  <Stack
-                    width="100%"
-                    key={index}
-                    direction="row"
-                    justifyContent={message.role === 'user' ? 'end' : 'start'}
-                  >
-                    <Stack
-                      sx={{
-                        backgroundColor:
-                          message.role === 'user' ? theme.palette.primary.main : theme.palette.background.paper,
-                        borderRadius: 1.8,
-                        width: 'max-content',
-                        maxWidth: 400,
-                        p: '10px 16px',
-                      }}
-                    >
-                      <Typography variant="body1" color={message.role === 'user' ? '#fff' : theme.palette.text.primary}>
-                        {message.content}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-                );
+                return <AiMessage message={message} key={index} />;
               })}
               {isLoading && (
                 <Stack direction="row" justifyContent="start">

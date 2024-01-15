@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { defaultGroupAvatarUrl } from 'src/config';
 
 @Schema({ timestamps: true })
 export class Group extends Document {
@@ -10,7 +9,7 @@ export class Group extends Document {
   @Prop({ required: true, type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
   members: mongoose.Schema.Types.ObjectId[];
 
-  @Prop({ required: true, default: defaultGroupAvatarUrl })
+  @Prop({ required: true })
   avatar: string;
 
   @Prop({ required: true, ref: 'User' })

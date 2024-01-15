@@ -55,8 +55,6 @@ export const Chat = () => {
       >
         <Stack height="100%" maxHeight="100vh" width="100%">
           <ChatHeader />
-          {/* chat messages */}
-
           <Message currentMessages={currentMessages} />
           <ChatFooter />
         </Stack>
