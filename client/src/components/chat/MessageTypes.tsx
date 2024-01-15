@@ -102,6 +102,11 @@ const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boo
           p: '10px 16px',
         }}
       >
+        {!fromSelf && (
+          <Typography variant="body2" fontSize={14} color={theme.palette.text.primary}>
+            {msg.authorName}
+          </Typography>
+        )}
         <Typography variant="body1" color={fromSelf ? '#fff' : theme.palette.text.primary}>
           {msg.text}
         </Typography>
@@ -114,32 +119,50 @@ const ContactMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: 
   const navigate = useNavigate();
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
-      <Box
-        sx={{
-          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
-          borderRadius: 1.8,
-          maxWidth: '45%',
-          p: '10px 16px',
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={1.4}>
-          <Avatar src={msg.contact.avatar} />
-          <Stack color={fromSelf ? '#fff' : theme.palette.text.primary}>
-            <Typography variant="body2">{msg.contact.displayName}</Typography>
-            <Typography variant="body1">{msg.contact.email}</Typography>
+      <Stack spacing={0.8}>
+        {!fromSelf && (
+          <Stack direction="row">
+            <Typography
+              variant="body2"
+              fontSize={14}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: theme.palette.background.paper,
+                px: 1.6,
+                py: 0.1,
+                borderRadius: 999,
+              }}
+            >
+              {msg.authorName}
+            </Typography>
           </Stack>
-        </Stack>
-        <Stack alignItems="end">
-          <Button
-            sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
-            onClick={() => {
-              navigate(`/personal/${msg.contact?._id}`);
-            }}
-          >
-            View details
-          </Button>
-        </Stack>
-      </Box>
+        )}
+        <Box
+          sx={{
+            backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+            borderRadius: 1.8,
+            p: '10px 16px',
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={1.4}>
+            <Avatar src={msg.contact.avatar} />
+            <Stack color={fromSelf ? '#fff' : theme.palette.text.primary}>
+              <Typography variant="body2">{msg.contact.displayName}</Typography>
+              <Typography variant="body1">{msg.contact.email}</Typography>
+            </Stack>
+          </Stack>
+          <Stack alignItems="end">
+            <Button
+              sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
+              onClick={() => {
+                navigate(`/personal/${msg.contact?._id}`);
+              }}
+            >
+              View details
+            </Button>
+          </Stack>
+        </Box>
+      </Stack>
     </MessageWrapper>
   );
 });
@@ -178,54 +201,94 @@ const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bool
   };
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
-      <Box
-        p={1.2}
-        sx={{
-          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
-          borderRadius: 1.2,
-          width: 'max-content',
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={3} sx={{ backgroundColor: 'transparent' }}>
-          <img src={getFileImage(msg.text)} alt="123" style={{ maxHeight: 50 }} />
-          <Typography
-            variant="body1"
-            color={fromSelf ? '#fff' : theme.palette.text.primary}
-            sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-          >
-            {msg.text}
-          </Typography>
-          <IconButton onClick={() => handleDownloadFile(msg.doc)}>
-            <MdOutlineFileDownload color={fromSelf ? '#fff' : theme.palette.text.primary} />
-          </IconButton>
-        </Stack>
-      </Box>
+      <Stack spacing={0.8}>
+        {!fromSelf && (
+          <Stack direction="row">
+            <Typography
+              variant="body2"
+              fontSize={14}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: theme.palette.background.paper,
+                px: 1.6,
+                py: 0.1,
+                borderRadius: 999,
+              }}
+            >
+              {msg.authorName}
+            </Typography>
+          </Stack>
+        )}
+        <Box
+          p={1.2}
+          sx={{
+            backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+            borderRadius: 1.2,
+            width: 'max-content',
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={3} sx={{ backgroundColor: 'transparent' }}>
+            <img src={getFileImage(msg.text)} alt="123" style={{ maxHeight: 50 }} />
+
+            <Typography
+              variant="body1"
+              color={fromSelf ? '#fff' : theme.palette.text.primary}
+              sx={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            >
+              {msg.text}
+            </Typography>
+            <IconButton onClick={() => handleDownloadFile(msg.doc)}>
+              <MdOutlineFileDownload color={fromSelf ? '#fff' : theme.palette.text.primary} />
+            </IconButton>
+          </Stack>
+        </Box>
+      </Stack>
     </MessageWrapper>
   );
 });
 
 const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+  const theme = useTheme();
   const [imageLink, setImageLink] = useState(msg.image);
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
-      <Box
-        sx={{
-          width: 300,
-          maxHeight: 600,
-          borderRadius: 1.2,
-          overflow: 'hidden',
-          boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',
-        }}
-      >
-        <img
-          src={imageLink}
-          alt={'image'}
-          style={{ width: '100%', height: '100%' }}
-          onError={() => {
-            setImageLink(default_img);
+      <Stack spacing={0.8}>
+        {!fromSelf && (
+          <Stack direction="row">
+            <Typography
+              variant="body2"
+              fontSize={14}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: theme.palette.background.paper,
+                px: 1.6,
+                py: 0.1,
+                borderRadius: 999,
+              }}
+            >
+              {msg.authorName}
+            </Typography>
+          </Stack>
+        )}
+        <Box
+          sx={{
+            width: 300,
+            maxHeight: 600,
+            borderRadius: 1.2,
+            overflow: 'hidden',
+            boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',
           }}
-        />
-      </Box>
+        >
+          <img
+            src={imageLink}
+            alt={'image'}
+            style={{ width: '100%', height: '100%' }}
+            onError={() => {
+              setImageLink(default_img);
+            }}
+          />
+        </Box>
+      </Stack>
     </MessageWrapper>
   );
 });
@@ -280,28 +343,47 @@ const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
   // render
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        p={1}
-        spacing={1}
-        sx={{
-          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
-          borderRadius: 1.2,
-          color: fromSelf ? '#fff' : theme.palette.text.primary,
-        }}
-      >
-        <IconButton
-          sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
-          onClick={isPlaying ? handlePauseAudio : handlePlayAudio}
+      <Stack spacing={0.8}>
+        {!fromSelf && (
+          <Stack direction="row">
+            <Typography
+              variant="body2"
+              fontSize={14}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: theme.palette.background.paper,
+                px: 1.6,
+                py: 0.1,
+                borderRadius: 999,
+              }}
+            >
+              {msg.authorName}
+            </Typography>
+          </Stack>
+        )}
+        <Stack
+          direction="row"
+          alignItems="center"
+          p={1}
+          spacing={1}
+          sx={{
+            backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+            borderRadius: 1.2,
+            color: fromSelf ? '#fff' : theme.palette.text.primary,
+          }}
         >
-          {isPlaying ? <IoStop size={20} /> : <IoPlay size={20} />}
-        </IconButton>
-        <Typography>{`${Math.floor(currentTime)}/${Math.floor(duration)}`}</Typography>
-        {isPlaying && <CircularProgress size={20} color="success" />}
-        <audio ref={audioRef}>
-          <source src={msg.voice} />
-        </audio>
+          <IconButton
+            sx={{ color: fromSelf ? '#fff' : theme.palette.text.primary }}
+            onClick={isPlaying ? handlePauseAudio : handlePlayAudio}
+          >
+            {isPlaying ? <IoStop size={20} /> : <IoPlay size={20} />}
+          </IconButton>
+          <Typography>{`${Math.floor(currentTime)}/${Math.floor(duration)}`}</Typography>
+          {isPlaying && <CircularProgress size={20} color="success" />}
+          <audio ref={audioRef}>
+            <source src={msg.voice} />
+          </audio>
+        </Stack>
       </Stack>
     </MessageWrapper>
   );

@@ -1,6 +1,18 @@
-import { Avatar, Box, Button, Divider, Grid, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  Stack,
+  Switch,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
-import { IoCloseOutline, IoExitOutline, IoPersonAddOutline, IoPersonCircleOutline } from 'react-icons/io5';
+import { IoCloseOutline, IoExitOutline, IoPersonAddOutline, IoPersonCircleOutline, IoStar } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
 import { PiPhoneLight } from 'react-icons/pi';
 import { MdBlock } from 'react-icons/md';
@@ -70,7 +82,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
       <Scrollbar height={'calc(100vh - 70px)'} sx={{ flexGrow: 1 }} p={3} spacing={3}>
         <Stack direction="column" alignItems="center" justifyContent="center" spacing={1}>
           <Avatar src={currentContact?.avatar} alt="avt" sx={{ width: 62, height: 62 }} />
-          <Typography variant="subtitle1">{currentContact?.displayName}</Typography>
+          <Typography variant="subtitle1">{currentContact?.displayName || currentContact?.groupName}</Typography>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-evenly">
           {currentContact?.type === ContactType.USER ? (
@@ -226,7 +238,14 @@ const Contact = ({ currentMessages }): JSX.Element => {
               {members.map((member) => (
                 <Stack key={member._id} direction="row" alignItems="center" spacing={1.4}>
                   <Avatar src={member.avatar} />
-                  <Typography variant="body1">{member.displayName}</Typography>
+                  {member._id === currentContact.createdBy ? (
+                    <Stack direction='row' alignItems='center' spacing={0.5}>
+                      <Typography variant="body1">{member.displayName}</Typography>
+                      <IoStar size={18} color="#f6e718" />
+                    </Stack>
+                  ) : (
+                    <Typography variant="body1">{member.displayName}</Typography>
+                  )}
                 </Stack>
               ))}
             </Stack>

@@ -17,6 +17,7 @@ export interface Message {
   image?: string;
   voice?: string;
   avatar?: string;
+  authorName?: string;
   contact?: {
     _id: string;
     avatar: string;

@@ -17,6 +17,10 @@ export const notificationSlice = createSlice({
       state.notifications = [];
       state.isLoading = false;
     },
+    addNotification(state, action) {
+      state.notifications.unshift(action.payload);
+      state.unseen += 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -90,5 +94,5 @@ export const seenNotification = createAsyncThunk(
     }
   },
 );
-export const { resetNotificationSlice } = notificationSlice.actions;
+export const { resetNotificationSlice, addNotification } = notificationSlice.actions;
 export default notificationSlice.reducer;

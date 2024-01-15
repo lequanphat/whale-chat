@@ -115,6 +115,7 @@ const AiChat = () => {
           <Stack p={2} direction="row" alignItems="center" spacing={1}>
             <StyledInput
               fullWidth
+              autoComplete="off"
               variant="filled"
               placeholder="Message ChatGPT..."
               InputProps={{ disableUnderline: true }}

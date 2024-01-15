@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../store/interface';
 import { addMessageToCurrentMessages, addNewContact } from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
+import { addNotification } from '../store/slices/notificationSlice';
 
 type SocketContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,6 +52,10 @@ export const SocketProvider = ({ children }) => {
     socketInstance.on('recieve-accept-friend', (data) => {
       dispatch(addNewContact(data));
     });
+    socketInstance.on('recieve-notification', (data) => {
+      dispatch(addNotification(data));
+    });
+
     setSocket(socketInstance);
     return () => {
       console.log('unmout-event-socket');

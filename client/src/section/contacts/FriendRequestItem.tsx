@@ -17,16 +17,20 @@ export const FriendRequestItem = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
-  const { emitAcceptFriend } = useSocket();
+  const { emitAcceptFriend, emitNotification } = useSocket();
 
   // handle
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDeleteFriendRequest = async ({ sendId, receiveId }: { sendId: any; receiveId: any }) => {
-    dispatch(deleteFriendRequests({ sendId, receiveId }));
+    const response = await dispatch(deleteFriendRequests({ sendId, receiveId }));
+    if (response.payload.notification) {
+      emitNotification(response.payload.notification);
+    }
   };
   const handleAcceptFriendRequest = async () => {
     const response = await dispatch(acceptFriendRequests({ friendRequestId: value._id }));
     if (!response.payload.error) {
+      emitNotification(response.payload.notification);
       emitAcceptFriend({
         contact: response.payload.contact,
         recentMessage: response.payload.recentMessage,
