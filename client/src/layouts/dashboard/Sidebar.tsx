@@ -4,8 +4,8 @@ import CustomSwitch from '../../components/switch/CustomSwitch';
 import logo from '../../assets/logo.png';
 import { Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
-import { resetUser, userLogout } from '../../store/slices/authSlice';
-import { openSnackbar, resetAppSlice, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
+import { resetUser } from '../../store/slices/authSlice';
+import { resetAppSlice, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetChatSlice, setCurrentContact } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
@@ -43,16 +43,12 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
   const handleLogout = async () => {
-    const response = await dispatch(userLogout());
-    if (!response.error) {
-      dispatch(openSnackbar({ message: 'Logout successfully!', serverity: 'success' }));
-      dispatch(resetChatSlice());
-      dispatch(resetAppSlice());
-      dispatch(resetUser());
-      dispatch(resetNotificationSlice());
-      dispatch(resetRelationshipSlice());
-      window.localStorage.removeItem('accessToken');
-    }
+    dispatch(resetChatSlice());
+    dispatch(resetAppSlice());
+    dispatch(resetUser());
+    dispatch(resetNotificationSlice());
+    dispatch(resetRelationshipSlice());
+    window.localStorage.removeItem('accessToken');
   };
   const handleAccountManager = (index) => {
     switch (index) {

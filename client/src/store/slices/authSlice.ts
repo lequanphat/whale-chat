@@ -61,17 +61,6 @@ export const userSlice = createSlice({
       .addCase(userLogin.rejected, (state) => {
         state.isLoading = false;
       })
-      .addCase(userLogout.pending, () => {})
-      .addCase(userLogout.fulfilled, (state) => {
-        state.id = '';
-        state.email = '';
-        state.displayName = '';
-        state.about = '';
-        state.auth = false;
-        state.avatar = '';
-        state.token = '';
-      })
-      .addCase(userLogout.rejected, () => {})
       .addCase(userRegister.pending, (state) => {
         state.isLoading = true;
       })
@@ -162,14 +151,7 @@ export const userLogin = createAsyncThunk('auth/login', async (data: LoginDTO, {
   }
 });
 
-export const userLogout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
-  try {
-    const response = await api.get('/auth/logout');
-    return response.data;
-  } catch (error) {
-    return rejectWithValue({ error: error.response.message });
-  }
-});
+
 export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get('/auth/refresh-token');
