@@ -1,4 +1,15 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
 import { MessagesService } from '../services/messages.service';
 import { ContactMessageDTO, TextMessageDTO } from '../types';
 import { Response } from 'express';
@@ -92,6 +103,22 @@ export class MessagesController {
       return await this.messageService.seenMessages({ id: req.user.id, from: contactId, to: req.user.id });
     } catch (error) {
       throw error;
+    }
+  }
+  @Get('download/:fileName')
+  async downLoadFile(@Param('fileName') fileName: string, @Res() res: Response) {
+    try {
+      return res.download('public/uploads/docs/' + fileName, (err) => {
+        if (err) {
+          console.error('Error downloading file:', err);
+          return new HttpException(err.message, HttpStatus.BAD_REQUEST);
+        } else {
+          console.log('File downloaded successfully');
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      return new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
   @Get(':contactId')

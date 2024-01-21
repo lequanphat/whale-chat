@@ -13,7 +13,7 @@ export class SocketGateway implements NestGateway {
     private readonly jwtService: JwtService,
     private userService: UsersService,
   ) {}
-  private onlineUsers: Map<string, string> = new Map();
+  private onlineUsers: Map<string, { socketId: string; rooms: string[] }> = new Map();
 
   // init socket
   afterInit() {
@@ -29,22 +29,25 @@ export class SocketGateway implements NestGateway {
   // connect
   async handleConnection(client: Socket) {
     const userID = client.handshake.headers.cookie;
-    this.onlineUsers.set(userID, client.id);
+    this.onlineUsers.set(userID, { socketId: client.id, rooms: [] });
     await this.userService.setOnlineUser(userID);
 
     // handle send message
     client.on('send-message', (data) => {
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
-        client.to(sendUserSocket).emit('recieve-message', data);
+        data.toUser = true;
+        client.to(sendUserSocket.socketId).emit('recieve-message', data);
+      } else {
+        data.toGroup = true;
+        client.to(data.to).emit('recieve-message', data);
       }
     });
-
     // handle send friend request
     client.on('send-friend-request', (data) => {
       const sendUserSocket = this.onlineUsers.get(data.receiveId);
       if (sendUserSocket) {
-        client.to(sendUserSocket).emit('recieve-friend-request', data);
+        client.to(sendUserSocket.socketId).emit('recieve-friend-request', data);
       }
     });
 
@@ -52,7 +55,7 @@ export class SocketGateway implements NestGateway {
     client.on('send-accept-friend', (data) => {
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
-        client.to(sendUserSocket).emit('recieve-accept-friend', data);
+        client.to(sendUserSocket.socketId).emit('recieve-accept-friend', data);
       }
     });
 
@@ -60,8 +63,15 @@ export class SocketGateway implements NestGateway {
     client.on('send-notification', (data) => {
       const sendUserSocket = this.onlineUsers.get(data.to);
       if (sendUserSocket) {
-        client.to(sendUserSocket).emit('recieve-notification', data);
+        client.to(sendUserSocket.socketId).emit('recieve-notification', data);
       }
+    });
+
+    // handle join group
+    client.on('join-group', (groupID) => {
+      client.join(groupID);
+      this.onlineUsers.get(userID).rooms.push(groupID);
+      console.log('client join group');
     });
   }
 
@@ -69,6 +79,9 @@ export class SocketGateway implements NestGateway {
   async handleDisconnect(client: Socket) {
     console.log('disconnect', client.handshake.headers.cookie);
     const userID = client.handshake.headers.cookie;
+    this.onlineUsers.get(userID).rooms.forEach((room) => {
+      client.leave(room);
+    });
     this.onlineUsers.delete(userID);
     await this.userService.setOfflineUser(userID);
   }
