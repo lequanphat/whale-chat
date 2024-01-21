@@ -1,16 +1,4 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  Stack,
-  Switch,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Avatar, Box, Button, Divider, Grid, IconButton, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { RxCaretRight } from 'react-icons/rx';
 import { IoCloseOutline, IoExitOutline, IoPersonAddOutline, IoPersonCircleOutline, IoStar } from 'react-icons/io5';
 import { FaRegStar } from 'react-icons/fa';
@@ -239,7 +227,7 @@ const Contact = ({ currentMessages }): JSX.Element => {
                 <Stack key={member._id} direction="row" alignItems="center" spacing={1.4}>
                   <Avatar src={member.avatar} />
                   {member._id === currentContact.createdBy ? (
-                    <Stack direction='row' alignItems='center' spacing={0.5}>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
                       <Typography variant="body1">{member.displayName}</Typography>
                       <IoStar size={18} color="#f6e718" />
                     </Stack>

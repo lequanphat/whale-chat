@@ -43,6 +43,7 @@ export interface Contact {
 export interface RecentMessage {
   type: MessageType;
   text: string;
+  authorName?: string;
   createdAt: string;
 }
 export interface ExtendContact {

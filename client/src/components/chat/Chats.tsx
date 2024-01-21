@@ -7,23 +7,34 @@ import ChatElement from './ChatElement';
 import { Scrollbar } from '../scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/interface';
 import { getAllContacts, seenMessages } from '../../store/slices/chatSlice';
 import Loading from '../loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { openAddFriendDialog } from '../../store/slices/appSlice';
+import { useSocket } from '../../hooks/useSocket';
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
   const theme = useTheme();
   const navigate = useNavigate();
-
+  const { emitJoinGroup } = useSocket();
   const [searchText, setSearchText] = useState<string>('');
 
   const { contacts, currentContact, isLoading } = useSelector((state: stateType) => state.chat);
   const contactsList = [...contacts];
   useEffect(() => {
-    dispatch(getAllContacts());
+    (async () => {
+      const response = await dispatch(getAllContacts());
+      if (response.payload.contacts) {
+        response.payload.contacts.forEach((contact) => {
+          if(contact.contact.type!==ContactType.USER){
+            emitJoinGroup(contact.contact._id);
+            console.log(`join group ${contact.contact.groupName}`);
+          }
+        })
+      }
+    })();
   }, [dispatch]);
 
   const handlePickContact = async ({ id, total }: { id: string; total: number }) => {

@@ -10,7 +10,6 @@ const getFileImage = (name: string) => {
     if (name) {
         const extendArray: string[] = name.split('.');
         const extend: string = extendArray[extendArray.length - 1];
-        console.log(extend);
         switch (extend) {
             case 'csv':
             case 'xlsx':

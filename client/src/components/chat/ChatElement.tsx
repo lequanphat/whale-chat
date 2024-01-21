@@ -5,9 +5,10 @@ import React, { useMemo } from 'react';
 import { formatMongoTime } from '../../utils/formatTime';
 import { MessageType } from './types';
 import { IoDocumentTextOutline, IoImageOutline } from 'react-icons/io5';
+import { HiMiniUserGroup } from 'react-icons/hi2';
 import { FaRegAddressCard } from 'react-icons/fa6';
 import { MdOutlineKeyboardVoice } from 'react-icons/md';
-import { Contact, RecentMessage } from '../../store/interface';
+import { Contact, ContactType, RecentMessage } from '../../store/interface';
 interface ChatElementProps {
   contact: Contact;
   recentMessages: RecentMessage;
@@ -115,13 +116,20 @@ const ChatElement: React.FC<ChatElementProps> = ({
       {...props}
     >
       <Stack direction="row" alignItems="center" justifyContent="space-between" height="100%">
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={2}>
           {contact.status === 'online' ? (
             <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
-              <Avatar alt="Remy Sharp" src={contact.avatar} />
+              <Avatar alt="avatar" src={contact.avatar} />
             </StyledBadge>
+          ) : contact.type === ContactType.USER ? (
+            <Avatar alt="avatar" src={contact.avatar} />
           ) : (
-            <Avatar alt="Remy Sharp" src={contact.avatar} />
+            <Badge
+              badgeContent={<HiMiniUserGroup size={18} />}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+              <Avatar alt="avatar" src={contact.avatar} />
+            </Badge>
           )}
 
           <Stack spacing={0.3}>

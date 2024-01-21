@@ -44,6 +44,8 @@ export const SocketProvider = ({ children }) => {
       console.log('disconnected...');
     });
     socketInstance.on('recieve-message', (data) => {
+      console.log(data);
+      
       dispatch(addMessageToCurrentMessages(data));
     });
     socketInstance.on('recieve-friend-request', (data) => {

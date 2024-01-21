@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import download from 'downloadjs';
 import default_img from '../../assets/default-img.jpg';
 import getFileImage from '../../utils/getFileImage';
@@ -190,15 +190,19 @@ const SystemMessage = React.memo(({ msg }: { msg: Message }) => {
 
 const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
-  const handleDownloadFile = async (filePath: string) => {
-    let fileName: string | string[] = filePath.split('/');
-    fileName = fileName[fileName.length - 1];
-    const response = await api.get(`/message/download/${fileName}`, {
-      responseType: 'blob',
-    });
-    download(response.data, fileName);
-    console.log('doc message render...');
-  };
+
+  const handleDownloadFile = useCallback(async (filePath: string) => {
+    try {
+      let fileName: string | string[] = filePath.split('/');
+      fileName = fileName[fileName.length - 1];
+      const response = await api.get(`/messages/download/${fileName}`, {
+        responseType: 'blob',
+      });
+      download(response.data, fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  }, []); 
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
       <Stack spacing={0.8}>

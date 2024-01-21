@@ -67,5 +67,8 @@ export const useSocket = () => {
   const emitNotification = (data) => {
     socket.emit('send-notification', data);
   };
-  return { emitMessage, emitFriendRequest, emitAcceptFriend, emitNotification };
+  const emitJoinGroup = (groupId: string) => {
+    socket.emit('join-group', groupId);
+  };
+  return { emitMessage, emitFriendRequest, emitAcceptFriend, emitNotification, emitJoinGroup };
 };
