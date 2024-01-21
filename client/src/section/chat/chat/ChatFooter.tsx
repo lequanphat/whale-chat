@@ -1,14 +1,14 @@
 import { Box, IconButton, Stack, useTheme } from '@mui/material';
 import { IoCloseOutline, IoSendSharp } from 'react-icons/io5';
 import ChatInput from './ChatInput';
-import { useSocket } from '../../hooks/useSocket';
+import { useSocket } from '../../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
-import { addDocMessage, addImageMessage, addTextMessage, addVoiceMessage } from '../../store/slices/chatSlice';
+import { stateType } from '../../../store/interface';
+import { addDocMessage, addImageMessage, addTextMessage, addVoiceMessage } from '../../../store/slices/chatSlice';
 import { FormEvent, useState } from 'react';
-import { openSnackbar } from '../../store/slices/appSlice';
+import { openSnackbar } from '../../../store/slices/appSlice';
 import VoicePreview from './VoiceInput';
-import { MessageType } from './types';
+import { MessageType } from '../types';
 
 const ChatFooter = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

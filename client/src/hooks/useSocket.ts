@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { SocketContext } from '../contexts/socketContext';
-import { MessageType } from '../components/chat/types';
+import { MessageType } from '../section/chat/types';
 
 export const useSocket = () => {
   const { socket } = useContext(SocketContext);

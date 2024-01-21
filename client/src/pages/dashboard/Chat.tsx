@@ -1,11 +1,11 @@
 import { Box, Stack, useTheme } from '@mui/material';
-import Contact from '../../components/contacts/Contact';
-import SharedMessages from '../../components/contacts/SharedMessages';
+import ContactInfo from '../../section/chat/contact_info/ContactInfo';
+import SharedMessages from '../../section/chat/contact_info/SharedMessages';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../store/interface';
-import ChatHeader from '../../components/chat/ChatHeader';
-import Message from '../../components/chat/Message';
-import ChatFooter from '../../components/chat/ChatFooter';
+import ChatHeader from '../../section/chat/chat/ChatHeader';
+import Message from '../../section/chat/message/Message';
+import ChatFooter from '../../section/chat/chat/ChatFooter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getMessages, setCurrentContact } from '../../store/slices/chatSlice';
@@ -63,9 +63,9 @@ export const Chat = () => {
         (() => {
           switch (contactbar.type) {
             case 'CONTACT':
-              return <Contact currentMessages={currentMessages} />;
+              return <ContactInfo currentMessages={currentMessages} />;
             case 'STARRED':
-              return <Contact currentMessages={currentMessages} />;
+              return <ContactInfo currentMessages={currentMessages} />;
             case 'SHARED':
               return <SharedMessages currentMessages={currentMessages} />;
             default:

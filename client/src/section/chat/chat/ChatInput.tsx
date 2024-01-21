@@ -1,5 +1,5 @@
 import { Box, Fab, IconButton, InputAdornment, Stack, Tooltip } from '@mui/material';
-import StyledInput from '../input/StyledInput';
+import StyledInput from '../../../components/input/StyledInput';
 import { HiOutlineLink } from 'react-icons/hi';
 import { MdOutlineInsertEmoticon } from 'react-icons/md';
 import StyledEmojiPicker from './StyledEmojiPicker';
@@ -7,7 +7,7 @@ import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
 import { IoImageOutline, IoReaderOutline, IoPersonOutline, IoMicOutline } from 'react-icons/io5';
 import { EmojiClickData } from 'emoji-picker-react';
 import MediaPreview from './MediaPreview';
-import { ContactCardDialog } from '../dialog/ContactCardDialog';
+import { ContactCardDialog } from '../../../components/dialog/ContactCardDialog';
 
 const Actions = [
   {

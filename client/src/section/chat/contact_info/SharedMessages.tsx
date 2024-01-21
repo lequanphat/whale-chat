@@ -3,8 +3,8 @@ import { Grid, IconButton, Stack, Tab, Tabs, ThemeOptions, Typography } from '@m
 import { GoChevronLeft } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
-import { Scrollbar } from '../scrollbar/Scrollbar';
-import { updateContactType } from '../../store/slices/appSlice';
+import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
+import { updateContactType } from '../../../store/slices/appSlice';
 
 const SharedMessages = ({ currentMessages }) => {
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ const SharedMessages = ({ currentMessages }) => {
                     .map((item, index) => {
                       return (
                         <Grid key={index} item xs={4} p={0}>
-                          <img src={item.image} alt={item.from} style={{ objectFit: 'cover' }} />
+                          <img src={item.image} alt={item.from} style={{ objectFit: 'cover', height: 60 }} />
                         </Grid>
                       );
                     })}

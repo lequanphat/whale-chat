@@ -1,14 +1,14 @@
 import { Badge, Box, Stack, Typography, useTheme } from '@mui/material';
 import { Avatar } from '@mui/material';
-import StyledBadge from '../avatar/StyledBadge';
+import StyledBadge from '../../../components/avatar/StyledBadge';
 import React, { useMemo } from 'react';
-import { formatMongoTime } from '../../utils/formatTime';
-import { MessageType } from './types';
+import { formatMongoTime } from '../../../utils/formatTime';
+import { MessageType } from '../types';
 import { IoDocumentTextOutline, IoImageOutline } from 'react-icons/io5';
 import { HiMiniUserGroup } from 'react-icons/hi2';
 import { FaRegAddressCard } from 'react-icons/fa6';
 import { MdOutlineKeyboardVoice } from 'react-icons/md';
-import { Contact, ContactType, RecentMessage } from '../../store/interface';
+import { Contact, ContactType, RecentMessage } from '../../../store/interface';
 interface ChatElementProps {
   contact: Contact;
   recentMessages: RecentMessage;

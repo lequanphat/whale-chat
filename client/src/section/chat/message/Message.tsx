@@ -1,11 +1,11 @@
 import { Stack } from '@mui/material';
 import { ContactMessage, DocMessage, MediaMessage, SystemMessage, TextMessage, VoiceMessage } from './MessageTypes';
 import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
+import { stateType } from '../../../store/interface';
 import { useEffect, useRef } from 'react';
-import { Scrollbar } from '../scrollbar/Scrollbar';
-import Loading from '../loading/Loading';
-import { MessageType } from './types';
+import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
+import Loading from '../../../components/loading/Loading';
+import { MessageType } from '../types';
 
 const Message = ({ currentMessages }) => {
   const { id } = useSelector((state: stateType) => state.auth);

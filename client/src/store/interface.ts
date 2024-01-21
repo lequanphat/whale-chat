@@ -1,4 +1,4 @@
-import { MessageType } from '../components/chat/types';
+import { MessageType } from '../section/chat/types';
 import { authType, notificationType, relationshipType } from './types';
 
 export interface appType {

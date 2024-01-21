@@ -1,12 +1,12 @@
 import { Avatar, Box, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
-import StyledBadge from '../avatar/StyledBadge';
+import StyledBadge from '../../../components/avatar/StyledBadge';
 import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from 'react-icons/io5';
 import { PiPhoneLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
+import { stateType } from '../../../store/interface';
 import { useState } from 'react';
-import VideoCalls from '../calls/VideoCalls';
-import { toggleContact } from '../../store/slices/appSlice';
+import VideoCalls from '../../../components/calls/VideoCalls';
+import { toggleContact } from '../../../store/slices/appSlice';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();

@@ -1,18 +1,18 @@
 import { Box, Button, Divider, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { IoPersonAddOutline } from 'react-icons/io5';
 import { CiSearch } from 'react-icons/ci';
-import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput';
+import { Search, SearchIconWrapper, StyledInputBase } from '../../../components/input/SearchInput';
 import { MdOutlineArchive } from 'react-icons/md';
 import ChatElement from './ChatElement';
-import { Scrollbar } from '../scrollbar/Scrollbar';
+import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { ContactType, stateType } from '../../store/interface';
-import { getAllContacts, seenMessages } from '../../store/slices/chatSlice';
-import Loading from '../loading/Loading';
+import { ContactType, stateType } from '../../../store/interface';
+import { getAllContacts, seenMessages } from '../../../store/slices/chatSlice';
+import Loading from '../../../components/loading/Loading';
 import { useNavigate } from 'react-router-dom';
-import { openAddFriendDialog } from '../../store/slices/appSlice';
-import { useSocket } from '../../hooks/useSocket';
+import { openAddFriendDialog } from '../../../store/slices/appSlice';
+import { useSocket } from '../../../hooks/useSocket';
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -28,11 +28,11 @@ const Chats = () => {
       const response = await dispatch(getAllContacts());
       if (response.payload.contacts) {
         response.payload.contacts.forEach((contact) => {
-          if(contact.contact.type!==ContactType.USER){
+          if (contact.contact.type !== ContactType.USER) {
             emitJoinGroup(contact.contact._id);
             console.log(`join group ${contact.contact.groupName}`);
           }
-        })
+        });
       }
     })();
   }, [dispatch]);

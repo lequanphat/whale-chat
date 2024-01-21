@@ -14,13 +14,12 @@ import { MdOutlineFileDownload } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import download from 'downloadjs';
-import default_img from '../../assets/default-img.jpg';
-import getFileImage from '../../utils/getFileImage';
-import api from '../../api/internal';
-import { Message } from './types';
+import { Message } from '../types';
 import { IoPlay, IoStop } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-
+import api from '../../../api/internal';
+import getFileImage from '../../../utils/getFileImage';
+import default_img from '../../../assets/default-img.jpg';
 const Message_Option = [
   {
     title: 'Reply',
@@ -202,7 +201,7 @@ const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bool
     } catch (error) {
       console.error('Error downloading file:', error);
     }
-  }, []); 
+  }, []);
   return (
     <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
       <Stack spacing={0.8}>
