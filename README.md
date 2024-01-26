@@ -1,8 +1,12 @@
-# [WHALE CHAT] Coming Soon
+## [WHALE CHAT] Coming Soon
 
-### The software is under development. It will be completed soon.
+## Tech Stack
 
-### DEMO
+**Client:** ReactJS, MaterialUI, ReduxToolkit
+
+**Server:** NestJS, SocketIO, MongoDB
+
+## DEMO
 
 Link youtube 👉 [https://www.youtube.com/watch?v=5BoySKxSJzM](https://www.youtube.com/watch?v=5BoySKxSJzM)
 
