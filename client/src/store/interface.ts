@@ -52,12 +52,17 @@ export interface ExtendContact {
   total: number;
 }
 
+export interface IncomingCall {
+  from: Contact;
+  open: boolean;
+}
 export interface chatType {
   unseenMessage: number;
   contacts: ExtendContact[];
   currentContact: Contact;
   isLoading: boolean;
   isMessagesLoading: boolean;
+  incomingCall: IncomingCall;
   chats: {
     id: string;
     messages: {

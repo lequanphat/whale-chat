@@ -73,6 +73,13 @@ export class SocketGateway implements NestGateway {
       this.onlineUsers.get(userID).rooms.push(groupID);
       console.log('client join group');
     });
+    // handle video call
+    client.on('video-call', (data) => {
+      const sendUserSocket = this.onlineUsers.get(data.to);
+      if (sendUserSocket) {
+        client.to(sendUserSocket.socketId).emit('incoming-video-call', { from: userID, ...data });
+      }
+    });
   }
 
   // disconnect

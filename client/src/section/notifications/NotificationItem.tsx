@@ -23,14 +23,19 @@ export const NotificationItem = ({
       py={1}
       px={2}
       sx={{
-        bgcolor: selected ? theme.palette.primary.main : theme.palette.background.default,
-        borderRadius: 1.2,
+        bgcolor: selected
+          ? theme.palette.primary.main
+          : !notification.seen
+          ? '#c5e2fb'
+          : theme.palette.background.default,
+        cursor: 'pointer',
+        borderBottom: '1px solid #eee',
         ':hover': {
           bgcolor: !selected && theme.palette.background.paper,
         },
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ color: selected && '#fff' }}>
+      <Stack direction="row" alignItems="center" spacing={2} sx={{ color: selected && '#fff' }}>
         <IoNotificationsOutline size={22} />
         <Stack>
           <Typography

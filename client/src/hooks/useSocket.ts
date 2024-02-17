@@ -70,5 +70,8 @@ export const useSocket = () => {
   const emitJoinGroup = (groupId: string) => {
     socket.emit('join-group', groupId);
   };
-  return { emitMessage, emitFriendRequest, emitAcceptFriend, emitNotification, emitJoinGroup };
+  const emitVideoCall = ({ to, offer }: { to: string; offer: any }) => {
+    socket.emit('video-call', { to, offer });
+  };
+  return { emitMessage, emitFriendRequest, emitAcceptFriend, emitNotification, emitJoinGroup, emitVideoCall };
 };

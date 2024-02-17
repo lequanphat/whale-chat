@@ -9,6 +9,10 @@ const initialState: chatType = {
   chats: [],
   contacts: [],
   currentContact: undefined,
+  incomingCall: {
+    from: undefined,
+    open: false,
+  },
   isLoading: false,
   isMessagesLoading: false,
 };
@@ -99,6 +103,14 @@ const chatSlice = createSlice({
     },
     clearMessages(state) {
       state.chats = [];
+    },
+    openIncomingCall(state) {
+      state.incomingCall.open = true;
+      state.incomingCall.from = state.currentContact;
+    },
+    closeIncomingCall(state) {
+      state.incomingCall.open = false;
+      state.incomingCall.from = null;
     },
   },
   extraReducers: (builder) => {
@@ -356,4 +368,6 @@ export const {
   addMessageToCurrentMessages,
   clearMessages,
   addNewContact,
+  openIncomingCall,
+  closeIncomingCall,
 } = chatSlice.actions;

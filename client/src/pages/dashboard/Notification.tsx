@@ -40,9 +40,6 @@ const Notification = () => {
           <Typography variant="h6">Notifications</Typography>
         </Stack>
         <Stack
-          spacing={1.6}
-          p={3}
-          pt={0}
           sx={{
             height: 'calc(100vh - 60px)',
             overflowY: 'auto',

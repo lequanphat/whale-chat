@@ -3,7 +3,7 @@ import { io as ClientIO } from 'socket.io-client';
 import { BACKEND_SERVER_PATH } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../store/interface';
-import { addMessageToCurrentMessages, addNewContact } from '../store/slices/chatSlice';
+import { addMessageToCurrentMessages, addNewContact, openIncomingCall } from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
 import { addNotification } from '../store/slices/notificationSlice';
 
@@ -45,7 +45,7 @@ export const SocketProvider = ({ children }) => {
     });
     socketInstance.on('recieve-message', (data) => {
       console.log(data);
-      
+
       dispatch(addMessageToCurrentMessages(data));
     });
     socketInstance.on('recieve-friend-request', (data) => {
@@ -56,6 +56,14 @@ export const SocketProvider = ({ children }) => {
     });
     socketInstance.on('recieve-notification', (data) => {
       dispatch(addNotification(data));
+    });
+
+    // video call
+    socketInstance.on('incoming-video-call', (data) => {
+      console.log('====================================');
+      console.log(data);
+      console.log('====================================');
+      dispatch(openIncomingCall(data));
     });
 
     setSocket(socketInstance);
