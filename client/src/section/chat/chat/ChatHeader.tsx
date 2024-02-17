@@ -4,21 +4,24 @@ import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from '
 import { PiPhoneLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../../../store/interface';
-import { useState } from 'react';
-import VideoCalls from '../../../components/calls/VideoCalls';
 import { toggleContact } from '../../../store/slices/appSlice';
+import { openCall } from '../../../store/slices/chatSlice';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { currentContact } = useSelector((state: stateType) => state.chat);
   const { contactbar } = useSelector((state: stateType) => state.app);
-  const [isVideoCall, setIsVideoCall] = useState<boolean>(false);
-  const handleCloseVideoCall = () => {
-    setIsVideoCall(false);
+
+  // handle
+  const handleVideoCall = () => {
+    dispatch(openCall());
   };
+
+  // render
   if (currentContact === null || currentContact === undefined) {
     return <></>;
   }
+
   return (
     <Box
       sx={{
@@ -47,11 +50,7 @@ const ChatHeader = () => {
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <IconButton
-            onClick={() => {
-              setIsVideoCall(true);
-            }}
-          >
+          <IconButton onClick={handleVideoCall}>
             <IoVideocamOutline size={22} />
           </IconButton>
           <IconButton>
@@ -74,7 +73,6 @@ const ChatHeader = () => {
           )}
         </Stack>
       </Stack>
-      {isVideoCall && <VideoCalls open={isVideoCall} handleClose={handleCloseVideoCall} />}
     </Box>
   );
 };

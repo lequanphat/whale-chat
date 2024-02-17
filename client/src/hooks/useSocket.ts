@@ -73,5 +73,21 @@ export const useSocket = () => {
   const emitVideoCall = ({ to, offer }: { to: string; offer: any }) => {
     socket.emit('video-call', { to, offer });
   };
-  return { emitMessage, emitFriendRequest, emitAcceptFriend, emitNotification, emitJoinGroup, emitVideoCall };
+  const emitRefuseVideoCall = ({ to }: { to: string }) => {
+    socket.emit('refuse-call', { to });
+  };
+  const emitInterruptVideoCall = ({ to }: { to: string }) => {
+    socket.emit('interrupt-call', { to });
+  };
+
+  return {
+    emitMessage,
+    emitFriendRequest,
+    emitAcceptFriend,
+    emitNotification,
+    emitJoinGroup,
+    emitVideoCall,
+    emitRefuseVideoCall,
+    emitInterruptVideoCall,
+  };
 };

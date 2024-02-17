@@ -56,6 +56,14 @@ export interface IncomingCall {
   from: Contact;
   open: boolean;
 }
+export interface Call {
+  contact: Contact;
+  calling: boolean;
+  pending: boolean;
+  refused: boolean;
+  over: boolean;
+  open: boolean;
+}
 export interface chatType {
   unseenMessage: number;
   contacts: ExtendContact[];
@@ -63,6 +71,7 @@ export interface chatType {
   isLoading: boolean;
   isMessagesLoading: boolean;
   incomingCall: IncomingCall;
+  call: Call;
   chats: {
     id: string;
     messages: {

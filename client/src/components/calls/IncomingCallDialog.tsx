@@ -13,22 +13,28 @@ import Transition from '../dialog/Transition';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
 import { stateType } from '../../store/interface';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeIncomingCall } from '../../store/slices/chatSlice';
+import { acceptIncomingCall, refuseIncomingCall } from '../../store/slices/chatSlice';
+import { useSocket } from '../../hooks/useSocket';
 export function IncomingCallDialog({ open }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { incomingCall } = useSelector((state: stateType) => state.chat);
+  const { emitRefuseVideoCall } = useSocket();
 
   // handle
   const handleAcceptCall = () => {
-    dispatch(closeIncomingCall());
+    dispatch(acceptIncomingCall());
+  };
+  const handleRefuseCall = () => {
+    emitRefuseVideoCall({ to: incomingCall.from._id });
+    dispatch(refuseIncomingCall());
   };
   // render
   return (
     <Dialog
       open={open}
       keepMounted
-      onClose={handleAcceptCall}
+      onClose={handleRefuseCall}
       aria-describedby="alert-dialog-slide-description"
       TransitionComponent={Transition}
     >
@@ -47,7 +53,7 @@ export function IncomingCallDialog({ open }) {
             </IconButton>
           </Box>
           <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
-            <IconButton onClick={handleAcceptCall} sx={{ color: '#fff' }}>
+            <IconButton onClick={handleRefuseCall} sx={{ color: '#fff' }}>
               <IoCloseOutline size={26} />
             </IconButton>
           </Box>

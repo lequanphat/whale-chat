@@ -8,12 +8,13 @@ import Loading from '../../components/loading/Loading';
 import { Role } from '../../store/types';
 import { AddFriendsDialog } from '../../components/dialog/AddFriendsDialog';
 import { IncomingCallDialog } from '../../components/calls/IncomingCallDialog';
+import VideoCalls from '../../components/calls/VideoCalls';
 
 const DashboardLayout = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { auth, role, isLoading } = useSelector((state: stateType) => state.auth);
   const { addFriendDialog } = useSelector((state: stateType) => state.app);
-  const { incomingCall } = useSelector((state: stateType) => state.chat);
+  const { incomingCall, call } = useSelector((state: stateType) => state.chat);
 
   if (!auth || role !== Role.USER) {
     return <Navigate to="/auth/login"></Navigate>;
@@ -24,6 +25,7 @@ const DashboardLayout = () => {
       {isLoading ? <Loading /> : <Outlet />}
       {addFriendDialog.open && <AddFriendsDialog open={addFriendDialog.open} />}
       {incomingCall.open && <IncomingCallDialog open={incomingCall.open} />}
+      {call.open && <VideoCalls open={call.open} />}
     </Stack>
   );
 };

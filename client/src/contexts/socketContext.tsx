@@ -3,7 +3,13 @@ import { io as ClientIO } from 'socket.io-client';
 import { BACKEND_SERVER_PATH } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import { stateType } from '../store/interface';
-import { addMessageToCurrentMessages, addNewContact, openIncomingCall } from '../store/slices/chatSlice';
+import {
+  addMessageToCurrentMessages,
+  addNewContact,
+  friendRefuseCall,
+  interruptCall,
+  receiveCall,
+} from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
 import { addNotification } from '../store/slices/notificationSlice';
 
@@ -63,7 +69,16 @@ export const SocketProvider = ({ children }) => {
       console.log('====================================');
       console.log(data);
       console.log('====================================');
-      dispatch(openIncomingCall(data));
+      dispatch(receiveCall(data));
+    });
+
+    socketInstance.on('refuse-call-receive', (data) => {
+      console.log(data);
+      dispatch(friendRefuseCall(data));
+    });
+    socketInstance.on('interrupt-call-receive', (data) => {
+      console.log(data);
+      dispatch(interruptCall(data));
     });
 
     setSocket(socketInstance);

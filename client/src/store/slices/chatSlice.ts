@@ -13,6 +13,14 @@ const initialState: chatType = {
     from: undefined,
     open: false,
   },
+  call: {
+    contact: undefined,
+    open: false,
+    calling: false,
+    pending: false,
+    refused: false,
+    over: false,
+  },
   isLoading: false,
   isMessagesLoading: false,
 };
@@ -104,11 +112,55 @@ const chatSlice = createSlice({
     clearMessages(state) {
       state.chats = [];
     },
+    openCall(state) {
+      state.call.contact = state.currentContact;
+      state.call.open = true;
+      state.call.pending = true;
+      state.call.calling = false;
+      state.call.refused = false;
+      state.call.over = false;
+    },
+    closeCall(state) {
+      state.call.contact = undefined;
+      state.call.open = false;
+      state.call.pending = false;
+      state.call.calling = false;
+      state.call.refused = false;
+      state.call.over = false;
+    },
+    interruptCall(state) {
+      state.call.pending = false;
+      state.call.calling = false;
+      state.call.refused = false;
+      state.call.over = true;
+    },
+    friendRefuseCall(state) {
+      state.call.pending = false;
+      state.call.calling = false;
+      state.call.refused = true;
+    },
+    receiveCall(state) {
+      if (state.call.open) {
+        state.call.calling = true;
+        state.call.pending = false;
+      } else {
+        state.incomingCall.open = true;
+        state.incomingCall.from = state.currentContact;
+      }
+    },
     openIncomingCall(state) {
       state.incomingCall.open = true;
       state.incomingCall.from = state.currentContact;
     },
-    closeIncomingCall(state) {
+    refuseIncomingCall(state) {
+      state.incomingCall.open = false;
+      state.incomingCall.from = null;
+    },
+    acceptIncomingCall(state) {
+      state.call.contact = state.incomingCall.from;
+      state.call.calling = true;
+      state.call.open = true;
+      // reset incoming call
       state.incomingCall.open = false;
       state.incomingCall.from = null;
     },
@@ -369,5 +421,11 @@ export const {
   clearMessages,
   addNewContact,
   openIncomingCall,
-  closeIncomingCall,
+  refuseIncomingCall,
+  acceptIncomingCall,
+  openCall,
+  closeCall,
+  friendRefuseCall,
+  receiveCall,
+  interruptCall
 } = chatSlice.actions;
