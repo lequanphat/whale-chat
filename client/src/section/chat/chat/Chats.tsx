@@ -30,7 +30,6 @@ const Chats = () => {
         response.payload.contacts.forEach((contact) => {
           if (contact.contact.type !== ContactType.USER) {
             emitJoinGroup(contact.contact._id);
-            console.log(`join group ${contact.contact.groupName}`);
           }
         });
       }

@@ -43,14 +43,14 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream]);
+  }, [stream, videoRef]);
 
   // set remote video stream
   useEffect(() => {
     if (remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
     }
-  }, [remoteStream]);
+  }, [remoteStream, remoteVideoRef]);
 
   // handle off stream
   const handleOffStream = () => {
@@ -134,6 +134,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
               <Typography variant="body1">has refused this call!!!</Typography>
             </Stack>
           )}
+
           {call.pending && (
             <>
               <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
@@ -147,6 +148,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
           {call.calling && (
             <>
               <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
+              calling...
               <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
             </>
           )}

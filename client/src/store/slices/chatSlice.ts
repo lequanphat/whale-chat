@@ -132,11 +132,16 @@ const chatSlice = createSlice({
       state.call.offer = undefined;
     },
     interruptCall(state) {
-      state.call.pending = false;
-      state.call.calling = false;
-      state.call.refused = false;
-      state.call.over = true;
-      state.call.offer = undefined;
+      if (state.call.open) {
+        state.call.pending = false;
+        state.call.calling = false;
+        state.call.refused = false;
+        state.call.over = true;
+        state.call.offer = undefined;
+      } else {
+        state.incomingCall.open = false;
+        state.incomingCall.from = null;
+      }
     },
     friendRefuseCall(state) {
       state.call.pending = false;
