@@ -24,12 +24,13 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         video: true,
       });
       setStream(myStream);
+      //
       let offer;
       if (call?.offer) {
         offer = await peer.getAnswer(call.offer);
         peer.setLocalDescription(offer);
         console.log('Call Accepted!');
-        sendStreams();
+        sendStreams(myStream);
       } else {
         offer = await peer.getOffer();
       }
@@ -37,12 +38,21 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     })();
   }, []);
 
+  // set video stream
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
   }, [stream]);
-  // handle
+
+  // set remote video stream
+  useEffect(() => {
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
+
+  // handle off stream
   const handleOffStream = () => {
     if (stream) {
       stream.getTracks().forEach((track) => {
@@ -54,26 +64,32 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     dispatch(interruptCall());
   };
 
+  // handle close call
   const handleCloseCall = () => {
     dispatch(closeCall());
   };
+
+  // handle recall
   const handleReCall = () => {
     console.log('====================================');
     console.log('recall');
     console.log('====================================');
   };
 
-  const sendStreams = useCallback(() => {
-    for (const track of stream.getTracks()) {
-      peer.peer.addTrack(track, stream);
+  // sendstream function
+  const sendStreams = (myStream) => {
+    for (const track of myStream.getTracks()) {
+      peer.peer.addTrack(track, myStream);
     }
-  }, [stream]);
+  };
 
+  // handle nego
   const handleNegoNeeded = useCallback(async () => {
     const offer = await peer.getOffer();
     emitVideoCall({ to: call.contact._id, offer });
   }, []);
 
+  // nego event
   useEffect(() => {
     peer.peer.addEventListener('negotiationneeded', handleNegoNeeded);
     return () => {
@@ -81,6 +97,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     };
   }, [handleNegoNeeded]);
 
+  // strack event
   useEffect(() => {
     peer.peer.addEventListener('track', async (ev) => {
       const remoteStream = ev.streams;
@@ -88,6 +105,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
       setRemoteStream(remoteStream[0]);
     });
   }, []);
+
   // render
   return (
     <Dialog
