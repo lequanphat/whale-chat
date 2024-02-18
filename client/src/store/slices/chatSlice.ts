@@ -20,6 +20,7 @@ const initialState: chatType = {
     pending: false,
     refused: false,
     over: false,
+    offer: undefined,
   },
   isLoading: false,
   isMessagesLoading: false,
@@ -119,6 +120,7 @@ const chatSlice = createSlice({
       state.call.calling = false;
       state.call.refused = false;
       state.call.over = false;
+      state.call.offer = undefined;
     },
     closeCall(state) {
       state.call.contact = undefined;
@@ -127,25 +129,28 @@ const chatSlice = createSlice({
       state.call.calling = false;
       state.call.refused = false;
       state.call.over = false;
+      state.call.offer = undefined;
     },
     interruptCall(state) {
       state.call.pending = false;
       state.call.calling = false;
       state.call.refused = false;
       state.call.over = true;
+      state.call.offer = undefined;
     },
     friendRefuseCall(state) {
       state.call.pending = false;
       state.call.calling = false;
       state.call.refused = true;
     },
-    receiveCall(state) {
+    receiveCall(state, action) {
       if (state.call.open) {
         state.call.calling = true;
         state.call.pending = false;
       } else {
         state.incomingCall.open = true;
         state.incomingCall.from = state.currentContact;
+        state.call.offer = action.payload.offer;
       }
     },
     openIncomingCall(state) {
@@ -427,5 +432,5 @@ export const {
   closeCall,
   friendRefuseCall,
   receiveCall,
-  interruptCall
+  interruptCall,
 } = chatSlice.actions;

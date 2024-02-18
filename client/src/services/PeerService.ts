@@ -1,5 +1,5 @@
 class PeerService {
-  private peer: RTCPeerConnection;
+  public peer: RTCPeerConnection;
 
   constructor() {
     const iceServers: RTCIceServer[] = [

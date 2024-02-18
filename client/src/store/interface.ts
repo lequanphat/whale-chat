@@ -63,6 +63,7 @@ export interface Call {
   refused: boolean;
   over: boolean;
   open: boolean;
+  offer: any;
 }
 export interface chatType {
   unseenMessage: number;

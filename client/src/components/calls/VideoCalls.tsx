@@ -1,7 +1,7 @@
 import { Avatar, Box, Dialog, DialogTitle, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
 import Transition from '../dialog/Transition';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import peer from '../../services/PeerService';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,9 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const [stream, setStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
   const videoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
   const { emitVideoCall, emitInterruptVideoCall } = useSocket();
   const { call } = useSelector((state: stateType) => state.chat);
 
@@ -21,16 +23,25 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         audio: true,
         video: true,
       });
-      console.log(myStream);
-      if (videoRef.current) {
-        setStream(myStream);
-        videoRef.current.srcObject = myStream;
+      setStream(myStream);
+      let offer;
+      if (call?.offer) {
+        offer = await peer.getAnswer(call.offer);
+        peer.setLocalDescription(offer);
+        console.log('Call Accepted!');
+        sendStreams();
+      } else {
+        offer = await peer.getOffer();
       }
-      const offer = await peer.getOffer();
       emitVideoCall({ to: call.contact._id, offer });
     })();
   }, []);
 
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
   // handle
   const handleOffStream = () => {
     if (stream) {
@@ -46,6 +57,37 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const handleCloseCall = () => {
     dispatch(closeCall());
   };
+  const handleReCall = () => {
+    console.log('====================================');
+    console.log('recall');
+    console.log('====================================');
+  };
+
+  const sendStreams = useCallback(() => {
+    for (const track of stream.getTracks()) {
+      peer.peer.addTrack(track, stream);
+    }
+  }, [stream]);
+
+  const handleNegoNeeded = useCallback(async () => {
+    const offer = await peer.getOffer();
+    emitVideoCall({ to: call.contact._id, offer });
+  }, []);
+
+  useEffect(() => {
+    peer.peer.addEventListener('negotiationneeded', handleNegoNeeded);
+    return () => {
+      peer.peer.removeEventListener('negotiationneeded', handleNegoNeeded);
+    };
+  }, [handleNegoNeeded]);
+
+  useEffect(() => {
+    peer.peer.addEventListener('track', async (ev) => {
+      const remoteStream = ev.streams;
+      console.log('GOT TRACKS!!');
+      setRemoteStream(remoteStream[0]);
+    });
+  }, []);
   // render
   return (
     <Dialog
@@ -87,7 +129,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
           {call.calling && (
             <>
               <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
-              <video autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
+              <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
             </>
           )}
         </Stack>
@@ -95,7 +137,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
           {call.refused || call.over ? (
             <>
               <Box sx={{ bgcolor: theme.palette.success.main, borderRadius: '50%' }}>
-                <IconButton onClick={null} sx={{ color: '#fff' }}>
+                <IconButton onClick={handleReCall} sx={{ color: '#fff' }}>
                   <IoCallOutline size={26} />
                 </IconButton>
               </Box>
