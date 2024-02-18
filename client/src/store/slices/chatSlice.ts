@@ -155,8 +155,8 @@ const chatSlice = createSlice({
       } else {
         state.incomingCall.open = true;
         state.incomingCall.from = state.currentContact;
-        state.call.offer = action.payload.offer;
       }
+      state.call.offer = action.payload.offer;
     },
     openIncomingCall(state) {
       state.incomingCall.open = true;

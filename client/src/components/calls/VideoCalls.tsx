@@ -24,11 +24,12 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         video: true,
       });
       setStream(myStream);
+      console.log('myStream', myStream);
+
       //
       let offer;
       if (call?.offer) {
         offer = await peer.getAnswer(call.offer);
-        peer.setLocalDescription(offer);
         console.log('Call Accepted!');
         sendStreams(myStream);
       } else {
@@ -38,19 +39,24 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     })();
   }, []);
 
+
   // set video stream
   useEffect(() => {
+    console.log('video ref');
+    console.log(videoRef);
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream, videoRef]);
+  }, [stream, videoRef, call.calling]);
 
   // set remote video stream
   useEffect(() => {
+    console.log('remoteStream', remoteStream);
     if (remoteVideoRef.current) {
+      console.log('remoteVideoRef', remoteVideoRef);
       remoteVideoRef.current.srcObject = remoteStream;
     }
-  }, [remoteStream, remoteVideoRef]);
+  }, [remoteStream, remoteVideoRef, call.calling]);
 
   // handle off stream
   const handleOffStream = () => {
@@ -71,15 +77,15 @@ const VideoCalls = ({ open }: { open: boolean }) => {
 
   // handle recall
   const handleReCall = () => {
-    console.log('====================================');
     console.log('recall');
-    console.log('====================================');
   };
 
   // sendstream function
   const sendStreams = (myStream) => {
-    for (const track of myStream.getTracks()) {
-      peer.peer.addTrack(track, myStream);
+    if (myStream) {
+      for (const track of myStream.getTracks()) {
+        peer.peer.addTrack(track, myStream);
+      }
     }
   };
 
@@ -119,7 +125,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     >
       <DialogTitle>Video Call</DialogTitle>
       <Stack direction="column" p={2}>
-        <Stack direction="row" gap={2}>
+        <Stack direction="row" justifyContent="space-between">
           {call.over && (
             <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
               <Avatar src={call.contact.avatar} />
@@ -147,9 +153,8 @@ const VideoCalls = ({ open }: { open: boolean }) => {
           )}
           {call.calling && (
             <>
-              <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
-              calling...
-              <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
+              <video ref={videoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
+              <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
             </>
           )}
         </Stack>
