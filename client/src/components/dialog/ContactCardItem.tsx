@@ -2,8 +2,8 @@ import { Avatar, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContactMessage } from '../../store/slices/chatSlice';
-import { Contact, stateType } from '../../store/interface';
 import { useSocket } from '../../hooks/useSocket';
+import { Contact, stateType } from '../../store/types';
 export const ContactCardItem = ({ user }: { user: Contact }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();

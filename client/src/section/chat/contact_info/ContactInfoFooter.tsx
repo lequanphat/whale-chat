@@ -4,10 +4,10 @@ import { Avatar, Button, Stack, Typography } from '@mui/material';
 import { MdBlock } from 'react-icons/md';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { IoStar } from 'react-icons/io5';
-import { ContactType, stateType } from '../../../store/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { faker } from '@faker-js/faker';
 import { getMemberOfGroup } from '../../../store/slices/chatSlice';
+import { ContactType, stateType } from '../../../store/types';
 
 export const ContactInfoFooter = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

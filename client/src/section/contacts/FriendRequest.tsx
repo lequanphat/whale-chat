@@ -2,9 +2,9 @@ import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { FriendRequestItem } from './FriendRequestItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { FriendRequestType } from './types';
-import { stateType } from '../../store/interface';
 import { useEffect } from 'react';
 import { getAllFriendRequests } from '../../store/slices/relationshipSlice';
+import { stateType } from '../../store/types';
 
 const FriendRequest = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

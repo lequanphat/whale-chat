@@ -2,13 +2,13 @@ import { Box, Stack, useTheme } from '@mui/material';
 import ContactInfo from '../../section/chat/contact_info/ContactInfo';
 import SharedMessages from '../../section/chat/contact_info/SharedMessages';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
 import ChatHeader from '../../section/chat/chat/ChatHeader';
 import Message from '../../section/chat/message/Message';
 import ChatFooter from '../../section/chat/chat/ChatFooter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getMessages, setCurrentContact } from '../../store/slices/chatSlice';
+import { stateType } from '../../store/types';
 
 export const Chat = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

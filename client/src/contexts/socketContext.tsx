@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from 'react';
 import { io as ClientIO } from 'socket.io-client';
 import { BACKEND_SERVER_PATH } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../store/interface';
 import {
   addMessageToCurrentMessages,
   addNewContact,
@@ -12,6 +11,7 @@ import {
 } from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
 import { addNotification } from '../store/slices/notificationSlice';
+import { stateType } from '../store/types';
 
 type SocketContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

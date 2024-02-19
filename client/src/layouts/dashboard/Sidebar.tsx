@@ -8,11 +8,11 @@ import { resetUser } from '../../store/slices/authSlice';
 import { resetAppSlice } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetChatSlice } from '../../store/slices/chatSlice';
-import { stateType } from '../../store/interface';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IoChatbubbleEllipsesOutline, IoLogoReddit, IoNotificationsOutline, IoPeopleOutline } from 'react-icons/io5';
 import { getAllNotifications, resetNotificationSlice } from '../../store/slices/notificationSlice';
 import { getAllFriendRequests, resetRelationshipSlice } from '../../store/slices/relationshipSlice';
+import { stateType } from '../../store/types';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();

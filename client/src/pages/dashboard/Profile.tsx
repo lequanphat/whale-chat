@@ -2,14 +2,14 @@ import { Avatar as MUIAvatar, Badge, Button, IconButton, Stack, TextField, Typog
 import { GoChevronLeft } from 'react-icons/go';
 import { IoCameraOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { stateType } from '../../store/interface';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { EditAvatarDialog } from '../../components/dialog/EditAvatarDialog';
 import { useFormik } from 'formik';
 import { editProfileSchema } from '../../schemas/Scheme';
 import { editProfile } from '../../store/slices/authSlice';
 import { openErrorSnackbar, openSuccessSnackbar } from '../../store/slices/appSlice';
+import { stateType } from '../../store/types';
 const initialErrors = {
   displayName: '',
   about: '',
@@ -73,13 +73,11 @@ export default function Profile() {
       >
         {/* Header  */}
         <Stack p={1} direction="row" alignItems="center" spacing={0.4}>
-          <IconButton
-            onClick={() => {
-              navigate('/app');
-            }}
-          >
-            <GoChevronLeft />
-          </IconButton>
+          <NavLink to="/app/chat">
+            <IconButton>
+              <GoChevronLeft />
+            </IconButton>
+          </NavLink>
           <Typography variant="h6">Profile</Typography>
         </Stack>
         <Stack p={3.2} spacing={5}>

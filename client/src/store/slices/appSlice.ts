@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { appType } from '../interface';
+import { appType } from '../types';
 
 const SERVERITY = {
   SUCCESS: 'success',

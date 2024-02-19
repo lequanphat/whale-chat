@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-import { chatType } from '../interface';
-import { ContactMessageDTO } from '../types';
 import { MessageType } from '../../section/chat/types';
 import { acceptFriendRequests } from './relationshipSlice';
+import { chatType } from '../types';
+import { ContactMessageDTO } from '../types/dto';
 const initialState: chatType = {
   unseenMessage: 0,
   chats: [],

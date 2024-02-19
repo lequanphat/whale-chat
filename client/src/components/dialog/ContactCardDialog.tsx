@@ -5,8 +5,8 @@ import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput
 import { CiSearch } from 'react-icons/ci';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
 import { ContactCardItem } from './ContactCardItem';
+import { stateType } from '../../store/types';
 
 export function ContactCardDialog({ open, handleClose }) {
   const theme = useTheme();

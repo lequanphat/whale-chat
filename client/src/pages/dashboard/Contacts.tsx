@@ -5,9 +5,9 @@ import { HiOutlineUserGroup } from 'react-icons/hi2';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openAddFriendDialog } from '../../store/slices/appSlice';
-import { stateType } from '../../store/interface';
 import { useState } from 'react';
 import { NewGroupDialog } from '../../components/dialog/NewGroupDialog';
+import { stateType } from '../../store/types';
 
 const Contacts = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

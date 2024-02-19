@@ -29,7 +29,7 @@ export const NotificationItem = ({
           ? '#c5e2fb'
           : theme.palette.background.default,
         cursor: 'pointer',
-        borderBottom: '1px solid #eee',
+        borderBottom: `1px solid ${theme.palette.background.paper}`,
         ':hover': {
           bgcolor: !selected && theme.palette.background.paper,
         },
@@ -50,19 +50,8 @@ export const NotificationItem = ({
           >
             {notification.title}
           </Typography>
-          <Typography
-            variant="body1"
-            fontSize={14}
-            sx={{
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              width: '180px',
-            }}
-          >
-            {notification.content}
-          </Typography>
-          <Typography variant="body1" fontSize={14}>
+
+          <Typography variant="body1" fontSize={12}>
             {formatMongoTime(notification.createdAt)}
           </Typography>
         </Stack>

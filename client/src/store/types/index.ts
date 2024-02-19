@@ -1,3 +1,5 @@
+import { MessageType } from '../../section/chat/types';
+
 export enum Role {
   USER = 'user',
   ADMIN = 'admin',
@@ -57,22 +59,88 @@ export interface notificationType {
   isLoading: boolean;
 }
 
-export interface CreateFriendRequestDTO {
-  receiveId: string;
-  text: string;
-}
-export interface DeleteFriendRequestDTO {
-  sendId: string;
-  receiveId: string;
-}
-export interface ContactMessageDTO {
-  from: string;
-  to: string;
-  contact: {
-    _id: string;
-    avatar: string;
-    displayName: string;
-    email: string;
+export interface appType {
+  contactbar: {
+    open: boolean;
+    type: string;
+  };
+  snackbar: {
+    open: boolean;
+    message: string;
+    serverity: string;
+  };
+  addFriendDialog: {
+    open: boolean;
   };
 }
+export enum ContactType {
+  USER = 'user',
+  GROUP = 'group',
+}
+export interface Contact {
+  type: ContactType;
+  // user
+  _id: string;
+  displayName?: string;
+  email?: string;
+  avatar?: string;
+  about?: string;
+  status?: string;
+  // group
+  groupName?: string;
+  createdBy?: string;
+  members?: string[];
+}
 
+export interface RecentMessage {
+  type: MessageType;
+  text: string;
+  authorName?: string;
+  createdAt: string;
+}
+export interface ExtendContact {
+  contact: Contact;
+  recentMessage: RecentMessage;
+  total: number;
+}
+
+export interface IncomingCall {
+  from: Contact;
+  open: boolean;
+}
+export interface Call {
+  contact: Contact;
+  calling: boolean;
+  pending: boolean;
+  refused: boolean;
+  over: boolean;
+  open: boolean;
+  offer: RTCSessionDescriptionInit;
+}
+export interface chatType {
+  unseenMessage: number;
+  contacts: ExtendContact[];
+  currentContact: Contact;
+  isLoading: boolean;
+  isMessagesLoading: boolean;
+  incomingCall: IncomingCall;
+  call: Call;
+  chats: {
+    id: string;
+    messages: {
+      _id: string;
+      type: MessageType;
+      text: string;
+      from: string;
+      to: string;
+      image?: string;
+    }[];
+  }[];
+}
+export interface stateType {
+  app: appType;
+  auth: authType;
+  chat: chatType;
+  relationship: relationshipType;
+  notifications: notificationType;
+}

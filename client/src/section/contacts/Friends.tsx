@@ -2,7 +2,7 @@ import { Avatar, Box, IconButton, Stack, Typography, useTheme } from '@mui/mater
 import StyledBadge from '../../components/avatar/StyledBadge';
 import { IoEllipsisVertical } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { ContactType, stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/types';
 
 const Friends = () => {
   const theme = useTheme();

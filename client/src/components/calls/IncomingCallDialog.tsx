@@ -11,10 +11,10 @@ import {
 } from '@mui/material';
 import Transition from '../dialog/Transition';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
-import { stateType } from '../../store/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { acceptIncomingCall, refuseIncomingCall } from '../../store/slices/chatSlice';
 import { useSocket } from '../../hooks/useSocket';
+import { stateType } from '../../store/types';
 export function IncomingCallDialog({ open }) {
   const theme = useTheme();
   const dispatch = useDispatch();

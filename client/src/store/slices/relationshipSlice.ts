@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-import { CreateFriendRequestDTO, DeleteFriendRequestDTO, relationshipType } from '../types';
+import { relationshipType } from '../types';
+import { CreateFriendRequestDTO, DeleteFriendRequestDTO } from '../types/dto';
 
 const initialState: relationshipType = {
   receiveTotal: 0,

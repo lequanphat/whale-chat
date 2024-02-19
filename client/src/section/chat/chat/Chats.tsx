@@ -7,12 +7,12 @@ import ChatElement from './ChatElement';
 import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { ContactType, stateType } from '../../../store/interface';
 import { getAllContacts, seenMessages } from '../../../store/slices/chatSlice';
 import Loading from '../../../components/loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { openAddFriendDialog } from '../../../store/slices/appSlice';
 import { useSocket } from '../../../hooks/useSocket';
+import { ContactType, stateType } from '../../../store/types';
 const Chats = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();

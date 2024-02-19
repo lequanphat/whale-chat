@@ -8,7 +8,7 @@ import { IoDocumentTextOutline, IoImageOutline } from 'react-icons/io5';
 import { HiMiniUserGroup } from 'react-icons/hi2';
 import { FaRegAddressCard } from 'react-icons/fa6';
 import { MdOutlineKeyboardVoice } from 'react-icons/md';
-import { Contact, ContactType, RecentMessage } from '../../../store/interface';
+import { Contact, ContactType, RecentMessage } from '../../../store/types';
 interface ChatElementProps {
   contact: Contact;
   recentMessages: RecentMessage;

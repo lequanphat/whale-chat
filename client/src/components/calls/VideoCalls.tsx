@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import peer from '../../services/PeerService';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
 import { closeCall, interruptCall } from '../../store/slices/chatSlice';
+import { stateType } from '../../store/types';
 const VideoCalls = ({ open }: { open: boolean }) => {
   const dispatch = useDispatch();
   const theme = useTheme();

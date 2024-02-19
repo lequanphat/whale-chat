@@ -1,7 +1,7 @@
 import { Avatar, Box, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { IoEllipsisVertical } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { ContactType, stateType } from '../../store/interface';
+import { ContactType, stateType } from '../../store/types';
 
 const Groups = () => {
   const theme = useTheme();

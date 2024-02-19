@@ -2,10 +2,9 @@ import { Stack } from '@mui/material';
 import { Navigate, Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
 
 import Loading from '../../components/loading/Loading';
-import { Role } from '../../store/types';
+import { Role, stateType } from '../../store/types';
 import { AddFriendsDialog } from '../../components/dialog/AddFriendsDialog';
 import { IncomingCallDialog } from '../../components/calls/IncomingCallDialog';
 import VideoCalls from '../../components/calls/VideoCalls';

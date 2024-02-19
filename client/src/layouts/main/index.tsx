@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
-import { stateType } from '../../store/interface';
 import CoverLoading from '../../components/loading/CoverLoading';
-import { Role } from '../../store/types';
+import { Role, stateType } from '../../store/types';
 
 export default function MainLayout() {
   const { auth, role, isLoading } = useSelector((state: stateType) => state.auth);

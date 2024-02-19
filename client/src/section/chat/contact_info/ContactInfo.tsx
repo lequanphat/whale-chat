@@ -5,11 +5,11 @@ import { FaRegStar } from 'react-icons/fa';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
-import { ContactType, stateType } from '../../../store/interface';
 import React from 'react';
 import { toggleContact, updateContactType } from '../../../store/slices/appSlice';
 import { ContactInfoHeader } from './ContactInfoHeader';
 import { ContactInfoFooter } from './ContactInfoFooter';
+import { ContactType, stateType } from '../../../store/types';
 
 const ContactInfo = ({ currentMessages }): JSX.Element => {
   const theme = useTheme();

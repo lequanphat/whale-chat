@@ -18,10 +18,10 @@ import { Search, SearchIconWrapper, StyledInputBase } from '../input/SearchInput
 import { CiSearch } from 'react-icons/ci';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ContactType, stateType } from '../../store/interface';
 import { MemberItem } from './MemberItem';
 import { createGroup } from '../../store/slices/chatSlice';
 import { openSuccessSnackbar } from '../../store/slices/appSlice';
+import { ContactType, stateType } from '../../store/types';
 enum ChooseType {
   REMOVE = 'remove',
   ADD = 'add',

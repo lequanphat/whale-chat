@@ -1,11 +1,12 @@
-import { Stack, Typography, useTheme } from '@mui/material';
+import { IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { NotificationItem } from '../../section/notifications/NotificationItem';
 import { NotificationDetails } from '../../section/notifications/NotificationDetails';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteNotification, seenNotification } from '../../store/slices/notificationSlice';
-import { stateType } from '../../store/interface';
 import Loading from '../../components/loading/Loading';
+import { IoSwapVerticalOutline } from 'react-icons/io5';
+import { stateType } from '../../store/types';
 
 const Notification = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,8 +37,11 @@ const Notification = () => {
           boxShadow: '0px 0px 2px rgba(0,0,0,.2)',
         }}
       >
-        <Stack px={3} py={2}>
+        <Stack px={3} py={2} direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h6">Notifications</Typography>
+          <IconButton onClick={null}>
+            <IoSwapVerticalOutline size={20} />
+          </IconButton>
         </Stack>
         <Stack
           sx={{

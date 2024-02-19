@@ -70,7 +70,7 @@ export const useSocket = () => {
   const emitJoinGroup = (groupId: string) => {
     socket.emit('join-group', groupId);
   };
-  const emitVideoCall = ({ to, offer }: { to: string; offer: any }) => {
+  const emitVideoCall = ({ to, offer }: { to: string; offer: RTCSessionDescriptionInit }) => {
     socket.emit('video-call', { to, offer });
   };
   const emitRefuseVideoCall = ({ to }: { to: string }) => {

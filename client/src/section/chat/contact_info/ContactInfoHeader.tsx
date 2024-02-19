@@ -2,8 +2,8 @@ import { Avatar, IconButton, Stack, Typography } from '@mui/material';
 import { IoExitOutline, IoPersonAddOutline, IoPersonCircleOutline, IoVideocamOutline } from 'react-icons/io5';
 import { PiPhoneLight } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
-import { ContactType, stateType } from '../../../store/interface';
 import { useSelector } from 'react-redux';
+import { ContactType, stateType } from '../../../store/types';
 
 export const ContactInfoHeader = () => {
   const { currentContact } = useSelector((state: stateType) => state.chat);
@@ -57,7 +57,6 @@ export const ContactInfoHeader = () => {
           </>
         )}
       </Stack>
-      
     </>
   );
 };

@@ -3,9 +3,9 @@ import StyledBadge from '../../../components/avatar/StyledBadge';
 import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from 'react-icons/io5';
 import { PiPhoneLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
-import { stateType } from '../../../store/interface';
 import { toggleContact } from '../../../store/slices/appSlice';
 import { openCall } from '../../../store/slices/chatSlice';
+import { stateType } from '../../../store/types';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();

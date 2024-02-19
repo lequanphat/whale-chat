@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
-import { stateType } from '../../store/interface';
 import { Navigate } from 'react-router-dom';
-import { Role } from '../../store/types';
+import { Role, stateType } from '../../store/types';
 
 export const AdminLayout = () => {
   const { auth, role } = useSelector((state: stateType) => state.auth);

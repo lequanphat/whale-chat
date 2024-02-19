@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/internal';
-import { ChangePasswordDTO, EditProfileDTO, LoginDTO, RegisterDTO } from '../interface';
 import { Role, authType } from '../types';
+import { ChangePasswordDTO, EditProfileDTO, LoginDTO, RegisterDTO } from '../types/dto';
 
 const initialState: authType = {
   id: '',
