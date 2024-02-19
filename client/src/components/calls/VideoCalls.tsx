@@ -24,21 +24,19 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         video: true,
       });
       setStream(myStream);
-      console.log('myStream', myStream);
-
       //
       let offer;
       if (call?.offer) {
         offer = await peer.getAnswer(call.offer);
+        peer.setLocalDescription(offer);
         console.log('Call Accepted!');
-        sendStreams(myStream);
       } else {
         offer = await peer.getOffer();
       }
+      sendStreams();
       emitVideoCall({ to: call.contact._id, offer });
     })();
   }, []);
-
 
   // set video stream
   useEffect(() => {
@@ -81,10 +79,10 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   };
 
   // sendstream function
-  const sendStreams = (myStream) => {
-    if (myStream) {
-      for (const track of myStream.getTracks()) {
-        peer.peer.addTrack(track, myStream);
+  const sendStreams = () => {
+    if (stream) {
+      for (const track of stream.getTracks()) {
+        peer.peer.addTrack(track, stream);
       }
     }
   };
