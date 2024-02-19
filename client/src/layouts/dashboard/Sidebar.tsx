@@ -1,19 +1,18 @@
-import { Avatar, Box, Divider, Menu, MenuItem, Stack, useTheme } from '@mui/material';
+import { Avatar, Badge, Box, Divider, IconButton, Menu, MenuItem, Stack, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CustomSwitch from '../../components/switch/CustomSwitch';
 import logo from '../../assets/logo.png';
 import { Profile_Menu } from '../../data';
 import useSettings from '../../hooks/useSettings';
 import { resetUser } from '../../store/slices/authSlice';
-import { resetAppSlice, setFriendsbar, setSidebar } from '../../store/slices/appSlice';
+import { resetAppSlice } from '../../store/slices/appSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetChatSlice, setCurrentContact } from '../../store/slices/chatSlice';
+import { resetChatSlice } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/interface';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { IoChatbubbleEllipsesOutline, IoLogoReddit, IoNotificationsOutline, IoPeopleOutline } from 'react-icons/io5';
 import { getAllNotifications, resetNotificationSlice } from '../../store/slices/notificationSlice';
 import { getAllFriendRequests, resetRelationshipSlice } from '../../store/slices/relationshipSlice';
-import { SidebarItem } from '../../components/sidebar/SidebarItem';
 const Sidebar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
@@ -68,27 +67,6 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
 
-  const handleSidebarAction = (index) => {
-    dispatch(setSidebar(index));
-    switch (index) {
-      case 0:
-        navigate('/app/chat');
-        dispatch(setCurrentContact(null));
-        break;
-      case 1:
-        navigate('/contacts/friends');
-        dispatch(setFriendsbar(0));
-        break;
-      case 2:
-        navigate('/gpt');
-        break;
-      case 3:
-        navigate('/notifications');
-        break;
-      default:
-        break;
-    }
-  };
   // render
   return (
     <Box
@@ -116,26 +94,11 @@ const Sidebar = () => {
             <img src={logo} alt="logo" />
           </Box>
           <Stack spacing={3} sx={{ width: 'max-content' }} direction="column" alignItems="center">
-            <SidebarItem
-              index={0}
-              action={handleSidebarAction}
-              icon={<IoChatbubbleEllipsesOutline />}
-              badgeContent={unseenMessage}
-            />
-            <SidebarItem
-              index={1}
-              action={handleSidebarAction}
-              icon={<IoPeopleOutline />}
-              badgeContent={receiveTotal}
-            />
-            <SidebarItem index={2} action={handleSidebarAction} icon={<IoLogoReddit />} badgeContent={0} />
+            <SidebarItem href={'/app/chat'} icon={<IoChatbubbleEllipsesOutline />} badgeContent={unseenMessage} />
+            <SidebarItem href={'/contacts/friends'} icon={<IoPeopleOutline />} badgeContent={receiveTotal} />
+            <SidebarItem href={'/gpt'} icon={<IoLogoReddit />} badgeContent={0} />
             <Divider sx={{ width: '48px' }} />
-            <SidebarItem
-              index={3}
-              action={handleSidebarAction}
-              icon={<IoNotificationsOutline />}
-              badgeContent={unseen}
-            />
+            <SidebarItem href={'/notifications'} icon={<IoNotificationsOutline />} badgeContent={unseen} />
           </Stack>
         </Stack>
         <Stack alignItems="center" spacing={2}>
@@ -176,6 +139,31 @@ const Sidebar = () => {
         </Stack>
       </Stack>
     </Box>
+  );
+};
+
+const SidebarItem = ({ href, icon, badgeContent }) => {
+  const theme = useTheme();
+  return (
+    <NavLink to={href}>
+      {({ isActive }) => (
+        <Box
+          sx={isActive ? { bgcolor: theme.palette.primary.main, color: '#fff' } : { color: theme.palette.text.primary }}
+          borderRadius={1}
+        >
+          <IconButton
+            sx={{
+              width: 'max-content',
+              color: 'inherit',
+            }}
+          >
+            <Badge badgeContent={badgeContent} max={5} color="primary">
+              {icon}
+            </Badge>
+          </IconButton>
+        </Box>
+      )}
+    </NavLink>
   );
 };
 

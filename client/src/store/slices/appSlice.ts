@@ -7,12 +7,6 @@ const SERVERITY = {
 };
 
 const initialState: appType = {
-  sidebar: {
-    index: 0,
-  },
-  friendsbar: {
-    index: 0,
-  },
   contactbar: {
     open: false,
     type: 'CONTACT', // CONTACT, STARRED, SHARED
@@ -32,17 +26,10 @@ const slice = createSlice({
   initialState,
   reducers: {
     resetAppSlice(state) {
-      state.sidebar.index = 0;
-      state.friendsbar.index = 0;
       state.contactbar.open = false;
       state.addFriendDialog.open = false;
     },
-    setSidebar(state, action) {
-      state.sidebar.index = action.payload;
-    },
-    setFriendsbar(state, action) {
-      state.friendsbar.index = action.payload;
-    },
+
     toggleContact(state) {
       state.contactbar.open = !state.contactbar.open;
     },
@@ -80,14 +67,12 @@ const slice = createSlice({
 export default slice.reducer;
 
 export const {
-  setSidebar,
   toggleContact,
   updateContactType,
   closeSnackbar,
   openSnackbar,
   openSuccessSnackbar,
   openErrorSnackbar,
-  setFriendsbar,
   openAddFriendDialog,
   closeAddFriendDialog,
   resetAppSlice,

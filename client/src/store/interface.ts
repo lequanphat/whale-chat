@@ -2,12 +2,6 @@ import { MessageType } from '../section/chat/types';
 import { authType, notificationType, relationshipType } from './types';
 
 export interface appType {
-  sidebar: {
-    index: number;
-  };
-  friendsbar: {
-    index: number;
-  };
   contactbar: {
     open: boolean;
     type: string;
