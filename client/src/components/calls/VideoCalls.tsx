@@ -38,7 +38,6 @@ const VideoCalls = ({ open }: { open: boolean }) => {
             // on stream
             call.on('stream', (remoteStream) => {
               setRemoteStream(remoteStream);
-              console.log('call.remoteStream', remoteStream);
             });
           });
         })
@@ -58,7 +57,6 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         console.log('myCall', myCall);
         myCall.on('stream', (remoteStream) => {
           setRemoteStream(remoteStream);
-          console.log('myCall.remoteStream', remoteStream);
         });
       }
     }
@@ -74,7 +72,6 @@ const VideoCalls = ({ open }: { open: boolean }) => {
 
   // set remote video stream
   useEffect(() => {
-    console.log('remoteStream', remoteStream);
     if (remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
     }

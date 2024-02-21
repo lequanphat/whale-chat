@@ -2,7 +2,7 @@
 
 ## Tech Stack
 
-**Client:** ReactJS, MaterialUI, ReduxToolkit
+**Client:** ReactJS, MaterialUI, ReduxToolkit, WebRTC
 
 **Server:** NestJS, SocketIO, MongoDB
 
