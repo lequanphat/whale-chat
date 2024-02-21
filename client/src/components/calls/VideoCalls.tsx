@@ -1,11 +1,21 @@
-import { Avatar, Box, Dialog, DialogTitle, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import Peer from 'peerjs';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
 import Transition from '../dialog/Transition';
 import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeCall, interruptCall } from '../../store/slices/chatSlice';
+import { acceptIncomingCall, closeCall, interruptCall, refuseIncomingCall } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/types';
 const VideoCalls = ({ open }: { open: boolean }) => {
   const dispatch = useDispatch();
@@ -19,8 +29,8 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const videoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   //
-  const { emitVideoCall, emitInterruptVideoCall } = useSocket();
-  const { call } = useSelector((state: stateType) => state.chat);
+  const { emitVideoCall, emitInterruptVideoCall, emitAcceptVideoCall, emitRefuseVideoCall } = useSocket();
+  const { call, currentContact } = useSelector((state: stateType) => state.chat);
   const { id } = useSelector((state: stateType) => state.auth);
 
   useEffect(() => {
@@ -45,7 +55,9 @@ const VideoCalls = ({ open }: { open: boolean }) => {
           console.error('Failed to get local stream', err);
         });
 
-      emitVideoCall({ to: call.contact._id, offer: null });
+      if (call.owner === id) {
+        emitVideoCall({ to: currentContact._id });
+      }
     })();
   }, []);
 
@@ -91,12 +103,29 @@ const VideoCalls = ({ open }: { open: boolean }) => {
 
   // handle close call
   const handleCloseCall = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop(); // Dừng mọi track trong stream
+      });
+    }
     dispatch(closeCall());
   };
 
   // handle recall
   const handleReCall = () => {
     console.log('recall');
+  };
+
+  // handle accept call
+  const handleAcceptCall = () => {
+    emitAcceptVideoCall({ to: call.contact._id });
+    dispatch(acceptIncomingCall());
+  };
+
+  // handle refuse call
+  const handleRefuseCall = () => {
+    emitRefuseVideoCall({ to: call.contact._id });
+    dispatch(refuseIncomingCall());
   };
 
   // render
@@ -111,63 +140,86 @@ const VideoCalls = ({ open }: { open: boolean }) => {
       TransitionComponent={Transition}
     >
       <DialogTitle>Video Call</DialogTitle>
-      <Stack direction="column" p={2}>
-        <Stack direction="row" justifyContent="space-between">
-          {call.over && (
-            <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
-              <Avatar src={call.contact.avatar} />
-              <Typography variant="h6">{call.contact.displayName}</Typography>
-              <Typography variant="body1">This call has ended!!!</Typography>
-            </Stack>
-          )}
-          {call.refused && (
-            <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
-              <Avatar src={call.contact.avatar} />
-              <Typography variant="h6">{call.contact.displayName}</Typography>
-              <Typography variant="body1">has refused this call!!!</Typography>
-            </Stack>
-          )}
-
-          {call.pending && (
-            <>
-              <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
+      {call.owner !== id && !call.accepted ? (
+        <Stack direction="column" p={2}>
+          <Stack direction="column" alignItems="center" justifyContent="center">
+            <Box p={2} pb={1}>
+              <Avatar alt="Remy Sharp" src={call.contact.avatar} />
+            </Box>
+            <Typography variant="h6">{call.contact?.displayName}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="space-around" pt={2}>
+            <Box sx={{ bgcolor: theme.palette.success.main, borderRadius: '50%' }}>
+              <IconButton onClick={handleAcceptCall} sx={{ color: '#fff' }}>
+                <IoCallOutline size={22} />
+              </IconButton>
+            </Box>
+            <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
+              <IconButton onClick={handleRefuseCall} sx={{ color: '#fff' }}>
+                <IoCloseOutline size={26} />
+              </IconButton>
+            </Box>
+          </Stack>
+        </Stack>
+      ) : (
+        <Stack direction="column" p={2}>
+          <Stack direction="row" justifyContent="space-between">
+            {!call.calling && !call.pending && call.accepted && (
               <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
                 <Avatar src={call.contact.avatar} />
                 <Typography variant="h6">{call.contact.displayName}</Typography>
-                <Typography variant="body1">Pending...</Typography>
+                <Typography variant="body1">This call has ended!!!</Typography>
               </Stack>
-            </>
-          )}
-          {call.calling && (
-            <>
-              <video ref={videoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
-              <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
-            </>
-          )}
-        </Stack>
-        <Stack direction="row" justifyContent="space-around" p={2} pt={4}>
-          {call.refused || call.over ? (
-            <>
-              <Box sx={{ bgcolor: theme.palette.success.main, borderRadius: '50%' }}>
-                <IconButton onClick={handleReCall} sx={{ color: '#fff' }}>
+            )}
+            {!call.accepted && !call.pending && (
+              <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
+                <Avatar src={call.contact.avatar} />
+                <Typography variant="h6">{call.contact.displayName}</Typography>
+                <Typography variant="body1">has refused this call!!!</Typography>
+              </Stack>
+            )}
+
+            {call.pending && (
+              <>
+                <video ref={videoRef} autoPlay playsInline style={{ width: '50%', height: 'auto' }}></video>
+                <Stack flex={1} direction="column" alignItems="center" justifyContent="center">
+                  <Avatar src={call.contact.avatar} />
+                  <Typography variant="h6">{call.contact.displayName}</Typography>
+                  <Typography variant="body1">Pending...</Typography>
+                </Stack>
+              </>
+            )}
+            {call.calling && (
+              <>
+                <video ref={videoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
+                <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '45%', height: 'auto' }}></video>
+              </>
+            )}
+          </Stack>
+          <Stack direction="row" justifyContent="space-around" p={2} pt={4}>
+            {!call.pending && !call.calling ? (
+              <>
+                <Box sx={{ bgcolor: theme.palette.success.main, borderRadius: '50%' }}>
+                  <IconButton onClick={handleReCall} sx={{ color: '#fff' }}>
+                    <IoCallOutline size={26} />
+                  </IconButton>
+                </Box>
+                <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
+                  <IconButton onClick={handleCloseCall} sx={{ color: '#fff' }}>
+                    <IoCloseOutline size={26} />
+                  </IconButton>
+                </Box>
+              </>
+            ) : (
+              <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
+                <IconButton onClick={handleOffStream} sx={{ color: '#fff' }}>
                   <IoCallOutline size={26} />
                 </IconButton>
               </Box>
-              <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
-                <IconButton onClick={handleCloseCall} sx={{ color: '#fff' }}>
-                  <IoCloseOutline size={26} />
-                </IconButton>
-              </Box>
-            </>
-          ) : (
-            <Box sx={{ bgcolor: theme.palette.error.main, borderRadius: '50%' }}>
-              <IconButton onClick={handleOffStream} sx={{ color: '#fff' }}>
-                <IoCallOutline size={26} />
-              </IconButton>
-            </Box>
-          )}
+            )}
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Dialog>
   );
 };

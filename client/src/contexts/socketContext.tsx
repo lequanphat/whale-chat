@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addMessageToCurrentMessages,
   addNewContact,
+  friendAcceptCall,
   friendRefuseCall,
   interruptCall,
   receiveCall,
@@ -66,21 +67,17 @@ export const SocketProvider = ({ children }) => {
 
     // video call
     socketInstance.on('incoming-video-call', (data) => {
-      console.log('====================================');
-      console.log(data);
-      console.log('====================================');
       dispatch(receiveCall(data));
     });
 
     socketInstance.on('refuse-call-receive', (data) => {
-      console.log(data);
       dispatch(friendRefuseCall(data));
     });
     socketInstance.on('accept-call-receive', (data) => {
+      dispatch(friendAcceptCall(data));
       console.log('accpet', data);
     });
     socketInstance.on('interrupt-call-receive', (data) => {
-      console.log(data);
       dispatch(interruptCall(data));
     });
 

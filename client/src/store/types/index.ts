@@ -104,17 +104,12 @@ export interface ExtendContact {
   total: number;
 }
 
-export interface IncomingCall {
-  from: Contact;
-  open: boolean;
-}
 export interface Call {
   owner: string;
   contact: Contact;
   calling: boolean;
   pending: boolean;
-  refused: boolean;
-  over: boolean;
+  accepted: boolean;
   open: boolean;
 }
 export interface chatType {
@@ -123,7 +118,6 @@ export interface chatType {
   currentContact: Contact;
   isLoading: boolean;
   isMessagesLoading: boolean;
-  incomingCall: IncomingCall;
   call: Call;
   chats: {
     id: string;

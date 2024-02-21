@@ -9,17 +9,12 @@ const initialState: chatType = {
   chats: [],
   contacts: [],
   currentContact: undefined,
-  incomingCall: {
-    from: undefined,
-    open: false,
-  },
   call: {
     contact: undefined,
     open: false,
     calling: false,
     pending: false,
-    refused: false,
-    over: false,
+    accepted: false,
     owner: undefined,
   },
   isLoading: false,
@@ -118,8 +113,7 @@ const chatSlice = createSlice({
       state.call.open = true;
       state.call.pending = true;
       state.call.calling = false;
-      state.call.refused = false;
-      state.call.over = false; 
+      state.call.accepted = false;
       state.call.owner = action.payload;
     },
     closeCall(state) {
@@ -127,50 +121,44 @@ const chatSlice = createSlice({
       state.call.open = false;
       state.call.pending = false;
       state.call.calling = false;
-      state.call.refused = false;
-      state.call.over = false;
+      state.call.accepted = false;
+      state.call.owner = undefined;
     },
     interruptCall(state) {
-      if (state.call.open) {
-        state.call.pending = false;
-        state.call.calling = false;
-        state.call.refused = false;
-        state.call.over = true;
-      } else {
-        state.incomingCall.open = false;
-        state.incomingCall.from = null;
-      }
-    },
-    friendRefuseCall(state) {
       state.call.pending = false;
       state.call.calling = false;
-      state.call.refused = true;
+      state.call.accepted = true;
     },
-    receiveCall(state) {
-      if (state.call.open) {
-        state.call.calling = true;
-        state.call.pending = false;
-      } else {
-        state.incomingCall.open = true;
-        state.incomingCall.from = state.currentContact;
-      }
+    friendRefuseCall(state) {
+      state.call.accepted = false;
+      state.call.pending = false;
+      state.call.calling = false;
     },
-    openIncomingCall(state) {
-      state.incomingCall.open = true;
-      state.incomingCall.from = state.currentContact;
+    friendAcceptCall(state, action) {
+      state.call.pending = false;
+      state.call.calling = true;
+      state.call.accepted = true;
+      state.call.contact = state.contacts.find((contact) => contact.contact._id === action.payload.from).contact;
     },
-    refuseIncomingCall(state) {
-      state.incomingCall.open = false;
-      state.incomingCall.from = null;
+    receiveCall(state, action) {
+      state.call.open = true;
+      state.call.calling = false;
+      state.call.pending = true;
+      state.call.accepted = false;
+      state.call.owner = action.payload.from;
+      state.call.contact = state.contacts.find((contact) => contact.contact._id === action.payload.from).contact;
     },
     acceptIncomingCall(state) {
-      state.call.contact = state.incomingCall.from;
       state.call.calling = true;
-      state.call.open = true;
-      state.call.owner = state.incomingCall.from._id;
+      state.call.pending = false;
+      state.call.accepted = true;
       // reset incoming call
-      state.incomingCall.open = false;
-      state.incomingCall.from = null;
+    },
+    refuseIncomingCall(state) {
+      state.call.open = false;
+      state.call.accepted = false;
+      state.call.pending = false;
+      state.call.contact = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -428,12 +416,12 @@ export const {
   addMessageToCurrentMessages,
   clearMessages,
   addNewContact,
-  openIncomingCall,
-  refuseIncomingCall,
   acceptIncomingCall,
+  refuseIncomingCall,
   openCall,
   closeCall,
   friendRefuseCall,
+  friendAcceptCall,
   receiveCall,
   interruptCall,
 } = chatSlice.actions;
