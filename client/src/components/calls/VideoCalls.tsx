@@ -1,8 +1,8 @@
 import { Avatar, Box, Dialog, DialogTitle, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import Peer from 'peerjs';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
 import Transition from '../dialog/Transition';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import peer from '../../services/PeerService';
+import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeCall, interruptCall } from '../../store/slices/chatSlice';
@@ -10,37 +10,62 @@ import { stateType } from '../../store/types';
 const VideoCalls = ({ open }: { open: boolean }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  // stream
   const [stream, setStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
+  // peer connection
+  const [myPeer, setMyPeer] = useState<Peer>();
+  // ref
   const videoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  //
   const { emitVideoCall, emitInterruptVideoCall } = useSocket();
   const { call } = useSelector((state: stateType) => state.chat);
+  const { id } = useSelector((state: stateType) => state.auth);
 
   useEffect(() => {
     (async () => {
-      const myStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      setStream(myStream);
-      //
-      let offer;
-      if (call?.offer) {
-        offer = await peer.getAnswer(call.offer);
-        peer.setLocalDescription(offer);
-        console.log('Call Accepted!');
-      } else {
-        offer = await peer.getOffer();
-      }
-      sendStreams();
-      emitVideoCall({ to: call.contact._id, offer });
+      const peer = new Peer(id);
+      setMyPeer(peer);
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((localStream) => {
+          setStream(localStream);
+          // on call
+          peer.on('call', (call) => {
+            console.log('on-call', call);
+            call.answer(localStream);
+            // on stream
+            call.on('stream', (remoteStream) => {
+              setRemoteStream(remoteStream);
+              console.log('call.remoteStream', remoteStream);
+            });
+          });
+        })
+        .catch((err) => {
+          console.error('Failed to get local stream', err);
+        });
+
+      emitVideoCall({ to: call.contact._id, offer: null });
     })();
   }, []);
 
+  // peer call
+  useEffect(() => {
+    if (myPeer && call.calling && stream) {
+      if (call.owner !== call.contact._id) {
+        const myCall = myPeer.call(call.contact._id, stream);
+        console.log('myCall', myCall);
+        myCall.on('stream', (remoteStream) => {
+          setRemoteStream(remoteStream);
+          console.log('myCall.remoteStream', remoteStream);
+        });
+      }
+    }
+  }, [myPeer, call, stream]);
+
   // set video stream
   useEffect(() => {
-    console.log('video ref');
     console.log(videoRef);
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
@@ -51,7 +76,6 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   useEffect(() => {
     console.log('remoteStream', remoteStream);
     if (remoteVideoRef.current) {
-      console.log('remoteVideoRef', remoteVideoRef);
       remoteVideoRef.current.srcObject = remoteStream;
     }
   }, [remoteStream, remoteVideoRef, call.calling]);
@@ -77,38 +101,6 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const handleReCall = () => {
     console.log('recall');
   };
-
-  // sendstream function
-  const sendStreams = () => {
-    if (stream) {
-      for (const track of stream.getTracks()) {
-        peer.peer.addTrack(track, stream);
-      }
-    }
-  };
-
-  // handle nego
-  const handleNegoNeeded = useCallback(async () => {
-    const offer = await peer.getOffer();
-    emitVideoCall({ to: call.contact._id, offer });
-  }, []);
-
-  // nego event
-  useEffect(() => {
-    peer.peer.addEventListener('negotiationneeded', handleNegoNeeded);
-    return () => {
-      peer.peer.removeEventListener('negotiationneeded', handleNegoNeeded);
-    };
-  }, [handleNegoNeeded]);
-
-  // strack event
-  useEffect(() => {
-    peer.peer.addEventListener('track', async (ev) => {
-      const remoteStream = ev.streams;
-      console.log('GOT TRACKS!!');
-      setRemoteStream(remoteStream[0]);
-    });
-  }, []);
 
   // render
   return (

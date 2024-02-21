@@ -19,10 +19,11 @@ export function IncomingCallDialog({ open }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { incomingCall } = useSelector((state: stateType) => state.chat);
-  const { emitRefuseVideoCall } = useSocket();
+  const { emitRefuseVideoCall, emitAcceptVideoCall } = useSocket();
 
   // handle
   const handleAcceptCall = () => {
+    emitAcceptVideoCall({ to: incomingCall.from._id });
     dispatch(acceptIncomingCall());
   };
   const handleRefuseCall = () => {

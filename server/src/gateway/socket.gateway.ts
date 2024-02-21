@@ -87,6 +87,13 @@ export class SocketGateway implements NestGateway {
         client.to(sendUserSocket.socketId).emit('refuse-call-receive', { from: userID, ...data });
       }
     });
+    // handle accept call
+    client.on('accept-call', (data) => {
+      const sendUserSocket = this.onlineUsers.get(data.to);
+      if (sendUserSocket) {
+        client.to(sendUserSocket.socketId).emit('accept-call-receive', { from: userID, ...data });
+      }
+    });
     // handle interrupt call
     client.on('interrupt-call', (data) => {
       const sendUserSocket = this.onlineUsers.get(data.to);

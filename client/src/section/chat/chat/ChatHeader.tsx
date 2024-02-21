@@ -11,10 +11,11 @@ const ChatHeader = () => {
   const dispatch = useDispatch();
   const { currentContact } = useSelector((state: stateType) => state.chat);
   const { contactbar } = useSelector((state: stateType) => state.app);
+  const { id } = useSelector((state: stateType) => state.auth);
 
   // handle
   const handleVideoCall = () => {
-    dispatch(openCall());
+    dispatch(openCall(id));
   };
 
   // render

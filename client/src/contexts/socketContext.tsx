@@ -76,6 +76,9 @@ export const SocketProvider = ({ children }) => {
       console.log(data);
       dispatch(friendRefuseCall(data));
     });
+    socketInstance.on('accept-call-receive', (data) => {
+      console.log('accpet', data);
+    });
     socketInstance.on('interrupt-call-receive', (data) => {
       console.log(data);
       dispatch(interruptCall(data));

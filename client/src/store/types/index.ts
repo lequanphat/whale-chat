@@ -109,13 +109,13 @@ export interface IncomingCall {
   open: boolean;
 }
 export interface Call {
+  owner: string;
   contact: Contact;
   calling: boolean;
   pending: boolean;
   refused: boolean;
   over: boolean;
   open: boolean;
-  offer: RTCSessionDescriptionInit;
 }
 export interface chatType {
   unseenMessage: number;

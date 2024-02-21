@@ -20,6 +20,7 @@
     "downloadjs": "^1.4.7",
     "emoji-picker-react": "^4.5.16",
     "formik": "^2.4.5",
+    "peerjs": "^1.5.2",
     "react": "^18.2.0",
     "react-avatar-edit": "^1.2.0",
     "react-dom": "^18.2.0",

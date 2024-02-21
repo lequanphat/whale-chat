@@ -2,7 +2,7 @@ import { Avatar as MUIAvatar, Badge, Button, IconButton, Stack, TextField, Typog
 import { GoChevronLeft } from 'react-icons/go';
 import { IoCameraOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { EditAvatarDialog } from '../../components/dialog/EditAvatarDialog';
 import { useFormik } from 'formik';
@@ -17,7 +17,6 @@ const initialErrors = {
 export default function Profile() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<any>();
-  const navigate = useNavigate();
   const theme = useTheme();
   const { displayName, avatar, about } = useSelector((state: stateType) => state.auth);
   //

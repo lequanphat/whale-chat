@@ -20,7 +20,7 @@ const initialState: chatType = {
     pending: false,
     refused: false,
     over: false,
-    offer: undefined,
+    owner: undefined,
   },
   isLoading: false,
   isMessagesLoading: false,
@@ -113,14 +113,14 @@ const chatSlice = createSlice({
     clearMessages(state) {
       state.chats = [];
     },
-    openCall(state) {
+    openCall(state, action) {
       state.call.contact = state.currentContact;
       state.call.open = true;
       state.call.pending = true;
       state.call.calling = false;
       state.call.refused = false;
-      state.call.over = false;
-      state.call.offer = undefined;
+      state.call.over = false; 
+      state.call.owner = action.payload;
     },
     closeCall(state) {
       state.call.contact = undefined;
@@ -129,7 +129,6 @@ const chatSlice = createSlice({
       state.call.calling = false;
       state.call.refused = false;
       state.call.over = false;
-      state.call.offer = undefined;
     },
     interruptCall(state) {
       if (state.call.open) {
@@ -137,7 +136,6 @@ const chatSlice = createSlice({
         state.call.calling = false;
         state.call.refused = false;
         state.call.over = true;
-        state.call.offer = undefined;
       } else {
         state.incomingCall.open = false;
         state.incomingCall.from = null;
@@ -148,7 +146,7 @@ const chatSlice = createSlice({
       state.call.calling = false;
       state.call.refused = true;
     },
-    receiveCall(state, action) {
+    receiveCall(state) {
       if (state.call.open) {
         state.call.calling = true;
         state.call.pending = false;
@@ -156,7 +154,6 @@ const chatSlice = createSlice({
         state.incomingCall.open = true;
         state.incomingCall.from = state.currentContact;
       }
-      state.call.offer = action.payload.offer;
     },
     openIncomingCall(state) {
       state.incomingCall.open = true;
@@ -170,6 +167,7 @@ const chatSlice = createSlice({
       state.call.contact = state.incomingCall.from;
       state.call.calling = true;
       state.call.open = true;
+      state.call.owner = state.incomingCall.from._id;
       // reset incoming call
       state.incomingCall.open = false;
       state.incomingCall.from = null;
