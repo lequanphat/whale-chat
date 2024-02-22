@@ -1,14 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Avatar, Box, Dialog, DialogTitle, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import Peer from 'peerjs';
 import { IoCallOutline, IoCloseOutline } from 'react-icons/io5';
 import Transition from '../dialog/Transition';
@@ -35,6 +25,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
 
   useEffect(() => {
     (async () => {
+      console.log('new peer');
       const peer = new Peer(id);
       setMyPeer(peer);
       navigator.mediaDevices
@@ -42,6 +33,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         .then((localStream) => {
           setStream(localStream);
           // on call
+
           peer.on('call', (call) => {
             console.log('on-call', call);
             call.answer(localStream);
@@ -67,9 +59,11 @@ const VideoCalls = ({ open }: { open: boolean }) => {
       if (call.owner !== call.contact._id) {
         const myCall = myPeer.call(call.contact._id, stream);
         console.log('myCall', myCall);
-        myCall.on('stream', (remoteStream) => {
-          setRemoteStream(remoteStream);
-        });
+        if (myCall) {
+          myCall.on('stream', (remoteStream) => {
+            setRemoteStream(remoteStream);
+          });
+        }
       }
     }
   }, [myPeer, call, stream]);
@@ -109,6 +103,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
       });
     }
     dispatch(closeCall());
+    myPeer.destroy();
   };
 
   // handle recall
