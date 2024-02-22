@@ -160,6 +160,13 @@ const chatSlice = createSlice({
       state.call.pending = false;
       state.call.contact = undefined;
     },
+    recall(state, action) {
+      state.call.contact = state.currentContact;
+      state.call.pending = true;
+      state.call.calling = false;
+      state.call.accepted = false;
+      state.call.owner = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -424,4 +431,5 @@ export const {
   friendAcceptCall,
   receiveCall,
   interruptCall,
+  recall,
 } = chatSlice.actions;

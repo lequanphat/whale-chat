@@ -5,7 +5,7 @@ import Transition from '../dialog/Transition';
 import { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { acceptIncomingCall, closeCall, interruptCall, refuseIncomingCall } from '../../store/slices/chatSlice';
+import { acceptIncomingCall, closeCall, interruptCall, recall, refuseIncomingCall } from '../../store/slices/chatSlice';
 import { stateType } from '../../store/types';
 const VideoCalls = ({ open }: { open: boolean }) => {
   const dispatch = useDispatch();
@@ -24,33 +24,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const { id } = useSelector((state: stateType) => state.auth);
 
   useEffect(() => {
-    (async () => {
-      console.log('new peer');
-      const peer = new Peer(id);
-      setMyPeer(peer);
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((localStream) => {
-          setStream(localStream);
-          // on call
-
-          peer.on('call', (call) => {
-            console.log('on-call', call);
-            call.answer(localStream);
-            // on stream
-            call.on('stream', (remoteStream) => {
-              setRemoteStream(remoteStream);
-            });
-          });
-        })
-        .catch((err) => {
-          console.error('Failed to get local stream', err);
-        });
-
-      if (call.owner === id) {
-        emitVideoCall({ to: currentContact._id });
-      }
-    })();
+    handleInitPeer();
   }, []);
 
   // peer call
@@ -83,6 +57,35 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     }
   }, [remoteStream, remoteVideoRef, call.calling]);
 
+  // handle init peer
+  const handleInitPeer = () => {
+    console.log('new peer');
+    const peer = new Peer(id);
+    setMyPeer(peer);
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((localStream) => {
+        setStream(localStream);
+        // on call
+
+        peer.on('call', (call) => {
+          console.log('on-call', call);
+          call.answer(localStream);
+          // on stream
+          call.on('stream', (remoteStream) => {
+            setRemoteStream(remoteStream);
+          });
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to get local stream', err);
+      });
+
+    if (call.owner === id) {
+      emitVideoCall({ to: currentContact._id });
+    }
+  };
+
   // handle off stream
   const handleOffStream = () => {
     if (stream) {
@@ -108,7 +111,14 @@ const VideoCalls = ({ open }: { open: boolean }) => {
 
   // handle recall
   const handleReCall = () => {
-    console.log('recall');
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop(); // Dừng mọi track trong stream
+      });
+    }
+    myPeer.destroy();
+    handleInitPeer();
+    dispatch(recall(id));
   };
 
   // handle accept call
