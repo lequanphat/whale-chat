@@ -71,6 +71,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
   const handleChooseImageFile = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.files[0]);
     setImageFile(e.target.files[0]);
+    setDocFile(null);
     e.target.value = '';
   };
   const handleResetChooseImage = () => {
@@ -82,6 +83,7 @@ const ChatInput = ({ text, docFile, imageFile, setText, setDocFile, setImageFile
   const handleChooseDocFile = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.files[0]);
     setDocFile(e.target.files[0]);
+    setImageFile(null);
     e.target.value = '';
   };
   return (
