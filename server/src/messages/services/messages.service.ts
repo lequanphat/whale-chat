@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Messages } from 'src/schemas/messages.chema';
-import { ContactMessageDTO, FileUploadDTO, SeenMessagesDTO, TextMessageDTO } from '../types';
+import { CallMessageDTO, ContactMessageDTO, FileUploadDTO, SeenMessagesDTO, TextMessageDTO } from '../types';
 import { SERVER_URL } from 'src/config';
 import { User } from 'src/schemas/users.chema';
 import { MessageType } from 'src/schemas/types';
@@ -97,6 +97,52 @@ export class MessagesService {
         to: data.to,
         text: data.text,
         type: MessageType.SYSTEM,
+      });
+      if (message) {
+        return { message };
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addVideoCallMessage(data: CallMessageDTO) {
+    const isValidFrom = mongoose.Types.ObjectId.isValid(data.from);
+    const isValidFrom_1 = mongoose.Types.ObjectId.isValid(data.to);
+    const isValidFrom_2 = mongoose.Types.ObjectId.isValid(data.owner);
+    if (!isValidFrom || !isValidFrom_1 || !isValidFrom_2) {
+      throw new HttpException('Invalid id field', HttpStatus.BAD_REQUEST);
+    }
+    if (data.to === data.owner) {
+      data.to = data.from;
+    }
+    try {
+      const message = await this.messageModel.create({
+        from: data.owner,
+        to: data.to,
+        text: data.text,
+        type: MessageType.VIDEO_CALL,
+      });
+      if (message) {
+        return { message };
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addVoiceCallMessage(data: CallMessageDTO) {
+    const isValidFrom = mongoose.Types.ObjectId.isValid(data.from);
+    if (!isValidFrom) {
+      throw new HttpException('Invalid From field', HttpStatus.BAD_REQUEST);
+    }
+    if (data.to === data.owner) {
+      data.to = data.from;
+    }
+    try {
+      const message = await this.messageModel.create({
+        from: data.owner,
+        to: data.to,
+        text: data.text,
+        type: MessageType.VOICE_CALL,
       });
       if (message) {
         return { message };

@@ -8,7 +8,8 @@ import {
   friendAcceptCall,
   friendRefuseCall,
   interruptCall,
-  receiveCall,
+  receiveVideoCall,
+  receiveVoiceCall,
 } from '../store/slices/chatSlice';
 import { addFriendRequest } from '../store/slices/relationshipSlice';
 import { addNotification } from '../store/slices/notificationSlice';
@@ -67,7 +68,7 @@ export const SocketProvider = ({ children }) => {
 
     // video call
     socketInstance.on('incoming-video-call', (data) => {
-      dispatch(receiveCall(data));
+      dispatch(receiveVideoCall(data));
     });
 
     socketInstance.on('refuse-call-receive', (data) => {
@@ -81,7 +82,14 @@ export const SocketProvider = ({ children }) => {
       dispatch(interruptCall(data));
     });
 
+    // voice call
+    socketInstance.on('incoming-voice-call', (data) => {
+      dispatch(receiveVoiceCall(data));
+    });
+
+    // set socket
     setSocket(socketInstance);
+    // clean up
     return () => {
       console.log('unmout-event-socket');
       socketInstance.off('recieve-message');

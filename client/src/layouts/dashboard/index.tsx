@@ -4,9 +4,10 @@ import Sidebar from './Sidebar';
 import { useSelector } from 'react-redux';
 
 import Loading from '../../components/loading/Loading';
-import { Role, stateType } from '../../store/types';
+import { CallType, Role, stateType } from '../../store/types';
 import { AddFriendsDialog } from '../../components/dialog/AddFriendsDialog';
 import VideoCalls from '../../components/calls/VideoCall';
+import VoiceCall from '../../components/calls/VoiceCall';
 
 const DashboardLayout = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +23,8 @@ const DashboardLayout = () => {
       <Sidebar />
       {isLoading ? <Loading /> : <Outlet />}
       {addFriendDialog.open && <AddFriendsDialog open={addFriendDialog.open} />}
-      {call.open && <VideoCalls open={call.open} />}
+      {call.open && call.type === CallType.VIDEO_CALL && <VideoCalls open={call.open && call.type === CallType.VIDEO_CALL} />}
+      {call.open && call.type === CallType.VOICE_CALL && <VoiceCall open={call.open && call.type === CallType.VOICE_CALL} />}
     </Stack>
   );
 };

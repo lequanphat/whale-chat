@@ -10,13 +10,21 @@ import {
   IoMicOffOutline,
 } from 'react-icons/io5';
 import Transition from '../dialog/Transition';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSocket } from '../../hooks/useSocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { acceptIncomingCall, closeCall, interruptCall, recall, refuseIncomingCall } from '../../store/slices/chatSlice';
+import {
+  acceptIncomingCall,
+  addVideoCallMessage,
+  closCall,
+  interruptCall,
+  recall,
+  refuseIncomingCall,
+} from '../../store/slices/chatSlice';
 import { stateType } from '../../store/types';
 const VideoCalls = ({ open }: { open: boolean }) => {
-  const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch = useDispatch<any>();
   const theme = useTheme();
   // stream
   const [stream, setStream] = useState(null);
@@ -33,7 +41,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const videoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   // emit
-  const { emitVideoCall, emitInterruptVideoCall, emitAcceptVideoCall, emitRefuseVideoCall } = useSocket();
+  const { emitMessage, emitVideoCall, emitInterruptVideoCall, emitAcceptVideoCall, emitRefuseVideoCall } = useSocket();
   // store state
   const { call, currentContact } = useSelector((state: stateType) => state.chat);
   const { id } = useSelector((state: stateType) => state.auth);
@@ -115,7 +123,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   };
 
   // handle off stream
-  const handleOffStream = () => {
+  const handleOffStream = async () => {
     if (stream) {
       stream.getTracks().forEach((track) => {
         track.stop(); // Dừng mọi track trong stream
@@ -124,6 +132,10 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     setStream(null);
     emitInterruptVideoCall({ to: call.contact._id });
     dispatch(interruptCall());
+    const response = await dispatch(
+      addVideoCallMessage({ to: call.contact._id, owner: call.owner, text: callTime + '' }),
+    );
+    emitMessage(response.payload.message);
   };
 
   // handle close call
@@ -133,7 +145,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
         track.stop(); // Dừng mọi track trong stream
       });
     }
-    dispatch(closeCall());
+    dispatch(closCall());
     myPeer.destroy();
   };
 
@@ -186,13 +198,13 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     }
   };
 
-  const formatCallTime = (callTime) => {
+  const formatCallTime = useCallback((callTime) => {
     const minutes = Math.floor(callTime / 60);
     const seconds = callTime % 60;
     const formattedMinutes = String(minutes).padStart(2, '0');
     const formattedSeconds = String(seconds).padStart(2, '0');
     return `${formattedMinutes}:${formattedSeconds}`;
-  };
+  }, []);
 
   // render
   return (

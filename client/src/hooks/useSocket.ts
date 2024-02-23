@@ -73,6 +73,9 @@ export const useSocket = () => {
   const emitVideoCall = ({ to }: { to: string }) => {
     socket.emit('video-call', { to });
   };
+  const emitVoiceCall = ({ to }: { to: string }) => {
+    socket.emit('voice-call', { to });
+  };
   const emitRefuseVideoCall = ({ to }: { to: string }) => {
     socket.emit('refuse-call', { to });
   };
@@ -93,5 +96,6 @@ export const useSocket = () => {
     emitRefuseVideoCall,
     emitAcceptVideoCall,
     emitInterruptVideoCall,
+    emitVoiceCall,
   };
 };

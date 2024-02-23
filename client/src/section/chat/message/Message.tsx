@@ -1,5 +1,14 @@
 import { Stack } from '@mui/material';
-import { ContactMessage, DocMessage, MediaMessage, SystemMessage, TextMessage, VoiceMessage } from './MessageTypes';
+import {
+  ContactMessage,
+  DocMessage,
+  MediaMessage,
+  SystemMessage,
+  TextMessage,
+  VideoCallMessage,
+  VoiceCallMessage,
+  VoiceMessage,
+} from './MessageTypes';
 import { useSelector } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { Scrollbar } from '../../../components/scrollbar/Scrollbar';
@@ -50,6 +59,10 @@ const Message = ({ currentMessages }) => {
                 return <SystemMessage key={index} msg={msg} />;
               case MessageType.CONTACT:
                 return <ContactMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+              case MessageType.VIDEO_CALL:
+                return <VideoCallMessage key={index} msg={msg} fromSelf={msg.from === id} />;
+              case MessageType.VOICE_CALL:
+                return <VoiceCallMessage key={index} msg={msg} fromSelf={msg.from === id} />;
               default:
                 return '';
             }

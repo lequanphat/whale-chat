@@ -15,7 +15,8 @@ import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import download from 'downloadjs';
 import { Message } from '../types';
-import { IoPlay, IoStop } from 'react-icons/io5';
+import { IoMicOutline, IoPlay, IoStop, IoVideocamOutline } from 'react-icons/io5';
+
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/internal';
 import getFileImage from '../../../utils/getFileImage';
@@ -88,7 +89,7 @@ export const MessageWrapper = React.memo(
     );
   },
 );
-const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+export const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
 
   return (
@@ -113,7 +114,86 @@ const TextMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boo
     </MessageWrapper>
   );
 });
-const ContactMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+
+export const VideoCallMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+  const theme = useTheme();
+
+  const formatCallTime = useCallback((callTime) => {
+    const minutes = Math.floor(callTime / 60);
+    const seconds = callTime % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }, []);
+  return (
+    <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
+      <Box
+        sx={{
+          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+          borderRadius: 1.8,
+          maxWidth: '45%',
+          p: '10px 16px',
+          color: fromSelf ? '#fff' : theme.palette.text.primary,
+        }}
+      >
+        {!fromSelf && (
+          <Typography variant="body2" fontSize={14} color={theme.palette.text.primary}>
+            {msg.authorName}
+          </Typography>
+        )}
+        <Stack direction="row" alignItems="center" gap={2}>
+          <Box>
+            <IoVideocamOutline size={24} />
+          </Box>
+          <Box>
+            <Typography variant="body1">Video Call</Typography>
+            <Typography variant="body1">{formatCallTime(msg.text)}</Typography>
+          </Box>
+        </Stack>
+      </Box>
+    </MessageWrapper>
+  );
+});
+export const VoiceCallMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+  const theme = useTheme();
+  const formatCallTime = useCallback((callTime) => {
+    const minutes = Math.floor(callTime / 60);
+    const seconds = callTime % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }, []);
+  return (
+    <MessageWrapper fromSelf={fromSelf} avatar={msg.avatar}>
+      <Box
+        sx={{
+          backgroundColor: fromSelf ? theme.palette.primary.main : theme.palette.background.paper,
+          borderRadius: 1.8,
+          maxWidth: '45%',
+          p: '10px 16px',
+          color: fromSelf ? '#fff' : theme.palette.text.primary,
+        }}
+      >
+        {!fromSelf && (
+          <Typography variant="body2" fontSize={14} color={theme.palette.text.primary}>
+            {msg.authorName}
+          </Typography>
+        )}
+        <Stack direction="row" alignItems="center" gap={2}>
+          <Box>
+            <IoMicOutline size={24} />
+          </Box>
+          <Box>
+            <Typography variant="body1">Voice Call</Typography>
+            <Typography variant="body1">{formatCallTime(msg.text)}</Typography>
+          </Box>
+        </Stack>
+      </Box>
+    </MessageWrapper>
+  );
+});
+
+export const ContactMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   return (
@@ -165,7 +245,7 @@ const ContactMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: 
     </MessageWrapper>
   );
 });
-const SystemMessage = React.memo(({ msg }: { msg: Message }) => {
+export const SystemMessage = React.memo(({ msg }: { msg: Message }) => {
   const theme = useTheme();
 
   return (
@@ -187,7 +267,7 @@ const SystemMessage = React.memo(({ msg }: { msg: Message }) => {
   );
 });
 
-const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+export const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
 
   const handleDownloadFile = useCallback(async (filePath: string) => {
@@ -250,7 +330,7 @@ const DocMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bool
   );
 });
 
-const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+export const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
   const [imageLink, setImageLink] = useState(msg.image);
   return (
@@ -295,7 +375,7 @@ const MediaMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
     </MessageWrapper>
   );
 });
-const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
+export const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: boolean }) => {
   const theme = useTheme();
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -391,7 +471,7 @@ const VoiceMessage = React.memo(({ msg, fromSelf }: { msg: Message; fromSelf: bo
     </MessageWrapper>
   );
 });
-const TimeLine = ({ text }) => {
+export const TimeLine = ({ text }) => {
   const theme = useTheme();
   return (
     <Stack direction="row" alignItems="center" justifyContent="center">
@@ -411,5 +491,3 @@ const TimeLine = ({ text }) => {
     </Stack>
   );
 };
-
-export { TimeLine, TextMessage, MediaMessage, DocMessage, VoiceMessage, SystemMessage, ContactMessage };

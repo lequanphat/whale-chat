@@ -21,3 +21,9 @@ export class ContactMessageDTO {
   to: string;
   contact: ContactType;
 }
+export class CallMessageDTO {
+  from: string;
+  to: string;
+  text: string;
+  owner: string;
+}

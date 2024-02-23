@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../api/internal';
 import { MessageType } from '../../section/chat/types';
 import { acceptFriendRequests } from './relationshipSlice';
-import { chatType } from '../types';
+import { CallType, chatType } from '../types';
 import { ContactMessageDTO } from '../types/dto';
 const initialState: chatType = {
   unseenMessage: 0,
@@ -16,6 +16,7 @@ const initialState: chatType = {
     pending: false,
     accepted: false,
     owner: undefined,
+    type: undefined,
   },
   isLoading: false,
   isMessagesLoading: false,
@@ -108,21 +109,32 @@ const chatSlice = createSlice({
     clearMessages(state) {
       state.chats = [];
     },
-    openCall(state, action) {
+    openVideoCall(state, action) {
       state.call.contact = state.currentContact;
       state.call.open = true;
       state.call.pending = true;
       state.call.calling = false;
       state.call.accepted = false;
       state.call.owner = action.payload;
+      state.call.type = CallType.VIDEO_CALL;
     },
-    closeCall(state) {
+    openVoiceCall(state, action) {
+      state.call.contact = state.currentContact;
+      state.call.open = true;
+      state.call.pending = true;
+      state.call.calling = false;
+      state.call.accepted = false;
+      state.call.owner = action.payload;
+      state.call.type = CallType.VOICE_CALL;
+    },
+    closCall(state) {
       state.call.contact = undefined;
       state.call.open = false;
       state.call.pending = false;
       state.call.calling = false;
       state.call.accepted = false;
       state.call.owner = undefined;
+      state.call.type = undefined;
     },
     interruptCall(state) {
       state.call.pending = false;
@@ -140,13 +152,23 @@ const chatSlice = createSlice({
       state.call.accepted = true;
       state.call.contact = state.contacts.find((contact) => contact.contact._id === action.payload.from).contact;
     },
-    receiveCall(state, action) {
+    receiveVideoCall(state, action) {
       state.call.open = true;
       state.call.calling = false;
       state.call.pending = true;
       state.call.accepted = false;
       state.call.owner = action.payload.from;
       state.call.contact = state.contacts.find((contact) => contact.contact._id === action.payload.from).contact;
+      state.call.type = CallType.VIDEO_CALL;
+    },
+    receiveVoiceCall(state, action) {
+      state.call.open = true;
+      state.call.calling = false;
+      state.call.pending = true;
+      state.call.accepted = false;
+      state.call.owner = action.payload.from;
+      state.call.contact = state.contacts.find((contact) => contact.contact._id === action.payload.from).contact;
+      state.call.type = CallType.VOICE_CALL;
     },
     acceptIncomingCall(state) {
       state.call.calling = true;
@@ -262,6 +284,38 @@ const chatSlice = createSlice({
         });
       })
       .addCase(addVoiceMessage.rejected, () => {})
+      .addCase(addVideoCallMessage.pending, () => {})
+      .addCase(addVideoCallMessage.fulfilled, (state, action) => {
+        state.chats.forEach((item) => {
+          if (item.id === action.payload.id) {
+            item.messages.push(action.payload.message);
+          }
+        });
+        state.contacts.forEach((item) => {
+          if (item.contact._id === action.payload.id) {
+            item.recentMessage.type = action.payload.message.type;
+            item.recentMessage.text = action.payload.message.text;
+            item.recentMessage.createdAt = action.payload.message.createdAt;
+          }
+        });
+      })
+      .addCase(addVideoCallMessage.rejected, () => {})
+      .addCase(addVoiceCallMessage.pending, () => {})
+      .addCase(addVoiceCallMessage.fulfilled, (state, action) => {
+        state.chats.forEach((item) => {
+          if (item.id === action.payload.id) {
+            item.messages.push(action.payload.message);
+          }
+        });
+        state.contacts.forEach((item) => {
+          if (item.contact._id === action.payload.id) {
+            item.recentMessage.type = action.payload.message.type;
+            item.recentMessage.text = action.payload.message.text;
+            item.recentMessage.createdAt = action.payload.message.createdAt;
+          }
+        });
+      })
+      .addCase(addVoiceCallMessage.rejected, () => {})
       .addCase(seenMessages.pending, () => {})
       .addCase(seenMessages.fulfilled, (state, action) => {
         for (const contact of state.contacts) {
@@ -314,6 +368,34 @@ export const addTextMessage = createAsyncThunk(
     try {
       const response = await api.post('/messages/add-text-message', data);
 
+      return {
+        id: data.to,
+        message: response.data.message,
+      };
+    } catch (error) {
+      return rejectWithValue({ error: error.response.data.message });
+    }
+  },
+);
+export const addVideoCallMessage = createAsyncThunk(
+  'chat/addVideoCallMessage',
+  async (data: { to: string; text: string; owner: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/messages/add-video-call-message', data);
+      return {
+        id: data.to,
+        message: response.data.message,
+      };
+    } catch (error) {
+      return rejectWithValue({ error: error.response.data.message });
+    }
+  },
+);
+export const addVoiceCallMessage = createAsyncThunk(
+  'chat/addVoiceCallMessage',
+  async (data: { to: string; text: string; owner: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/messages/add-voice-call-message', data);
       return {
         id: data.to,
         message: response.data.message,
@@ -425,11 +507,13 @@ export const {
   addNewContact,
   acceptIncomingCall,
   refuseIncomingCall,
-  openCall,
-  closeCall,
+  openVideoCall,
+  closCall,
   friendRefuseCall,
   friendAcceptCall,
-  receiveCall,
+  receiveVideoCall,
   interruptCall,
   recall,
+  openVoiceCall,
+  receiveVoiceCall,
 } = chatSlice.actions;

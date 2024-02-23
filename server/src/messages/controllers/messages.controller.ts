@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { MessagesService } from '../services/messages.service';
-import { ContactMessageDTO, TextMessageDTO } from '../types';
+import { CallMessageDTO, ContactMessageDTO, TextMessageDTO } from '../types';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { uploadStorage } from '../utils/uploadStorage';
@@ -35,6 +35,26 @@ export class MessagesController {
     data.from = req.user.id;
     try {
       const { message } = await this.messageService.addSystemMessage(data);
+      return res.status(HttpStatus.OK).json({ message });
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Post('add-video-call-message')
+  async addVideoCallMessage(@Body() data: CallMessageDTO, @Req() req: any, @Res() res: Response) {
+    data.from = req.user.id;
+    try {
+      const { message } = await this.messageService.addVideoCallMessage(data);
+      return res.status(HttpStatus.OK).json({ message });
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Post('add-voice-call-message')
+  async addVoiceCallMessage(@Body() data: CallMessageDTO, @Req() req: any, @Res() res: Response) {
+    data.from = req.user.id;
+    try {
+      const { message } = await this.messageService.addVoiceCallMessage(data);
       return res.status(HttpStatus.OK).json({ message });
     } catch (error) {
       throw error;

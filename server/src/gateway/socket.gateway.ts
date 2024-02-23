@@ -101,6 +101,14 @@ export class SocketGateway implements NestGateway {
         client.to(sendUserSocket.socketId).emit('interrupt-call-receive', { from: userID, ...data });
       }
     });
+
+    // handle voice call
+    client.on('voice-call', (data) => {
+      const sendUserSocket = this.onlineUsers.get(data.to);
+      if (sendUserSocket) {
+        client.to(sendUserSocket.socketId).emit('incoming-voice-call', { from: userID, ...data });
+      }
+    });
   }
 
   // disconnect

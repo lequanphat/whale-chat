@@ -4,8 +4,8 @@ import { IoSearchOutline, IoVideocamOutline, IoInformationCircleOutline } from '
 import { PiPhoneLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleContact } from '../../../store/slices/appSlice';
-import { openCall } from '../../../store/slices/chatSlice';
 import { stateType } from '../../../store/types';
+import { openVideoCall, openVoiceCall } from '../../../store/slices/chatSlice';
 const ChatHeader = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -15,7 +15,12 @@ const ChatHeader = () => {
 
   // handle
   const handleVideoCall = () => {
-    dispatch(openCall(id));
+    dispatch(openVideoCall(id));
+  };
+
+  // handle
+  const handleVoiceCall = () => {
+    dispatch(openVoiceCall(id));
   };
 
   // render
@@ -54,7 +59,7 @@ const ChatHeader = () => {
           <IconButton onClick={handleVideoCall}>
             <IoVideocamOutline size={22} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleVoiceCall}>
             <PiPhoneLight size={22} />
           </IconButton>
           <IconButton>
