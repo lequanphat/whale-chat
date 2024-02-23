@@ -23,6 +23,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   const [remoteStream, setRemoteStream] = useState(null);
 
   // state
+  const [callTime, setCallTime] = useState<number>(0);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isMicrophoneOn, setIsMicrophoneOn] = useState<boolean>(true);
   const [isCameraOn, setIsCameraOn] = useState<boolean>(true);
@@ -41,6 +42,18 @@ const VideoCalls = ({ open }: { open: boolean }) => {
   useEffect(() => {
     handleInitPeer();
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (call.calling) {
+      timer = setInterval(() => {
+        setCallTime((pre) => pre + 1);
+      }, 1000);
+    }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [call.calling]);
 
   // peer call
   useEffect(() => {
@@ -173,6 +186,14 @@ const VideoCalls = ({ open }: { open: boolean }) => {
     }
   };
 
+  const formatCallTime = (callTime) => {
+    const minutes = Math.floor(callTime / 60);
+    const seconds = callTime % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+  };
+
   // render
   return (
     <Dialog
@@ -265,8 +286,13 @@ const VideoCalls = ({ open }: { open: boolean }) => {
               </>
             )}
           </Stack>
+          {call.calling && (
+            <Typography variant="body1" textAlign="center" color={theme.palette.success.main} pt={2}>
+              {formatCallTime(callTime)}
+            </Typography>
+          )}
           {!call.pending && !call.calling ? (
-            <Stack direction="row" justifyContent="center" p={2} pt={4} gap={16}>
+            <Stack direction="row" justifyContent="center" p={2} pt={2} gap={16}>
               <Box sx={{ bgcolor: theme.palette.success.main, borderRadius: '50%' }}>
                 <IconButton onClick={handleReCall} sx={{ color: '#fff' }}>
                   <IoCallOutline size={26} />
@@ -279,7 +305,7 @@ const VideoCalls = ({ open }: { open: boolean }) => {
               </Box>
             </Stack>
           ) : (
-            <Stack direction="row" justifyContent="center" p={2} pt={4} gap={3}>
+            <Stack direction="row" justifyContent="center" p={2} pt={2} gap={3}>
               <Box sx={{ bgcolor: '#ccc', borderRadius: '50%' }}>
                 <IconButton onClick={toggleMicrophone} sx={{ color: '#fff' }}>
                   {isMicrophoneOn ? <IoMicOutline size={26} /> : <IoMicOffOutline size={26} />}

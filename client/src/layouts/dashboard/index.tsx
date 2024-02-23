@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import Loading from '../../components/loading/Loading';
 import { Role, stateType } from '../../store/types';
 import { AddFriendsDialog } from '../../components/dialog/AddFriendsDialog';
-import VideoCalls from '../../components/calls/VideoCalls';
+import VideoCalls from '../../components/calls/VideoCall';
 
 const DashboardLayout = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
