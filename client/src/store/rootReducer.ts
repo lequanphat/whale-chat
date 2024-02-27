@@ -9,6 +9,7 @@ import notificationReducer from './slices/notificationSlice';
 const rootPersistConfig = {
   key: 'root',
   storage,
+  blacklist: ['auth'],
   keyPrefix: 'redux-',
 };
 

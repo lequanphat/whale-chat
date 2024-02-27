@@ -38,6 +38,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // code here
         window.localStorage.removeItem('accessToken');
+        window.location.reload();
         return Promise.reject(refreshError);
       }
     }
